@@ -317,7 +317,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Raw
         }
         $points = array();
         for ($idx = 0; $idx < $sides; ++$idx) {
-            $angrad = deg2rad((float) ($angle + ($idx * 360 / $sides)));
+            $angrad = $this->degToRad((float) ($angle + ($idx * 360 / $sides)));
             $points[] = ($posx + ($radius * sin($angrad)));
             $points[] = ($posy + ($radius * cos($angrad)));
         }
@@ -367,7 +367,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Raw
         $points2 = array();
         $visited = array();
         for ($idx = 0; $idx < $nvert; ++$idx) {
-            $angrad = deg2rad((float) ($angle + ($idx * 360 / $nvert)));
+            $angrad = $this->degToRad((float) ($angle + ($idx * 360 / $nvert)));
             $points2[] = $posx + ($radius * sin($angrad));
             $points2[] = $posy + ($radius * cos($angrad));
             $visited[] = false;
@@ -574,9 +574,9 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Raw
         // getting arrow direction angle; 0 deg angle is when both arms go along X axis; angle grows clockwise.
         $dir_angle = atan2(($posy0 - $posy1), ($posx0 - $posx1));
         if ($dir_angle < 0) {
-            $dir_angle += (2 * M_PI);
+            $dir_angle += (2 * self::MPI);
         }
-        $armangle = deg2rad($armangle);
+        $armangle = $this->degToRad($armangle);
         $sx1 = $posx1;
         $sy1 = $posy1;
         if ($headmode > 0) {

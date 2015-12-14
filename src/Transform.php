@@ -185,8 +185,8 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
         $posy = (($this->pageh - $posy) * $this->kunit);
         $posx = ($posx * $this->kunit);
         $ctm = array();
-        $ctm[0] = cos(deg2rad($angle));
-        $ctm[1] = sin(deg2rad($angle));
+        $ctm[0] = cos($this->degToRad($angle));
+        $ctm[1] = sin($this->degToRad($angle));
         $ctm[2] = -$ctm[1];
         $ctm[3] = $ctm[0];
         $ctm[4] = ($posx + ($ctm[1] * $posy) - ($ctm[0] * $posx));
@@ -303,8 +303,8 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
         $posx = ($posx * $this->kunit);
         $ctm = array();
         $ctm[0] = 1;
-        $ctm[1] = tan(deg2rad($angy));
-        $ctm[2] = tan(deg2rad($angx));
+        $ctm[1] = tan($this->degToRad($angy));
+        $ctm[2] = tan($this->degToRad($angx));
         $ctm[3] = 1;
         $ctm[4] = (-$ctm[2] * $posy);
         $ctm[5] = (-$ctm[1] * $posx);

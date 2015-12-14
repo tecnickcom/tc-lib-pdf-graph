@@ -32,6 +32,14 @@ use \Com\Tecnick\Pdf\Graph\Exception as GraphException;
 abstract class Base
 {
     /**
+     * Pi constant
+     * We use this instead of M_PI because HHVM has a different value.
+     *
+     * @var float
+     */
+    const MPI = 3.14159265358979323846264338327950288419716939937510;
+
+    /**
      * Current page height
      *
      * @var float

@@ -176,24 +176,24 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
      */
     protected function setRawEllipticalArcAngles(&$ags, &$agf, $rdv, $rdh, $ccw, $svg)
     {
-        $ags = deg2rad((float) $ags);
-        $agf = deg2rad((float) $agf);
+        $ags = $this->degToRad((float) $ags);
+        $agf = $this->degToRad((float) $agf);
         if (!$svg) {
             $ags = atan2((sin($ags) / $rdv), (cos($ags) / $rdh));
             $agf = atan2((sin($agf) / $rdv), (cos($agf) / $rdh));
         }
         if ($ags < 0) {
-            $ags += (2 * M_PI);
+            $ags += (2 * self::MPI);
         }
         if ($agf < 0) {
-            $agf += (2 * M_PI);
+            $agf += (2 * self::MPI);
         }
         if ($ccw && ($ags > $agf)) {
             // reverse rotation
-            $ags -= (2 * M_PI);
+            $ags -= (2 * self::MPI);
         } elseif (!$ccw && ($ags < $agf)) {
             // reverse rotation
-            $agf -= (2 * M_PI);
+            $agf -= (2 * self::MPI);
         }
     }
 
@@ -243,13 +243,13 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
         if ($pie) {
             $out .= $this->getRawPoint($posxc, $posyc); // center of the arc
         }
-        $posxang = deg2rad((float) $posxang);
+        $posxang = $this->degToRad((float) $posxang);
         $ags = $angs;
         $agf = $angf;
         $this->setRawEllipticalArcAngles($ags, $agf, $rdv, $rdh, $ccw, $svg);
         $total_angle = ($agf - $ags);
         $ncv = max(2, $ncv);
-        $ncv *= (2 * abs($total_angle) / M_PI); // total arcs to draw
+        $ncv *= (2 * abs($total_angle) / self::MPI); // total arcs to draw
         $ncv = round($ncv) + 1;
         $arcang = ($total_angle / $ncv); // angle of each arc
         $posx0 = $posxc; // X center point in PDF coordinates
@@ -339,5 +339,18 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
             $angle *= -1;
         }
         return $angle;
+    }
+
+    /**
+     * Converts the number in degrees to the radian equivalent.
+     * We use this instead of $this->degToRad to avoid precision problems with hhvm.
+     *
+     * @param float $deg Angular value in degrees.
+     *
+     * @return float Angle in radiants
+     */
+    public function degToRad($deg)
+    {
+        return ($deg * self::MPI / 180);
     }
 }
