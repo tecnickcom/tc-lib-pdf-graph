@@ -183,17 +183,17 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
             $agf = atan2((sin($agf) / $rdv), (cos($agf) / $rdh));
         }
         if ($ags < 0) {
-            $ags += (2 * self::MPI);
+            $ags += (2 * M_PI);
         }
         if ($agf < 0) {
-            $agf += (2 * self::MPI);
+            $agf += (2 * M_PI);
         }
         if ($ccw && ($ags > $agf)) {
             // reverse rotation
-            $ags -= (2 * self::MPI);
+            $ags -= (2 * M_PI);
         } elseif (!$ccw && ($ags < $agf)) {
             // reverse rotation
-            $agf -= (2 * self::MPI);
+            $agf -= (2 * M_PI);
         }
     }
 
@@ -249,7 +249,7 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
         $this->setRawEllipticalArcAngles($ags, $agf, $rdv, $rdh, $ccw, $svg);
         $total_angle = ($agf - $ags);
         $ncv = max(2, $ncv);
-        $ncv *= (2 * abs($total_angle) / self::MPI); // total arcs to draw
+        $ncv *= (2 * abs($total_angle) / M_PI); // total arcs to draw
         $ncv = round($ncv) + 1;
         $arcang = ($total_angle / $ncv); // angle of each arc
         $posx0 = $posxc; // X center point in PDF coordinates

@@ -574,7 +574,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Raw
         // getting arrow direction angle; 0 deg angle is when both arms go along X axis; angle grows clockwise.
         $dir_angle = atan2(($posy0 - $posy1), ($posx0 - $posx1));
         if ($dir_angle < 0) {
-            $dir_angle += (2 * self::MPI);
+            $dir_angle += (2 * M_PI);
         }
         $armangle = deg2rad($armangle);
         $sx1 = $posx1;
