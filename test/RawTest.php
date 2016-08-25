@@ -33,7 +33,7 @@ class RawTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         //$this->markTestSkipped(); // skip this test
-        $this->obj = new \Com\Tecnick\Pdf\Graph\Draw(0.75, 100, new \Com\Tecnick\Color\Pdf());
+        $this->obj = new \Com\Tecnick\Pdf\Graph\Draw(0.75, 100, new \Com\Tecnick\Color\Pdf(), false);
     }
 
     public function testGetRawPoint()

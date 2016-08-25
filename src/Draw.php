@@ -28,7 +28,7 @@ use \Com\Tecnick\Pdf\Graph\Exception as GraphException;
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  */
-class Draw extends \Com\Tecnick\Pdf\Graph\Raw
+class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
 {
     /**
      * Draws a line between two points.
@@ -188,6 +188,48 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Raw
         $ncv = 2
     ) {
         return $this->getEllipse($posx, $posy, $rad, $rad, 0, $angs, $angf, $mode, $style, $ncv);
+    }
+
+    /**
+     * Draws a circle pie sector.
+     *
+     * @param float  $posx   Abscissa of center point.
+     * @param float  $posy   Ordinate of center point.
+     * @param float  $rad    Radius.
+     * @param float  $angs   Angle in degrees at which starting drawing.
+     * @param float  $angf   Angle in degrees at which stop drawing.
+     * @param string $mode   Mode of rendering. @see getPathPaintOp()
+     * @param array  $style  Style.
+     * @param int    $ncv    Number of curves used to draw a 90 degrees portion of ellipse.
+     *
+     * @return string PDF command
+     */
+    public function getPieSector(
+        $posx,
+        $posy,
+        $rad,
+        $angs = 0,
+        $angf = 360,
+        $mode = 'FD',
+        array $style = array(),
+        $ncv = 2
+    ) {
+        return $this->getStyleCmd($style)
+            .$this->getRawEllipticalArc(
+                $posx,
+                $posy,
+                $rad,
+                $rad,
+                0,
+                $angs,
+                $angf,
+                true,
+                $ncv,
+                true,
+                true,
+                false
+            )
+            .$this->getPathPaintOp($mode);
     }
 
     /**
@@ -468,7 +510,11 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Raw
         }
 
         $out = $this->getStyleCmd($style);
-        $out .= $this->getRawPoint(($posx + $hrad), $posy);
+        if ($corner[3]) {
+            $out .= $this->getRawPoint(($posx + $hrad), $posy);
+        } else {
+            $out .= $this->getRawPoint($posx, $posy);
+        }
         $posxc = ($posx + $width - $hrad);
         $posyc = ($posy + $vrad);
         $out .= $this->getRawLine($posxc, $posy);
@@ -535,7 +581,6 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Raw
             );
         } else {
             $out .= $this->getRawLine($posx, $posy);
-            $out .= $this->getRawLine(($posx + $hrad), $posy);
         }
 
         $out .= $this->getPathPaintOp($mode);
@@ -603,5 +648,93 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Raw
         $points = array($hxl, $hyl, $posx1, $posy1, $hxr, $hyr);
         $out .= $this->getBasicPolygon($points, $modemap[$headmode], $style);
         return $out;
+    }
+
+    /**
+     * Get a registration mark.
+     *
+     * @param float   $posx   Abscissa of center point.
+     * @param float   $posy   Ordinate of center point.
+     * @param float   $rad    Radius.
+     * @param boolean $double If true prints two concentric crop marks.
+     * @param array   $color  Color.
+     *
+     * @return string PDF command
+     */
+    public function getRegistrationMark($posx, $posy, $rad, $double = false, $color = 'all')
+    {
+        $style = array(
+            'lineWidth'  => max((0.5 / $this->kunit), ($rad / 30)),
+            'lineCap'    => 'butt',
+            'lineJoin'   => 'miter',
+            'miterLimit' => (10.0 / $this->kunit),
+            'dashArray'  => array(),
+            'dashPhase'  => 0,
+            'lineColor'  => $color,
+            'fillColor'  => $color,
+        );
+        $out = $this->col->getColorObject($color)->getPdfColor()
+            .$this->getPieSector($posx, $posy, $rad, 90, 180, 'F')
+            .$this->getPieSector($posx, $posy, $rad, 270, 360, 'F')
+            .$this->getCircle($posx, $posy, $rad, 0, 360, 'S', array(), 8);
+        if ($double) {
+            $radi = ($rad * 0.5);
+            $out .= $this->col->getColorObject($color)->invertColor()->getPdfColor()
+            .$this->getPieSector($posx, $posy, $radi, 90, 180, 'F')
+            .$this->getPieSector($posx, $posy, $radi, 270, 360, 'F')
+            .$this->getCircle($posx, $posy, $radi, 0, 360, 'S', array(), 8)
+            .$this->col->getColorObject($color)->getPdfColor()
+            .$this->getPieSector($posx, $posy, $radi, 0, 90, 'F')
+            .$this->getPieSector($posx, $posy, $radi, 180, 270, 'F')
+            .$this->getCircle($posx, $posy, $radi, 0, 360, 'S', array(), 8);
+        }
+        return $this->getStartTransform()
+            .$this->getStyleCmd($style)
+            .$out
+            .$this->getStopTransform();
+    }
+
+    /**
+     * Get a CMYK registration mark.
+     *
+     * @param float   $posx   Abscissa of center point.
+     * @param float   $posy   Ordinate of center point.
+     * @param float   $rad    Radius.
+     *
+     * @return string PDF command
+     */
+    public function getCmykRegistrationMark($posx, $posy, $rad)
+    {
+        // internal radius
+        $radi = ($rad * 0.6);
+        // external radius
+        $rade = ($rad * 1.3);
+        // line style for external circle
+        $style = array(
+            'lineWidth'  => max((0.5 / $this->kunit), ($rad / 30)),
+            'lineCap'    => 'butt',
+            'lineJoin'   => 'miter',
+            'miterLimit' => (10.0 / $this->kunit),
+            'dashArray'  => array(),
+            'dashPhase'  => 0,
+            'lineColor'  => 'All',
+            'fillColor'  => '',
+        );
+        return $this->getStartTransform()
+            .$this->col->getColorObject('Cyan')->getPdfColor()
+            .$this->getPieSector($posx, $posy, $radi, 270, 360, 'F')
+            .$this->col->getColorObject('Magenta')->getPdfColor()
+            .$this->getPieSector($posx, $posy, $radi, 0, 90, 'F')
+            .$this->col->getColorObject('Yellow')->getPdfColor()
+            .$this->getPieSector($posx, $posy, $radi, 90, 180, 'F')
+            .$this->col->getColorObject('Key')->getPdfColor()
+            .$this->getPieSector($posx, $posy, $radi, 180, 270, 'F')
+            .$this->getStyleCmd($style)
+            .$this->getCircle($posx, $posy, $rad, 0, 360, 'S', array(), 8)
+            .$this->getLine($posx, ($posy - $rade), $posx, ($posy - $radi))
+            .$this->getLine($posx, ($posy + $radi), $posx, ($posy + $rade))
+            .$this->getLine(($posx - $rade), $posy, ($posx - $radi), $posy)
+            .$this->getLine(($posx + $radi), $posy, ($posx + $rade), $posy)
+            .$this->getStopTransform();
     }
 }

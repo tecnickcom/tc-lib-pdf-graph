@@ -6,7 +6,7 @@
  * @category    Library
  * @package     PdfGraph
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2015 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2011-2016 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  *
@@ -25,7 +25,7 @@ use \Com\Tecnick\Pdf\Graph\Exception as GraphException;
  * @category    Library
  * @package     PdfGraph
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2015 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2011-2016 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  */
@@ -61,16 +61,26 @@ abstract class Base
     protected $col;
 
     /**
+     * True if we are in PDF/A mode.
+     *
+     * @var bool
+     */
+    protected $pdfa = false;
+
+    /**
      * Initialize
      *
-     * @param float  $kunit  Unit of measure conversion ratio.
-     * @param float  $pageh  Page height
+     * @param float    $kunit  Unit of measure conversion ratio.
+     * @param float    $pageh  Page height
+     * @param PdfColor $color  Color object
+     * @param bool     $pdfa   True if we are in PDF/A mode.
      */
-    public function __construct($kunit, $pageh, PdfColor $color)
+    public function __construct($kunit, $pageh, PdfColor $color, $pdfa = false)
     {
         $this->setKUnit($kunit);
         $this->setPageHeight($pageh);
         $this->col = $color;
+        $this->pdfa = (bool) $pdfa;
         $this->init();
     }
 

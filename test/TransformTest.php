@@ -33,7 +33,7 @@ class TransformTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         //$this->markTestSkipped(); // skip this test
-        $this->obj = new \Com\Tecnick\Pdf\Graph\Draw(1, 0, new \Com\Tecnick\Color\Pdf());
+        $this->obj = new \Com\Tecnick\Pdf\Graph\Draw(1, 0, new \Com\Tecnick\Color\Pdf(), false);
         $this->assertEquals(-1, $this->obj->getTransformIndex());
         $this->assertEquals('q'."\n", $this->obj->getStartTransform());
     }
@@ -46,7 +46,7 @@ class TransformTest extends \PHPUnit_Framework_TestCase
 
     public function testGetStartStopTransform()
     {
-        $obj = new \Com\Tecnick\Pdf\Graph\Draw(1, 0, new \Com\Tecnick\Color\Pdf());
+        $obj = new \Com\Tecnick\Pdf\Graph\Draw(1, 0, new \Com\Tecnick\Color\Pdf(), false);
         $this->assertEquals(-1, $obj->getTransformIndex());
         $this->assertEquals('q'."\n", $obj->getStartTransform());
         $this->assertEquals(0, $obj->getTransformIndex());
@@ -82,7 +82,7 @@ class TransformTest extends \PHPUnit_Framework_TestCase
 
     public function testSetPageHeight()
     {
-        $obj = new \Com\Tecnick\Pdf\Graph\Draw(1, 0, new \Com\Tecnick\Color\Pdf());
+        $obj = new \Com\Tecnick\Pdf\Graph\Draw(1, 0, new \Com\Tecnick\Color\Pdf(), false);
         $obj->setPageHeight(100);
         $this->assertEquals('q'."\n", $obj->getStartTransform());
         $this->assertEquals(
@@ -93,7 +93,7 @@ class TransformTest extends \PHPUnit_Framework_TestCase
 
     public function testSetKUnit()
     {
-        $obj = new \Com\Tecnick\Pdf\Graph\Draw(1, 0, new \Com\Tecnick\Color\Pdf());
+        $obj = new \Com\Tecnick\Pdf\Graph\Draw(1, 0, new \Com\Tecnick\Color\Pdf(), false);
         $obj->setKUnit(0.75);
         $this->assertEquals('q'."\n", $obj->getStartTransform());
         $this->assertEquals(
