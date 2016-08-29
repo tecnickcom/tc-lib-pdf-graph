@@ -33,9 +33,16 @@ class StyleTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         //$this->markTestSkipped(); // skip this test
-        $this->obj = new \Com\Tecnick\Pdf\Graph\Draw(1, 0, new \Com\Tecnick\Color\Pdf(), false);
+        $this->obj = new \Com\Tecnick\Pdf\Graph\Draw(
+            1,
+            0,
+            0,
+            new \Com\Tecnick\Color\Pdf(),
+            new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
+            false
+        );
     }
-    
+
     public function testStyle()
     {
         $style = array();
@@ -138,21 +145,21 @@ class StyleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(4, $this->obj->getLastStyleProperty('lineWidth', 0));
         $this->assertEquals(7, $this->obj->getLastStyleProperty('unknown', 7));
     }
-    
+
     public function testGetPathPaintOp()
     {
         $res = $this->obj->getPathPaintOp('', '');
         $this->assertEquals('', $res);
-        
+    
         $res = $this->obj->getPathPaintOp('');
         $this->assertEquals('S'."\n", $res);
-        
+    
         $res = $this->obj->getPathPaintOp('', 'df');
         $this->assertEquals('b'."\n", $res);
-        
+    
         $res = $this->obj->getPathPaintOp('CEO');
         $this->assertEquals('W* n'."\n", $res);
-        
+    
         $res = $this->obj->getPathPaintOp('F*D');
         $this->assertEquals('B*'."\n", $res);
     }
@@ -230,5 +237,37 @@ class StyleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('h f', $this->obj->getModeWithoutStroke('b'));
         $this->assertEquals('h f*', $this->obj->getModeWithoutStroke('b*'));
         $this->assertEquals('n', $this->obj->getModeWithoutStroke('n'));
+    }
+
+    public function testGetExtGState()
+    {
+        $this->assertEquals(
+            '/GS1 gs'."\n",
+            $this->obj->getExtGState(array('A' => 'B'))
+        );
+        $this->assertEquals(
+            '/GS1 gs'."\n",
+            $this->obj->getExtGState(array('A' => 'B'))
+        );
+        $this->assertEquals(
+            '/GS2 gs'."\n",
+            $this->obj->getExtGState(array('C' => 'D'))
+        );
+    }
+
+    public function testGetExtGStatePdfa()
+    {
+        $obj = new \Com\Tecnick\Pdf\Graph\Draw(
+            1,
+            0,
+            0,
+            new \Com\Tecnick\Color\Pdf(),
+            new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
+            true
+        );
+        $this->assertEquals(
+            '',
+            $obj->getExtGState(array('A' => 'B'))
+        );
     }
 }

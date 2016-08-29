@@ -33,7 +33,14 @@ class RawTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         //$this->markTestSkipped(); // skip this test
-        $this->obj = new \Com\Tecnick\Pdf\Graph\Draw(0.75, 100, new \Com\Tecnick\Color\Pdf(), false);
+        $this->obj = new \Com\Tecnick\Pdf\Graph\Draw(
+            0.75,
+            80,
+            100,
+            new \Com\Tecnick\Color\Pdf(),
+            new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
+            false
+        );
     }
 
     public function testGetRawPoint()
@@ -73,7 +80,7 @@ class RawTest extends \PHPUnit_Framework_TestCase
     {
         $res = $this->obj->getRawEllipticalArc(0, 0, 0, 0);
         $this->assertEquals('', $res);
-        
+    
         $res = $this->obj->getRawEllipticalArc(3, 5, 7, 11);
         $this->assertEquals(
             '7.500000 71.250000 m'."\n"
@@ -139,7 +146,7 @@ class RawTest extends \PHPUnit_Framework_TestCase
     {
         $res = $this->obj->getVectorsAngle(0, 0, 0, 0);
         $this->assertEquals(0, $res, '', 0.01);
-        
+    
         $res = $this->obj->getVectorsAngle(0, 1, 0, 1);
         $this->assertEquals(0, $res, '', 0.01);
 

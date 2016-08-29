@@ -33,7 +33,14 @@ class GradientTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         //$this->markTestSkipped(); // skip this test
-        $this->obj = new \Com\Tecnick\Pdf\Graph\Draw(0.75, 100, new \Com\Tecnick\Color\Pdf(), false);
+        $this->obj = new \Com\Tecnick\Pdf\Graph\Draw(
+            0.75,
+            80,
+            100,
+            new \Com\Tecnick\Color\Pdf(),
+            new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
+            false
+        );
     }
 
     public function testGetClippingRect()
@@ -78,7 +85,14 @@ class GradientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetGradientPDFA()
     {
-        $obj = new \Com\Tecnick\Pdf\Graph\Draw(0.75, 100, new \Com\Tecnick\Color\Pdf(), true);
+        $obj = new \Com\Tecnick\Pdf\Graph\Draw(
+            0.75,
+            80,
+            100,
+            new \Com\Tecnick\Color\Pdf(),
+            new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
+            true
+        );
         $this->assertEquals(
             '',
             $obj->getGradient(2, array(), array(), '', false)
@@ -152,7 +166,14 @@ class GradientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCoonsPatchMeshPDFA()
     {
-        $obj = new \Com\Tecnick\Pdf\Graph\Draw(0.75, 100, new \Com\Tecnick\Color\Pdf(), true);
+        $obj = new \Com\Tecnick\Pdf\Graph\Draw(
+            0.75,
+            80,
+            100,
+            new \Com\Tecnick\Color\Pdf(),
+            new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
+            true
+        );
         $this->assertEquals(
             '',
             $obj->getCoonsPatchMesh(3, 5, 7, 11)
@@ -624,7 +645,7 @@ class GradientTest extends \PHPUnit_Framework_TestCase
             .'Q'."\n",
             $res
         );
-        
+     
         $style = array(
             'lineWidth' => 0.3,
             'lineColor' => 'black',
@@ -651,6 +672,36 @@ class GradientTest extends \PHPUnit_Framework_TestCase
             .'7.500000 71.250000 l'."\n"
             .'S'."\n"
             .'Q'."\n",
+            $res
+        );
+    }
+
+    public function testGetOverprint()
+    {
+        $res = $this->obj->getOverprint();
+        $this->assertEquals(
+            '/GS1 gs'."\n",
+            $res
+        );
+
+        $res = $this->obj->getOverprint(false, true, 1);
+        $this->assertEquals(
+            '/GS2 gs'."\n",
+            $res
+        );
+    }
+
+    public function testGetAlpha()
+    {
+        $res = $this->obj->getAlpha();
+        $this->assertEquals(
+            '/GS1 gs'."\n",
+            $res
+        );
+
+        $res = $this->obj->getAlpha(0.5, '/Missing', 0.4, true);
+        $this->assertEquals(
+            '/GS2 gs'."\n",
             $res
         );
     }

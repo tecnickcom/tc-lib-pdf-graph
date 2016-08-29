@@ -202,7 +202,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      *                          offset = (0 to 1) represents a location along the gradient vector;
      *                          exponent = exponent of the exponential interpolation function (default = 1).
      * @param string $bgcolor   Background color
-     * @param bool  $antialias  Flag indicating whether to filter the shading function to prevent aliasing artifacts.
+     * @param bool   $antialias Flag indicating whether to filter the shading function to prevent aliasing artifacts.
      *
      * @return string PDF command
      */
@@ -543,5 +543,87 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             .$this->getStyleCmd($style)
             .$out
             .$this->getStopTransform();
+    }
+
+    /**
+     * Get overprint mode for stroking (OP) and non-stroking (op) painting operations.
+     * (Check the "Entries in a Graphics State Parameter Dictionary" on PDF 32000-1:2008).
+     *
+     * @param boolean $stroking    If true apply overprint for stroking operations.
+     * @param boolean $nonstroking If true apply overprint for painting operations other than stroking.
+     * @param integer $mode        Overprint mode:
+     *                             0 = each source colour component value replaces the value previously
+     *                                 painted for the corresponding device colorant;
+     *                             1 = a tint value of 0.0 for a source colour component shall leave the
+     *                                 corresponding component of the previously painted colour unchanged.
+     *
+     * @return string PDF command
+     */
+    public function getOverprint($stroking = true, $nonstroking = '', $mode = 0)
+    {
+        if ($nonstroking == '') {
+            $nonstroking = $stroking;
+        }
+        return $this->getExtGState(
+            array(
+                'OP' => ($stroking && true),
+                'op' => ($nonstroking && true),
+                'OPM' => max(0, min(1, (int) $mode)),
+            )
+        );
+    }
+
+    /**
+     * Set alpha for stroking (CA) and non-stroking (ca) operations.
+     *
+     * @param float  $stroking    Alpha value for stroking operations: real value from 0 (transparent) to 1 (opaque).
+     * @param string $bmv         Blend mode, one of the following:
+     *                            Normal, Multiply, Screen, Overlay, Darken, Lighten, ColorDodge, ColorBurn,
+     *                            HardLight, SoftLight, Difference, Exclusion, Hue, Saturation, Color, Luminosity.
+     * @param float  $nonstroking Alpha value for non-stroking operations:
+     *                            real value from 0 (transparent) to 1 (opaque).
+     * @param boolean $ais
+     *
+     * @return string PDF command
+     */
+    public function getAlpha($stroking = 1, $bmv = 'Normal', $nonstroking = '', $ais = false)
+    {
+        if ($nonstroking == '') {
+            $nonstroking = $stroking;
+        }
+
+        if ($bmv[0] == '/') {
+            // remove trailing slash
+            $bmv = substr($bmv, 1);
+        }
+        $map = array(
+            'Normal',
+            'Multiply',
+            'Screen',
+            'Overlay',
+            'Darken',
+            'Lighten',
+            'ColorDodge',
+            'ColorBurn',
+            'HardLight',
+            'SoftLight',
+            'Difference',
+            'Exclusion',
+            'Hue',
+            'Saturation',
+            'Color',
+            'Luminosity',
+        );
+        if (!in_array($bmv, $map)) {
+            $bmv = $map[0];
+        }
+        return $this->getExtGState(
+            array(
+                'CA' => floatval($stroking),
+                'ca' => floatval($nonstroking),
+                'BM' => '/'.$bmv,
+                'AIS' => ($ais && true),
+            )
+        );
     }
 }

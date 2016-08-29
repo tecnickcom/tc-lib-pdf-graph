@@ -34,7 +34,14 @@ class DrawTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         //$this->markTestSkipped(); // skip this test
-        $this->obj = new \Com\Tecnick\Pdf\Graph\Draw(0.75, 100, new \Com\Tecnick\Color\Pdf(), false);
+        $this->obj = new \Com\Tecnick\Pdf\Graph\Draw(
+            0.75,
+            80,
+            100,
+            new \Com\Tecnick\Color\Pdf(),
+            new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
+            false
+        );
         $this->style = array(
             'lineWidth'  => 3,
             'lineCap'    => 'round',

@@ -6,7 +6,7 @@
  * @category    Library
  * @package     PdfGraph
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2015 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2011-2016 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  *
@@ -24,7 +24,7 @@ use \Com\Tecnick\Pdf\Graph\Exception as GraphException;
  * @category    Library
  * @package     PdfGraph
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2015 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2011-2016 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  */
@@ -110,6 +110,13 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
         'h'    => 'h',
         'n'    => 'n'
     );
+
+    /**
+     * Array of transparency objects and parameters.
+     *
+     * @var array
+     */
+    protected $extgstates = array();
 
     /**
      * Initialize default style
@@ -406,5 +413,32 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
             return $map[self::$ppopmap[$mode]];
         }
         return $mode;
+    }
+
+    /**
+     * Add transparency parameters to the current extgstate
+     *
+     * @param array $parms parameters
+     *
+     * @return string PDF command
+     */
+    public function getExtGState($parms)
+    {
+        if ($this->pdfa) {
+            return '';
+        }
+
+        $gsx = (count($this->extgstates) + 1);
+        // check if this ExtGState already exist
+        foreach ($this->extgstates as $idx => $ext) {
+            if ($ext['parms'] == $parms) {
+                $gsx = $idx;
+                break;
+            }
+        }
+        if (empty($this->extgstates[$gsx])) {
+            $this->extgstates[$gsx] = array('parms' => $parms);
+        }
+        return '/GS'.$gsx.' gs'."\n";
     }
 }
