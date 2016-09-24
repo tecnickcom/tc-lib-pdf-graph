@@ -132,6 +132,7 @@ abstract class Base
     public function setPageHeight($pageh)
     {
         $this->pageh = (float) $pageh;
+        return $this;
     }
 
     /**
@@ -142,6 +143,7 @@ abstract class Base
     public function setPageWidth($pagew)
     {
         $this->pagew = (float) $pagew;
+        return $this;
     }
 
     /**
@@ -152,6 +154,7 @@ abstract class Base
     public function setKUnit($kunit)
     {
         $this->kunit = (float) $kunit;
+        return $this;
     }
     
     /**

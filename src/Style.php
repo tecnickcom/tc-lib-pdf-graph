@@ -133,6 +133,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
             'lineColor'  => 'black',               // line (drawing) color
             'fillColor'  => 'black',               // background (filling) color
         );
+        return $this;
     }
 
     /**
