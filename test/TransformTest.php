@@ -6,7 +6,7 @@
  * @category    Library
  * @package     PdfGraph
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2015 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2011-2017 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  *
@@ -15,6 +15,8 @@
 
 namespace Test;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Transform Test
  *
@@ -22,11 +24,11 @@ namespace Test;
  * @category    Library
  * @package     PdfGraph
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2015 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2011-2017 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  */
-class TransformTest extends \PHPUnit_Framework_TestCase
+class TransformTest extends TestCase
 {
     protected $obj = null;
 
@@ -142,9 +144,11 @@ class TransformTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @expectedException \Com\Tecnick\Pdf\Graph\Exception
+     */
     public function testGetScalingEx()
     {
-        $this->setExpectedException('\Com\Tecnick\Pdf\Graph\Exception');
         $this->obj->getScaling(0, 0, 7, 11);
     }
 
@@ -245,9 +249,11 @@ class TransformTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @expectedException \Com\Tecnick\Pdf\Graph\Exception
+     */
     public function testGetSkewingEx()
     {
-        $this->setExpectedException('\Com\Tecnick\Pdf\Graph\Exception');
         $this->obj->getSkewing(90, -90, 7, 11);
     }
 

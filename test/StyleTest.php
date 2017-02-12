@@ -6,7 +6,7 @@
  * @category    Library
  * @package     PdfGraph
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2015 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2011-2017 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  *
@@ -15,6 +15,8 @@
 
 namespace Test;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Style Test
  *
@@ -22,11 +24,11 @@ namespace Test;
  * @category    Library
  * @package     PdfGraph
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2015 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2011-2017 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  */
-class StyleTest extends \PHPUnit_Framework_TestCase
+class StyleTest extends TestCase
 {
     protected $obj = null;
 
@@ -107,9 +109,14 @@ class StyleTest extends \PHPUnit_Framework_TestCase
 
         $res = $this->obj->pop();
         $this->assertEquals($exp1, $res);
+    }
 
-        $this->setExpectedException('\Com\Tecnick\Pdf\Graph\Exception');
-        $res = $this->obj->pop();
+    /**
+     * @expectedException \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testStyleEx()
+    {
+        $this->obj->pop();
     }
 
     public function testSaveRestoreStyle()
@@ -130,8 +137,13 @@ class StyleTest extends \PHPUnit_Framework_TestCase
     {
         $res = $this->obj->getCurrentStyleItem('lineCap');
         $this->assertEquals('butt', $res);
+    }
 
-        $this->setExpectedException('\Com\Tecnick\Pdf\Graph\Exception');
+    /**
+     * @expectedException \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testStyleItemEx()
+    {
         $this->obj->getCurrentStyleItem('wrongField');
     }
 
