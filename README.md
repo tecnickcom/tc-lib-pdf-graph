@@ -99,15 +99,15 @@ Create a composer.json in your projects root-directory:
 ```json
 {
     "require": {
-        "tecnickcom/tc-lib-pdf-graph": "dev-master"
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:tecnickcom/tc-lib-pdf-graph.git"
-        }
-    ]
+        "tecnickcom/tc-lib-pdf-graph": "^1.4"
+    }
 }
+```
+
+Or add to an existing project with: 
+
+```bash
+composer require tecnickcom/tc-lib-pdf-graph ^1.4
 ```
 
 
