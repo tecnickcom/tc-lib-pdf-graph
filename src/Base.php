@@ -377,11 +377,12 @@ abstract class Base
      */
     public function getOutGradientShaders($pon)
     {
+        $this->pon = (int) $pon;
+
         if ($this->pdfa || empty($this->gradients)) {
             return '';
         }
 
-        $this->pon = (int) $pon;
         $idt = count($this->gradients); // index for transparency gradients
 
         $out = '';
