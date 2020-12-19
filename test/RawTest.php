@@ -28,14 +28,11 @@ use PHPUnit\Framework\TestCase;
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  */
-class RawTest extends TestCase
+class RawTest extends TestUtil
 {
-    protected $obj = null;
-
-    public function setUp()
+    protected function getTestObject()
     {
-        //$this->markTestSkipped(); // skip this test
-        $this->obj = new \Com\Tecnick\Pdf\Graph\Draw(
+        return new \Com\Tecnick\Pdf\Graph\Draw(
             0.75,
             80,
             100,
@@ -47,43 +44,50 @@ class RawTest extends TestCase
 
     public function testGetRawPoint()
     {
-        $this->assertEquals('2.250000 71.250000 m'."\n", $this->obj->getRawPoint(3, 5));
+        $testObj = $this->getTestObject();
+        $this->assertEquals('2.250000 71.250000 m'."\n", $testObj->getRawPoint(3, 5));
     }
 
     public function testGetRawLine()
     {
-        $this->assertEquals('2.250000 71.250000 l'."\n", $this->obj->getRawLine(3, 5));
+        $testObj = $this->getTestObject();
+        $this->assertEquals('2.250000 71.250000 l'."\n", $testObj->getRawLine(3, 5));
     }
 
     public function testGetRawRect()
     {
-        $this->assertEquals('2.250000 71.250000 5.250000 -8.250000 re'."\n", $this->obj->getRawRect(3, 5, 7, 11));
+        $testObj = $this->getTestObject();
+        $this->assertEquals('2.250000 71.250000 5.250000 -8.250000 re'."\n", $testObj->getRawRect(3, 5, 7, 11));
     }
 
     public function testGetRawCurve()
     {
+        $testObj = $this->getTestObject();
         $this->assertEquals(
             '2.250000 71.250000 5.250000 66.750000 9.750000 62.250000 c'."\n",
-            $this->obj->getRawCurve(3, 5, 7, 11, 13, 17)
+            $testObj->getRawCurve(3, 5, 7, 11, 13, 17)
         );
     }
 
     public function testGetRawCurveV()
     {
-        $this->assertEquals('2.250000 71.250000 5.250000 66.750000 v'."\n", $this->obj->getRawCurveV(3, 5, 7, 11));
+        $testObj = $this->getTestObject();
+        $this->assertEquals('2.250000 71.250000 5.250000 66.750000 v'."\n", $testObj->getRawCurveV(3, 5, 7, 11));
     }
 
     public function testGetRawCurveY()
     {
-        $this->assertEquals('2.250000 71.250000 5.250000 66.750000 y'."\n", $this->obj->getRawCurveY(3, 5, 7, 11));
+        $testObj = $this->getTestObject();
+        $this->assertEquals('2.250000 71.250000 5.250000 66.750000 y'."\n", $testObj->getRawCurveY(3, 5, 7, 11));
     }
 
     public function testGetRawEllipticalArc()
     {
-        $res = $this->obj->getRawEllipticalArc(0, 0, 0, 0);
+        $testObj = $this->getTestObject();
+        $res = $testObj->getRawEllipticalArc(0, 0, 0, 0);
         $this->assertEquals('', $res);
     
-        $res = $this->obj->getRawEllipticalArc(3, 5, 7, 11);
+        $res = $testObj->getRawEllipticalArc(3, 5, 7, 11);
         $this->assertEquals(
             '7.500000 71.250000 m'."\n"
             .'7.500000 73.189135 7.064930 75.067534 6.271733 76.552998 c'."\n"
@@ -99,7 +103,7 @@ class RawTest extends TestCase
         );
 
         $bbox = array();
-        $res = $this->obj->getRawEllipticalArc(
+        $res = $testObj->getRawEllipticalArc(
             3,
             5,
             7,
@@ -129,7 +133,7 @@ class RawTest extends TestCase
         );
 
         $bbox = array();
-        $res = $this->obj->getRawEllipticalArc(3, 5, 7, 11, 0, 90, 45);
+        $res = $testObj->getRawEllipticalArc(3, 5, 7, 11, 0, 90, 45);
         $this->assertEquals(
             '2.250000 79.500000 m'."\n"
             .'1.084822 79.500000 -0.047846 78.890447 -0.968406 77.767993 c'."\n"
@@ -146,28 +150,29 @@ class RawTest extends TestCase
 
     public function testGetVectorsAngle()
     {
-        $res = $this->obj->getVectorsAngle(0, 0, 0, 0);
-        $this->assertEquals(0, $res, '', 0.01);
+        $testObj = $this->getTestObject();
+        $res = $testObj->getVectorsAngle(0, 0, 0, 0);
+        $this->bcAssertEqualsWithDelta(0, $res);
     
-        $res = $this->obj->getVectorsAngle(0, 1, 0, 1);
-        $this->assertEquals(0, $res, '', 0.01);
+        $res = $testObj->getVectorsAngle(0, 1, 0, 1);
+        $this->bcAssertEqualsWithDelta(0, $res);
 
-        $res = $this->obj->getVectorsAngle(1, 1, 2, 2);
-        $this->assertEquals(0, $res, '', 0.01);
+        $res = $testObj->getVectorsAngle(1, 1, 2, 2);
+        $this->bcAssertEqualsWithDelta(0, $res);
 
-        $res = $this->obj->getVectorsAngle(1, 0, 0, 1);
-        $this->assertEquals(1.57, $res, '', 0.01);
+        $res = $testObj->getVectorsAngle(1, 0, 0, 1);
+        $this->bcAssertEqualsWithDelta(1.57, $res);
 
-        $res = $this->obj->getVectorsAngle(0, 1, 1, 0);
-        $this->assertEquals(-1.57, $res, '', 0.01);
+        $res = $testObj->getVectorsAngle(0, 1, 1, 0);
+        $this->bcAssertEqualsWithDelta(-1.57, $res);
 
-        $res = $this->obj->getVectorsAngle(1, 0, 1, 1);
-        $this->assertEquals(0.79, $res, '', 0.01);
+        $res = $testObj->getVectorsAngle(1, 0, 1, 1);
+        $this->bcAssertEqualsWithDelta(0.79, $res);
 
-        $res = $this->obj->getVectorsAngle(-1, -1, 1, 1);
-        $this->assertEquals(M_PI, $res, '', 0.01);
+        $res = $testObj->getVectorsAngle(-1, -1, 1, 1);
+        $this->bcAssertEqualsWithDelta(M_PI, $res);
 
-        $res = $this->obj->getVectorsAngle(1, 0, -1, 0);
-        $this->assertEquals(M_PI, $res, '', 0.01);
+        $res = $testObj->getVectorsAngle(1, 0, -1, 0);
+        $this->bcAssertEqualsWithDelta(M_PI, $res);
     }
 }

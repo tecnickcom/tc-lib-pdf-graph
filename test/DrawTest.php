@@ -28,15 +28,11 @@ use PHPUnit\Framework\TestCase;
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  */
-class DrawTest extends TestCase
+class DrawTest extends TestUtil
 {
-    protected $obj = null;
-    protected $style = array();
-
-    public function setUp()
+    protected function getTestObject()
     {
-        //$this->markTestSkipped(); // skip this test
-        $this->obj = new \Com\Tecnick\Pdf\Graph\Draw(
+        return new \Com\Tecnick\Pdf\Graph\Draw(
             0.75,
             80,
             100,
@@ -44,7 +40,11 @@ class DrawTest extends TestCase
             new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
             false
         );
-        $this->style = array(
+    }
+
+    protected function getTestStyle()
+    {
+        return array(
             'lineWidth'  => 3,
             'lineCap'    => 'round',
             'lineJoin'   => 'bevel',
@@ -58,7 +58,8 @@ class DrawTest extends TestCase
 
     public function testGetLine()
     {
-        $res = $this->obj->getLine(3, 5, 7, 11);
+        $testObj = $this->getTestObject();
+        $res = $testObj->getLine(3, 5, 7, 11);
         $this->assertEquals(
             '2.250000 71.250000 m'."\n"
             .'5.250000 66.750000 l'."\n"
@@ -66,7 +67,8 @@ class DrawTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getLine(3, 5, 7, 11, $this->style);
+        $testStyle = $this->getTestStyle();
+        $res = $testObj->getLine(3, 5, 7, 11, $testStyle);
         $this->assertEquals(
             '2.250000 w'."\n"
             .'1 J'."\n"
@@ -84,7 +86,8 @@ class DrawTest extends TestCase
 
     public function testGetCurve()
     {
-        $res = $this->obj->getCurve(3, 5, 7, 11, 13, 17, 19, 23);
+        $testObj = $this->getTestObject();
+        $res = $testObj->getCurve(3, 5, 7, 11, 13, 17, 19, 23);
         $this->assertEquals(
             '2.250000 71.250000 m'."\n"
             .'5.250000 66.750000 9.750000 62.250000 14.250000 57.750000 c'."\n"
@@ -92,7 +95,8 @@ class DrawTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getCurve(3, 5, 7, 11, 13, 17, 19, 23, 'B*', $this->style);
+        $testStyle = $this->getTestStyle();
+        $res = $testObj->getCurve(3, 5, 7, 11, 13, 17, 19, 23, 'B*', $testStyle);
         $this->assertEquals(
             '2.250000 w'."\n"
             .'1 J'."\n"
@@ -110,12 +114,13 @@ class DrawTest extends TestCase
 
     public function testGetPolycurve()
     {
+        $testObj = $this->getTestObject();
         $segments = array(
             array(7, 11, 13, 17, 19, 23),
             array(29, 31, 37, 41, 43, 47),
         );
 
-        $res = $this->obj->getPolycurve(3, 5, $segments);
+        $res = $testObj->getPolycurve(3, 5, $segments);
         $this->assertEquals(
             '2.250000 71.250000 m'."\n"
             .'5.250000 66.750000 9.750000 62.250000 14.250000 57.750000 c'."\n"
@@ -124,7 +129,8 @@ class DrawTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getPolycurve(3, 5, $segments, 'B*', $this->style);
+        $testStyle = $this->getTestStyle();
+        $res = $testObj->getPolycurve(3, 5, $segments, 'B*', $testStyle);
         $this->assertEquals(
             '2.250000 w'."\n"
             .'1 J'."\n"
@@ -143,7 +149,8 @@ class DrawTest extends TestCase
 
     public function testGetEllipse()
     {
-        $res = $this->obj->getEllipse(3, 5, 7, 0, 13, 61, 349);
+        $testObj = $this->getTestObject();
+        $res = $testObj->getEllipse(3, 5, 7, 0, 13, 61, 349);
         $this->assertEquals(
             '3.697096 76.296624 m'."\n"
             .'2.476319 76.646676 1.169043 76.542151 0.019397 76.002569 c'."\n"
@@ -157,7 +164,8 @@ class DrawTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getEllipse(3, 5, 7, 11, 13, 61, 349, 'B*', $this->style, 4);
+        $testStyle = $this->getTestStyle();
+        $res = $testObj->getEllipse(3, 5, 7, 11, 13, 61, 349, 'B*', $testStyle, 4);
         $this->assertEquals(
             '2.250000 w'."\n"
             .'1 J'."\n"
@@ -189,7 +197,8 @@ class DrawTest extends TestCase
 
     public function testGetCircle()
     {
-        $res = $this->obj->getCircle(3, 5, 7, 61, 349);
+        $testObj = $this->getTestObject();
+        $res = $testObj->getCircle(3, 5, 7, 61, 349);
         $this->assertEquals(
             '4.795251 75.841753 m'."\n"
             .'3.684506 76.457449 2.387223 76.649676 1.145663 76.382537 c'."\n"
@@ -203,7 +212,8 @@ class DrawTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getCircle(3, 5, 7, 61, 349, 'B*', $this->style, 4);
+        $testStyle = $this->getTestStyle();
+        $res = $testObj->getCircle(3, 5, 7, 61, 349, 'B*', $testStyle, 4);
         $this->assertEquals(
             '2.250000 w'."\n"
             .'1 J'."\n"
@@ -234,7 +244,8 @@ class DrawTest extends TestCase
 
     public function testGetPieSector()
     {
-        $res = $this->obj->getPieSector(3, 5, 7, 90, 120);
+        $testObj = $this->getTestObject();
+        $res = $testObj->getPieSector(3, 5, 7, 90, 120);
         $this->assertEquals(
             '2.250000 71.250000 m'."\n"
             .'2.250000 76.500000 l'."\n"
@@ -248,9 +259,10 @@ class DrawTest extends TestCase
 
     public function testGetBasicPolygon()
     {
+        $testObj = $this->getTestObject();
         $points = array(3, 5, 7, 11, 13, 17, 19, 23);
 
-        $res = $this->obj->getBasicPolygon($points);
+        $res = $testObj->getBasicPolygon($points);
         $this->assertEquals(
             '2.250000 71.250000 m'."\n"
             .'5.250000 66.750000 l'."\n"
@@ -260,7 +272,8 @@ class DrawTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getBasicPolygon($points, 'B*', $this->style);
+        $testStyle = $this->getTestStyle();
+        $res = $testObj->getBasicPolygon($points, 'B*', $testStyle);
         $this->assertEquals(
             '2.250000 w'."\n"
             .'1 J'."\n"
@@ -280,12 +293,13 @@ class DrawTest extends TestCase
 
     public function testGetPolygon()
     {
+        $testObj = $this->getTestObject();
         $points = array(3, 5, 7, 11, 13, 17, 19, 23);
 
-        $res = $this->obj->getPolygon(array(3, 5, 7, 11));
+        $res = $testObj->getPolygon(array(3, 5, 7, 11));
         $this->assertEquals('', $res);
 
-        $res = $this->obj->getPolygon($points);
+        $res = $testObj->getPolygon($points);
         $this->assertEquals(
             '2.250000 71.250000 m'."\n"
             .'5.250000 66.750000 l'."\n"
@@ -299,10 +313,11 @@ class DrawTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getPolygon(
+        $testStyle = $this->getTestStyle();
+        $res = $testObj->getPolygon(
             $points,
             'b*',
-            array('all' => $this->style, 0 => array('lineColor' => '#ff0000'))
+            array('all' => $testStyle, 0 => array('lineColor' => '#ff0000'))
         );
         $this->assertEquals(
             '2.250000 w'."\n"
@@ -337,10 +352,11 @@ class DrawTest extends TestCase
 
     public function testGetRegularPolygon()
     {
-        $res = $this->obj->getRegularPolygon(3, 5, 7, 2);
+        $testObj = $this->getTestObject();
+        $res = $testObj->getRegularPolygon(3, 5, 7, 2);
         $this->assertEquals('', $res);
 
-        $res = $this->obj->getRegularPolygon(3, 5, 7, 5, 11);
+        $res = $testObj->getRegularPolygon(3, 5, 7, 5, 11);
         $this->assertEquals(
             '3.251747 66.096457 m'."\n"
             .'7.460867 70.610186 l'."\n"
@@ -357,14 +373,15 @@ class DrawTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getRegularPolygon(
+        $testStyle = $this->getTestStyle();
+        $res = $testObj->getRegularPolygon(
             3,
             5,
             7,
             5,
             11,
             'b*',
-            array('all' => $this->style, 0 => array('lineColor' => '#ff0000')),
+            array('all' => $testStyle, 0 => array('lineColor' => '#ff0000')),
             'f',
             array('fillColor' => '#cccccc')
         );
@@ -417,10 +434,11 @@ class DrawTest extends TestCase
 
     public function testGetStarPolygon()
     {
-        $res = $this->obj->getStarPolygon(3, 5, 7, 1, 0);
+        $testObj = $this->getTestObject();
+        $res = $testObj->getStarPolygon(3, 5, 7, 1, 0);
         $this->assertEquals('', $res);
 
-        $res = $this->obj->getStarPolygon(3, 5, 7, 11, 13);
+        $res = $testObj->getStarPolygon(3, 5, 7, 11, 13);
         $this->assertEquals(
             '2.250000 66.000000 m'."\n"
             .'7.025568 69.069071 l'."\n"
@@ -455,7 +473,8 @@ class DrawTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getStarPolygon(
+        $testStyle = $this->getTestStyle();
+        $res = $testObj->getStarPolygon(
             3,
             5,
             7,
@@ -463,7 +482,7 @@ class DrawTest extends TestCase
             13,
             61,
             'b*',
-            array('all' => $this->style, 0 => array('lineColor' => '#ff0000')),
+            array('all' => $testStyle, 0 => array('lineColor' => '#ff0000')),
             'f',
             array('fillColor' => '#cccccc')
         );
@@ -540,14 +559,16 @@ class DrawTest extends TestCase
 
     public function testGetBasicRect()
     {
-        $res = $this->obj->getBasicRect(3, 5, 7, 11);
+        $testObj = $this->getTestObject();
+        $res = $testObj->getBasicRect(3, 5, 7, 11);
         $this->assertEquals(
             '2.250000 71.250000 5.250000 -8.250000 re'."\n"
             .'S'."\n",
             $res
         );
 
-        $res = $this->obj->getBasicRect(3, 5, 7, 11, 'b*', $this->style);
+        $testStyle = $this->getTestStyle();
+        $res = $testObj->getBasicRect(3, 5, 7, 11, 'b*', $testStyle);
         $this->assertEquals(
             '2.250000 w'."\n"
             .'1 J'."\n"
@@ -564,7 +585,8 @@ class DrawTest extends TestCase
 
     public function testGetRect()
     {
-        $res = $this->obj->getRect(3, 5, 7, 11);
+        $testObj = $this->getTestObject();
+        $res = $testObj->getRect(3, 5, 7, 11);
         $this->assertEquals(
             '2.250000 71.250000 m'."\n"
             .'7.500000 71.250000 l'."\n"
@@ -581,13 +603,14 @@ class DrawTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getRect(
+        $testStyle = $this->getTestStyle();
+        $res = $testObj->getRect(
             3,
             5,
             7,
             11,
             'b*',
-            array('all' => $this->style, 1 => array('lineColor' => '#ff0000'))
+            array('all' => $testStyle, 1 => array('lineColor' => '#ff0000'))
         );
         $this->assertEquals(
             '2.250000 w'."\n"
@@ -622,7 +645,8 @@ class DrawTest extends TestCase
 
     public function testGetRoundedRect()
     {
-        $res = $this->obj->getRoundedRect(3, 5, 137, 241, 13, 17);
+        $testObj = $this->getTestObject();
+        $res = $testObj->getRoundedRect(3, 5, 137, 241, 13, 17);
         $this->assertEquals(
             '12.000000 71.250000 m'."\n"
             .'95.250000 71.250000 l'."\n"
@@ -637,14 +661,15 @@ class DrawTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getRoundedRect(3, 5, 137, 241, 13, 17, '0000');
+        $res = $testObj->getRoundedRect(3, 5, 137, 241, 13, 17, '0000');
         $this->assertEquals(
             '2.250000 71.250000 102.750000 -180.750000 re'."\n"
             .'S'."\n",
             $res
         );
 
-        $res = $this->obj->getRoundedRect(3, 5, 137, 241, 13, 17, '1010', 'b*', $this->style);
+        $testStyle = $this->getTestStyle();
+        $res = $testObj->getRoundedRect(3, 5, 137, 241, 13, 17, '1010', 'b*', $testStyle);
         $this->assertEquals(
             '2.250000 w'."\n"
             .'1 J'."\n"
@@ -666,7 +691,7 @@ class DrawTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getRoundedRect(3, 5, 137, 241, 13, 17, '0101');
+        $res = $testObj->getRoundedRect(3, 5, 137, 241, 13, 17, '0101');
         $this->assertEquals(
             '12.000000 71.250000 m'."\n"
             .'95.250000 71.250000 l'."\n"
@@ -684,7 +709,8 @@ class DrawTest extends TestCase
 
     public function testGetArrow()
     {
-        $res = $this->obj->getArrow(3, 5, 7, 11);
+        $testObj = $this->getTestObject();
+        $res = $testObj->getArrow(3, 5, 7, 11);
         $this->assertEquals(
             '2.250000 71.250000 m'."\n"
             .'5.250000 66.750000 l'."\n"
@@ -696,7 +722,8 @@ class DrawTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getArrow(3, 5, 7, 11, 1, 6, 17, $this->style);
+        $testStyle = $this->getTestStyle();
+        $res = $testObj->getArrow(3, 5, 7, 11, 1, 6, 17, $testStyle);
         $this->assertEquals(
             '2.250000 w'."\n"
             .'1 J'."\n"
@@ -722,7 +749,7 @@ class DrawTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getArrow(3, 5, 7, 11, 2, 6, 17, array());
+        $res = $testObj->getArrow(3, 5, 7, 11, 2, 6, 17, array());
         $this->assertEquals(
             '2.250000 71.250000 m'."\n"
             .'3.308549 69.662176 l'."\n"
@@ -734,7 +761,7 @@ class DrawTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getArrow(3, 5, 7, 11, 3, 6, 17, array());
+        $res = $testObj->getArrow(3, 5, 7, 11, 3, 6, 17, array());
         $this->assertEquals(
             '2.250000 71.250000 m'."\n"
             .'3.308549 69.662176 l'."\n"
@@ -749,7 +776,8 @@ class DrawTest extends TestCase
 
     public function testGetRegistrationMark()
     {
-        $res = $this->obj->getRegistrationMark(3, 5, 7, true, 'All');
+        $testObj = $this->getTestObject();
+        $res = $testObj->getRegistrationMark(3, 5, 7, true, 'All');
         $this->assertEquals(
             'q'."\n"
             .'0.500000 w'."\n"
@@ -915,7 +943,8 @@ class DrawTest extends TestCase
 
     public function testGetCmykRegistrationMark()
     {
-        $res = $this->obj->getCmykRegistrationMark(3, 5, 11);
+        $testObj = $this->getTestObject();
+        $res = $testObj->getCmykRegistrationMark(3, 5, 11);
         $this->assertEquals(
             'q'."\n"
             .'1.000000 0.000000 0.000000 0.000000 k'."\n"

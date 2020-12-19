@@ -28,14 +28,11 @@ use PHPUnit\Framework\TestCase;
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  */
-class StyleTest extends TestCase
+class StyleTest extends TestUtil
 {
-    protected $obj = null;
-
-    public function setUp()
+    protected function getTestObject()
     {
-        //$this->markTestSkipped(); // skip this test
-        $this->obj = new \Com\Tecnick\Pdf\Graph\Draw(
+        return new \Com\Tecnick\Pdf\Graph\Draw(
             1,
             0,
             0,
@@ -47,8 +44,9 @@ class StyleTest extends TestCase
 
     public function testStyle()
     {
+        $testObj = $this->getTestObject();
         $style = array();
-        $res = $this->obj->add($style, true);
+        $res = $testObj->add($style, true);
         $exp1 = '1.000000 w'."\n"
             .'0 J'."\n"
             .'0 j'."\n"
@@ -67,7 +65,7 @@ class StyleTest extends TestCase
             'lineColor'  => 'greenyellow',
             'fillColor'  => '["RGB",0.250000,0.500000,0.750000]',
         );
-        $res = $this->obj->add($style, false);
+        $res = $testObj->add($style, false);
         $exp2 = '3.000000 w'."\n"
             .'1 J'."\n"
             .'2 j'."\n"
@@ -76,7 +74,7 @@ class StyleTest extends TestCase
             .'0.678431 1.000000 0.184314 RG'."\n"
             .'0.250000 0.500000 0.750000 rg'."\n";
         $this->assertEquals($exp2, $res);
-        $this->assertEquals($style, $this->obj->getCurrentStyleArray());
+        $this->assertEquals($style, $testObj->getCurrentStyleArray());
 
         $style = array(
             'lineCap'    => 'round',
@@ -84,7 +82,7 @@ class StyleTest extends TestCase
             'lineColor'  => 'transparent',
             'fillColor'  => 'cmyk(67,33,0,25)',
         );
-        $res = $this->obj->add($style, true);
+        $res = $testObj->add($style, true);
         $exp3 = '3.000000 w'."\n"
             .'1 J'."\n"
             .'2 j'."\n"
@@ -94,176 +92,185 @@ class StyleTest extends TestCase
         $this->assertEquals($exp3, $res);
 
         $style = array('lineWidth'  => 7.123);
-        $res = $this->obj->add($style, false);
+        $res = $testObj->add($style, false);
         $exp4 = '7.123000 w'."\n";
         $this->assertEquals($exp4, $res);
 
-        $res = $this->obj->pop();
+        $res = $testObj->pop();
         $this->assertEquals($exp4, $res);
 
-        $res = $this->obj->pop();
+        $res = $testObj->pop();
         $this->assertEquals($exp3, $res);
 
-        $res = $this->obj->pop();
+        $res = $testObj->pop();
         $this->assertEquals($exp2, $res);
 
-        $res = $this->obj->pop();
+        $res = $testObj->pop();
         $this->assertEquals($exp1, $res);
     }
 
-    /**
-     * @expectedException \Com\Tecnick\Pdf\Graph\Exception
-     */
     public function testStyleEx()
     {
-        $this->obj->pop();
+        $this->bcExpectException('\Com\Tecnick\Pdf\Graph\Exception');
+        $testObj = $this->getTestObject();
+        $testObj->pop();
     }
 
     public function testSaveRestoreStyle()
     {
-        $this->obj->add(array('lineWidth' => 1), false);
-        $this->obj->add(array('lineWidth' => 2), false);
-        $this->obj->add(array('lineWidth' => 3), false);
-        $this->obj->saveStyleStaus();
-        $this->obj->add(array('lineWidth' => 4), false);
-        $this->obj->add(array('lineWidth' => 5), false);
-        $this->obj->add(array('lineWidth' => 6), false);
-        $this->assertEquals(array('lineWidth' => 6), $this->obj->getCurrentStyleArray());
-        $this->obj->restoreStyleStaus();
-        $this->assertEquals(array('lineWidth' => 3), $this->obj->getCurrentStyleArray());
+        $testObj = $this->getTestObject();
+        $testObj->add(array('lineWidth' => 1), false);
+        $testObj->add(array('lineWidth' => 2), false);
+        $testObj->add(array('lineWidth' => 3), false);
+        $testObj->saveStyleStaus();
+        $testObj->add(array('lineWidth' => 4), false);
+        $testObj->add(array('lineWidth' => 5), false);
+        $testObj->add(array('lineWidth' => 6), false);
+        $this->assertEquals(array('lineWidth' => 6), $testObj->getCurrentStyleArray());
+        $testObj->restoreStyleStaus();
+        $this->assertEquals(array('lineWidth' => 3), $testObj->getCurrentStyleArray());
     }
 
     public function testStyleItem()
     {
-        $res = $this->obj->getCurrentStyleItem('lineCap');
+        $testObj = $this->getTestObject();
+        $res = $testObj->getCurrentStyleItem('lineCap');
         $this->assertEquals('butt', $res);
     }
 
-    /**
-     * @expectedException \Com\Tecnick\Pdf\Graph\Exception
-     */
     public function testStyleItemEx()
     {
-        $this->obj->getCurrentStyleItem('wrongField');
+        $this->bcExpectException('\Com\Tecnick\Pdf\Graph\Exception');
+        $testObj = $this->getTestObject();
+        $testObj->getCurrentStyleItem('wrongField');
     }
 
     public function testGetLastStyleProperty()
     {
-        $this->obj->add(array('lineWidth' => 1), false);
-        $this->obj->add(array('lineWidth' => 2), false);
-        $this->obj->add(array('lineWidth' => 3), false);
-        $this->assertEquals(3, $this->obj->getLastStyleProperty('lineWidth', 0));
-        $this->obj->add(array('lineWidth' => 4), false);
-        $this->assertEquals(4, $this->obj->getLastStyleProperty('lineWidth', 0));
-        $this->assertEquals(7, $this->obj->getLastStyleProperty('unknown', 7));
+        $testObj = $this->getTestObject();
+        $testObj->add(array('lineWidth' => 1), false);
+        $testObj->add(array('lineWidth' => 2), false);
+        $testObj->add(array('lineWidth' => 3), false);
+        $this->assertEquals(3, $testObj->getLastStyleProperty('lineWidth', 0));
+        $testObj->add(array('lineWidth' => 4), false);
+        $this->assertEquals(4, $testObj->getLastStyleProperty('lineWidth', 0));
+        $this->assertEquals(7, $testObj->getLastStyleProperty('unknown', 7));
     }
 
     public function testGetPathPaintOp()
     {
-        $res = $this->obj->getPathPaintOp('', '');
+        $testObj = $this->getTestObject();
+        $res = $testObj->getPathPaintOp('', '');
         $this->assertEquals('', $res);
     
-        $res = $this->obj->getPathPaintOp('');
+        $res = $testObj->getPathPaintOp('');
         $this->assertEquals('S'."\n", $res);
     
-        $res = $this->obj->getPathPaintOp('', 'df');
+        $res = $testObj->getPathPaintOp('', 'df');
         $this->assertEquals('b'."\n", $res);
     
-        $res = $this->obj->getPathPaintOp('CEO');
+        $res = $testObj->getPathPaintOp('CEO');
         $this->assertEquals('W* n'."\n", $res);
     
-        $res = $this->obj->getPathPaintOp('F*D');
+        $res = $testObj->getPathPaintOp('F*D');
         $this->assertEquals('B*'."\n", $res);
     }
 
     public function testIsFillingMode()
     {
-        $this->assertTrue($this->obj->isFillingMode('f'));
-        $this->assertTrue($this->obj->isFillingMode('f*'));
-        $this->assertTrue($this->obj->isFillingMode('B'));
-        $this->assertTrue($this->obj->isFillingMode('B*'));
-        $this->assertTrue($this->obj->isFillingMode('b'));
-        $this->assertTrue($this->obj->isFillingMode('b*'));
-        $this->assertFalse($this->obj->isFillingMode('S'));
-        $this->assertFalse($this->obj->isFillingMode('s'));
-        $this->assertFalse($this->obj->isFillingMode('n'));
-        $this->assertFalse($this->obj->isFillingMode(''));
+        $testObj = $this->getTestObject();
+        $this->assertTrue($testObj->isFillingMode('f'));
+        $this->assertTrue($testObj->isFillingMode('f*'));
+        $this->assertTrue($testObj->isFillingMode('B'));
+        $this->assertTrue($testObj->isFillingMode('B*'));
+        $this->assertTrue($testObj->isFillingMode('b'));
+        $this->assertTrue($testObj->isFillingMode('b*'));
+        $this->assertFalse($testObj->isFillingMode('S'));
+        $this->assertFalse($testObj->isFillingMode('s'));
+        $this->assertFalse($testObj->isFillingMode('n'));
+        $this->assertFalse($testObj->isFillingMode(''));
     }
 
     public function testIsStrokingMode()
     {
-        $this->assertTrue($this->obj->isStrokingMode('S'));
-        $this->assertTrue($this->obj->isStrokingMode('s'));
-        $this->assertTrue($this->obj->isStrokingMode('B'));
-        $this->assertTrue($this->obj->isStrokingMode('B*'));
-        $this->assertTrue($this->obj->isStrokingMode('b'));
-        $this->assertTrue($this->obj->isStrokingMode('b*'));
-        $this->assertFalse($this->obj->isStrokingMode('f'));
-        $this->assertFalse($this->obj->isStrokingMode('f*'));
-        $this->assertFalse($this->obj->isStrokingMode('n'));
-        $this->assertFalse($this->obj->isStrokingMode(''));
+        $testObj = $this->getTestObject();
+        $this->assertTrue($testObj->isStrokingMode('S'));
+        $this->assertTrue($testObj->isStrokingMode('s'));
+        $this->assertTrue($testObj->isStrokingMode('B'));
+        $this->assertTrue($testObj->isStrokingMode('B*'));
+        $this->assertTrue($testObj->isStrokingMode('b'));
+        $this->assertTrue($testObj->isStrokingMode('b*'));
+        $this->assertFalse($testObj->isStrokingMode('f'));
+        $this->assertFalse($testObj->isStrokingMode('f*'));
+        $this->assertFalse($testObj->isStrokingMode('n'));
+        $this->assertFalse($testObj->isStrokingMode(''));
     }
 
     public function testIsClosingMode()
     {
-        $this->assertTrue($this->obj->isClosingMode('s'));
-        $this->assertTrue($this->obj->isClosingMode('b'));
-        $this->assertTrue($this->obj->isClosingMode('b*'));
-        $this->assertFalse($this->obj->isClosingMode('f'));
-        $this->assertFalse($this->obj->isClosingMode('f*'));
-        $this->assertFalse($this->obj->isClosingMode('S'));
-        $this->assertFalse($this->obj->isClosingMode('B'));
-        $this->assertFalse($this->obj->isClosingMode('B*'));
-        $this->assertFalse($this->obj->isClosingMode('n'));
-        $this->assertFalse($this->obj->isClosingMode(''));
+        $testObj = $this->getTestObject();
+        $this->assertTrue($testObj->isClosingMode('s'));
+        $this->assertTrue($testObj->isClosingMode('b'));
+        $this->assertTrue($testObj->isClosingMode('b*'));
+        $this->assertFalse($testObj->isClosingMode('f'));
+        $this->assertFalse($testObj->isClosingMode('f*'));
+        $this->assertFalse($testObj->isClosingMode('S'));
+        $this->assertFalse($testObj->isClosingMode('B'));
+        $this->assertFalse($testObj->isClosingMode('B*'));
+        $this->assertFalse($testObj->isClosingMode('n'));
+        $this->assertFalse($testObj->isClosingMode(''));
     }
 
     public function testGetModeWithoutClose()
     {
-        $this->assertEquals('', $this->obj->getModeWithoutClose(''));
-        $this->assertEquals('S', $this->obj->getModeWithoutClose('s'));
-        $this->assertEquals('B', $this->obj->getModeWithoutClose('b'));
-        $this->assertEquals('B*', $this->obj->getModeWithoutClose('b*'));
-        $this->assertEquals('n', $this->obj->getModeWithoutClose('n'));
+        $testObj = $this->getTestObject();
+        $this->assertEquals('', $testObj->getModeWithoutClose(''));
+        $this->assertEquals('S', $testObj->getModeWithoutClose('s'));
+        $this->assertEquals('B', $testObj->getModeWithoutClose('b'));
+        $this->assertEquals('B*', $testObj->getModeWithoutClose('b*'));
+        $this->assertEquals('n', $testObj->getModeWithoutClose('n'));
     }
 
     public function testGetModeWithoutFill()
     {
-        $this->assertEquals('', $this->obj->getModeWithoutFill(''));
-        $this->assertEquals('', $this->obj->getModeWithoutFill('f'));
-        $this->assertEquals('', $this->obj->getModeWithoutFill('f*'));
-        $this->assertEquals('S', $this->obj->getModeWithoutFill('B'));
-        $this->assertEquals('S', $this->obj->getModeWithoutFill('B*'));
-        $this->assertEquals('s', $this->obj->getModeWithoutFill('b'));
-        $this->assertEquals('s', $this->obj->getModeWithoutFill('b*'));
-        $this->assertEquals('n', $this->obj->getModeWithoutFill('n'));
+        $testObj = $this->getTestObject();
+        $this->assertEquals('', $testObj->getModeWithoutFill(''));
+        $this->assertEquals('', $testObj->getModeWithoutFill('f'));
+        $this->assertEquals('', $testObj->getModeWithoutFill('f*'));
+        $this->assertEquals('S', $testObj->getModeWithoutFill('B'));
+        $this->assertEquals('S', $testObj->getModeWithoutFill('B*'));
+        $this->assertEquals('s', $testObj->getModeWithoutFill('b'));
+        $this->assertEquals('s', $testObj->getModeWithoutFill('b*'));
+        $this->assertEquals('n', $testObj->getModeWithoutFill('n'));
     }
 
     public function testGetModeWithoutStroke()
     {
-        $this->assertEquals('', $this->obj->getModeWithoutStroke(''));
-        $this->assertEquals('', $this->obj->getModeWithoutStroke('S'));
-        $this->assertEquals('h', $this->obj->getModeWithoutStroke('s'));
-        $this->assertEquals('f', $this->obj->getModeWithoutStroke('B'));
-        $this->assertEquals('f*', $this->obj->getModeWithoutStroke('B*'));
-        $this->assertEquals('h f', $this->obj->getModeWithoutStroke('b'));
-        $this->assertEquals('h f*', $this->obj->getModeWithoutStroke('b*'));
-        $this->assertEquals('n', $this->obj->getModeWithoutStroke('n'));
+        $testObj = $this->getTestObject();
+        $this->assertEquals('', $testObj->getModeWithoutStroke(''));
+        $this->assertEquals('', $testObj->getModeWithoutStroke('S'));
+        $this->assertEquals('h', $testObj->getModeWithoutStroke('s'));
+        $this->assertEquals('f', $testObj->getModeWithoutStroke('B'));
+        $this->assertEquals('f*', $testObj->getModeWithoutStroke('B*'));
+        $this->assertEquals('h f', $testObj->getModeWithoutStroke('b'));
+        $this->assertEquals('h f*', $testObj->getModeWithoutStroke('b*'));
+        $this->assertEquals('n', $testObj->getModeWithoutStroke('n'));
     }
 
     public function testGetExtGState()
     {
+        $testObj = $this->getTestObject();
         $this->assertEquals(
             '/GS1 gs'."\n",
-            $this->obj->getExtGState(array('A' => 'B'))
+            $testObj->getExtGState(array('A' => 'B'))
         );
         $this->assertEquals(
             '/GS1 gs'."\n",
-            $this->obj->getExtGState(array('A' => 'B'))
+            $testObj->getExtGState(array('A' => 'B'))
         );
         $this->assertEquals(
             '/GS2 gs'."\n",
-            $this->obj->getExtGState(array('C' => 'D'))
+            $testObj->getExtGState(array('C' => 'D'))
         );
     }
 

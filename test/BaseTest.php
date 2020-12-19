@@ -28,15 +28,11 @@ use PHPUnit\Framework\TestCase;
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  */
-class BaseTest extends TestCase
+class BaseTest extends TestUtil
 {
-    protected $obj = null;
-    protected $style = array();
-
-    public function setUp()
+    protected function getTestObject()
     {
-        //$this->markTestSkipped(); // skip this test
-        $this->obj = new \Com\Tecnick\Pdf\Graph\Draw(
+        return new \Com\Tecnick\Pdf\Graph\Draw(
             0.75,
             80,
             100,
@@ -44,29 +40,20 @@ class BaseTest extends TestCase
             new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
             false
         );
-        $this->style = array(
-            'lineWidth'  => 3,
-            'lineCap'    => 'round',
-            'lineJoin'   => 'bevel',
-            'miterLimit' => 11,
-            'dashArray'  => array(5, 7),
-            'dashPhase'  => 1,
-            'lineColor'  => 'greenyellow',
-            'fillColor'  => '["RGB",0.250000,0.500000,0.750000]',
-        );
     }
 
     public function testGetOutExtGState()
     {
-        $res = $this->obj->getOutExtGState(10);
+        $testObj = $this->getTestObject();
+        $res = $testObj->getOutExtGState(10);
         $this->assertEquals(
             '',
             $res
         );
 
-        $this->obj->getOverprint();
-        $this->obj->getAlpha();
-        $res = $this->obj->getOutExtGState(10);
+        $testObj->getOverprint();
+        $testObj->getAlpha();
+        $res = $testObj->getOutExtGState(10);
         $this->assertEquals(
             '11 0 obj'."\n"
             .'<< /Type /ExtGState /OP true /op true /OPM 0.000000 >>'."\n"
@@ -77,12 +64,13 @@ class BaseTest extends TestCase
             $res
         );
 
-        $this->assertEquals(12, $this->obj->getObjectNumber());
+        $this->assertEquals(12, $testObj->getObjectNumber());
     }
 
     public function testGetOutExtGStateResourcesEmpty()
     {
-        $res = $this->obj->getOutExtGStateResources();
+        $testObj = $this->getTestObject();
+        $res = $testObj->getOutExtGStateResources();
         $this->assertEquals(
             '',
             $res
@@ -91,7 +79,8 @@ class BaseTest extends TestCase
 
     public function testGetOutGradientResourcesEmpty()
     {
-        $res = $this->obj->getOutGradientResources();
+        $testObj = $this->getTestObject();
+        $res = $testObj->getOutGradientResources();
         $this->assertEquals(
             '',
             $res
@@ -100,17 +89,18 @@ class BaseTest extends TestCase
 
     public function testGetOutGradientShaders()
     {
-        $res = $this->obj->getOutGradientShaders(10);
+        $testObj = $this->getTestObject();
+        $res = $testObj->getOutGradientShaders(10);
         $this->assertEquals(
             '',
             $res
         );
 
-        $this->obj->getCoonsPatchMesh(3, 5, 7, 11);
-        $this->obj->getOutGradientShaders(11);
-        $this->assertEquals(13, $this->obj->getObjectNumber());
+        $testObj->getCoonsPatchMesh(3, 5, 7, 11);
+        $testObj->getOutGradientShaders(11);
+        $this->assertEquals(13, $testObj->getObjectNumber());
 
-        $res = $this->obj->getOutGradientResources();
+        $res = $testObj->getOutGradientResources();
         $this->assertEquals(
             ' /Pattern << /p1 13 0 R /p2 13 0 R >>'."\n"
             .' /Shading << /Sh1 12 0 R /Sh2 12 0 R >>'."\n",
@@ -120,6 +110,7 @@ class BaseTest extends TestCase
 
     public function testGetOutShaders()
     {
+        $testObj = $this->getTestObject();
         $stops = array(
             array('color' => 'red', 'exponent' => 1, 'opacity' => 0.5),
             array('color' => 'blue', 'offset' => 0.2, 'exponent' => 1, 'opacity' => 0.6),
@@ -130,17 +121,17 @@ class BaseTest extends TestCase
         $this->assertEquals(
             '/TGS1 gs'."\n"
             .'/Sh1 sh'."\n",
-            $this->obj->getGradient(2, array(0,0,1,0), $stops, '', false)
+            $testObj->getGradient(2, array(0,0,1,0), $stops, '', false)
         );
 
-        $this->obj->getOverprint();
-        $this->obj->getAlpha();
-        $this->obj->getOutExtGState($this->obj->getObjectNumber());
+        $testObj->getOverprint();
+        $testObj->getAlpha();
+        $testObj->getOutExtGState($testObj->getObjectNumber());
 
-        $this->obj->getOutGradientShaders($this->obj->getObjectNumber());
-        $this->assertEquals(19, $this->obj->getObjectNumber());
+        $testObj->getOutGradientShaders($testObj->getObjectNumber());
+        $this->assertEquals(19, $testObj->getObjectNumber());
 
-        $res = $this->obj->getOutExtGStateResources();
+        $res = $testObj->getOutExtGStateResources();
         $this->assertEquals(
             ' /ExtGState << /GS1 1 0 R /GS2 2 0 R /TGS1 20 0 R >>'."\n",
             $res
@@ -149,7 +140,8 @@ class BaseTest extends TestCase
 
     public function testGetOutShadersRadial()
     {
-        $this->obj->getGradient(
+        $testObj = $this->getTestObject();
+        $testObj->getGradient(
             3,
             array(0.6,0.5,0.4,0.3,1),
             array(
@@ -168,7 +160,7 @@ class BaseTest extends TestCase
             true
         );
 
-        $this->obj->getOutGradientShaders($this->obj->getObjectNumber());
-        $this->assertEquals(4, $this->obj->getObjectNumber());
+        $testObj->getOutGradientShaders($testObj->getObjectNumber());
+        $this->assertEquals(4, $testObj->getObjectNumber());
     }
 }

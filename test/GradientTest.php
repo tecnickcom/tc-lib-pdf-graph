@@ -28,14 +28,11 @@ use PHPUnit\Framework\TestCase;
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  */
-class GradientTest extends TestCase
+class GradientTest extends TestUtil
 {
-    protected $obj = null;
-
-    public function setUp()
+    protected function getTestObject()
     {
-        //$this->markTestSkipped(); // skip this test
-        $this->obj = new \Com\Tecnick\Pdf\Graph\Draw(
+        return new \Com\Tecnick\Pdf\Graph\Draw(
             0.75,
             80,
             100,
@@ -47,41 +44,45 @@ class GradientTest extends TestCase
 
     public function testGetClippingRect()
     {
+        $testObj = $this->getTestObject();
         $this->assertEquals(
             '2.250000 71.250000 5.250000 -8.250000 re W n'."\n",
-            $this->obj->getClippingRect(3, 5, 7, 11)
+            $testObj->getClippingRect(3, 5, 7, 11)
         );
     }
 
     public function testGetGradientTransform()
     {
+        $testObj = $this->getTestObject();
         $this->assertEquals(
             '5.250000 0.000000 0.000000 8.250000 2.250000 63.000000 cm'."\n",
-            $this->obj->getGradientTransform(3, 5, 7, 11)
+            $testObj->getGradientTransform(3, 5, 7, 11)
         );
     }
 
     public function testGetLinearGradient()
     {
+        $testObj = $this->getTestObject();
         $this->assertEquals(
             'q'."\n"
             .'2.250000 71.250000 5.250000 -8.250000 re W n'."\n"
             .'5.250000 0.000000 0.000000 8.250000 2.250000 63.000000 cm'."\n"
             .'/Sh1 sh'."\n"
             .'Q'."\n",
-            $this->obj->getLinearGradient(3, 5, 7, 11, 'red', 'green', array(1,2,3,4))
+            $testObj->getLinearGradient(3, 5, 7, 11, 'red', 'green', array(1,2,3,4))
         );
     }
 
     public function testGetRadialGradient()
     {
+        $testObj = $this->getTestObject();
         $this->assertEquals(
             'q'."\n"
             .'2.250000 71.250000 5.250000 -8.250000 re W n'."\n"
             .'5.250000 0.000000 0.000000 8.250000 2.250000 63.000000 cm'."\n"
             .'/Sh1 sh'."\n"
             .'Q'."\n",
-            $this->obj->getRadialGradient(3, 5, 7, 11, 'red', 'green', array(0.6,0.5,0.4,0.3,1))
+            $testObj->getRadialGradient(3, 5, 7, 11, 'red', 'green', array(0.6,0.5,0.4,0.3,1))
         );
     }
 
@@ -103,6 +104,7 @@ class GradientTest extends TestCase
 
     public function testGetGradient()
     {
+        $testObj = $this->getTestObject();
         $stops = array(
             array('color' => 'red', 'exponent' => 1, 'opacity' => 0.5),
             array('color' => 'blue', 'offset' => 0.2, 'exponent' => 1, 'opacity' => 0.6),
@@ -113,7 +115,7 @@ class GradientTest extends TestCase
         $this->assertEquals(
             '/TGS1 gs'."\n"
             .'/Sh1 sh'."\n",
-            $this->obj->getGradient(2, array(0,0,1,0), $stops, '', false)
+            $testObj->getGradient(2, array(0,0,1,0), $stops, '', false)
         );
 
         $exp = array (
@@ -163,7 +165,7 @@ class GradientTest extends TestCase
                 'colspace' => 'DeviceCMYK',
             ),
         );
-        $this->assertEquals($exp, $this->obj->getGradientsArray(), '', 0.01);
+        $this->bcAssertEqualsWithDelta($exp, $testObj->getGradientsArray());
     }
 
     public function testGetCoonsPatchMeshPDFA()
@@ -184,13 +186,14 @@ class GradientTest extends TestCase
 
     public function testGetCoonsPatchMesh()
     {
+        $testObj = $this->getTestObject();
         $this->assertEquals(
             'q'."\n"
             .'2.250000 71.250000 5.250000 -8.250000 re W n'."\n"
             .'5.250000 0.000000 0.000000 8.250000 2.250000 63.000000 cm'."\n"
             .'/Sh1 sh'."\n"
             .'Q'."\n",
-            $this->obj->getCoonsPatchMesh(3, 5, 7, 11)
+            $testObj->getCoonsPatchMesh(3, 5, 7, 11)
         );
 
         $patch_array = array (
@@ -352,13 +355,14 @@ class GradientTest extends TestCase
             .'142.500000 0.000000 0.000000 150.000000 7.500000 -108.750000 cm'."\n"
             .'/Sh2 sh'."\n"
             .'Q'."\n",
-            $this->obj->getCoonsPatchMesh(10, 45, 190, 200, '', '', '', '', $patch_array, 0, 2)
+            $testObj->getCoonsPatchMesh(10, 45, 190, 200, '', '', '', '', $patch_array, 0, 2)
         );
     }
 
     public function testGetColorRegistrationBar()
     {
-        $res = $this->obj->getColorRegistrationBar(50, 70, 40, 40);
+        $testObj = $this->getTestObject();
+        $res = $testObj->getColorRegistrationBar(50, 70, 40, 40);
         $this->assertEquals(
             'q'."\n"
             .'37.500000 22.500000 30.000000 -3.750000 re W n'."\n"
@@ -403,7 +407,7 @@ class GradientTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getColorRegistrationBar(50, 70, 40, 40, true);
+        $res = $testObj->getColorRegistrationBar(50, 70, 40, 40, true);
         $this->assertEquals(
             'q'."\n"
             .'37.500000 22.500000 3.750000 -30.000000 re W n'."\n"
@@ -448,7 +452,7 @@ class GradientTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getColorRegistrationBar(
+        $res = $testObj->getColorRegistrationBar(
             50,
             70,
             40,
@@ -613,7 +617,7 @@ class GradientTest extends TestCase
             $res
         );
 
-        $res = $this->obj->getColorRegistrationBar(
+        $res = $testObj->getColorRegistrationBar(
             50,
             70,
             40,
@@ -626,10 +630,11 @@ class GradientTest extends TestCase
 
     public function testGetCropMark()
     {
-        $res = $this->obj->getCropMark(3, 5, 7, 11, '');
+        $testObj = $this->getTestObject();
+        $res = $testObj->getCropMark(3, 5, 7, 11, '');
         $this->assertEquals('', $res);
 
-        $res = $this->obj->getCropMark(3, 5, 7, 11, 'TBLR');
+        $res = $testObj->getCropMark(3, 5, 7, 11, 'TBLR');
         $this->assertEquals(
             'q'."\n"
             .'2.250000 79.500000 m'."\n"
@@ -654,7 +659,7 @@ class GradientTest extends TestCase
             'lineCap'   => 'butt',
             'lineJoin'  => 'miter',
         );
-        $res = $this->obj->getCropMark(3, 5, 7, 11, 'TBLR', $style);
+        $res = $testObj->getCropMark(3, 5, 7, 11, 'TBLR', $style);
         $this->assertEquals(
             'q'."\n"
             .'0.225000 w'."\n"
@@ -680,13 +685,14 @@ class GradientTest extends TestCase
 
     public function testGetOverprint()
     {
-        $res = $this->obj->getOverprint();
+        $testObj = $this->getTestObject();
+        $res = $testObj->getOverprint();
         $this->assertEquals(
             '/GS1 gs'."\n",
             $res
         );
 
-        $res = $this->obj->getOverprint(false, true, 1);
+        $res = $testObj->getOverprint(false, true, 1);
         $this->assertEquals(
             '/GS2 gs'."\n",
             $res
@@ -695,13 +701,14 @@ class GradientTest extends TestCase
 
     public function testGetAlpha()
     {
-        $res = $this->obj->getAlpha();
+        $testObj = $this->getTestObject();
+        $res = $testObj->getAlpha();
         $this->assertEquals(
             '/GS1 gs'."\n",
             $res
         );
 
-        $res = $this->obj->getAlpha(0.5, '/Missing', 0.4, true);
+        $res = $testObj->getAlpha(0.5, '/Missing', 0.4, true);
         $this->assertEquals(
             '/GS2 gs'."\n",
             $res
