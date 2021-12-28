@@ -380,8 +380,8 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
                     $bpcd,
                     ((($point - $coords_min) / ($coords_max - $coords_min)) * $bpcd)
                 ));
-                $this->gradients[$ngr]['stream'] .= chr(intval(floor(floatval($point / 256))))
-                    .chr(intval(floor(floatval($point % 256))));
+                $this->gradients[$ngr]['stream'] .= chr(floor($point / 256))
+                    .chr(floor($point % (float)256));
             }
             foreach ($par['colors'] as $color) {
                 //each color component as 8 bit
