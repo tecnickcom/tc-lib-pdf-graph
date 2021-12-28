@@ -368,23 +368,23 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             $patch_array = $coords;
         }
 
-        $bpcd = 65535; //16 bits per coordinate
-        //build the data stream
+        $bpcd = 65535; // 16 bits per coordinate
+        // build the data stream
         $this->gradients[$ngr]['stream'] = '';
  
         foreach ($patch_array as $par) {
             $this->gradients[$ngr]['stream'] .= chr($par['f']); // start with the edge flag as 8 bit
             foreach ($par['points'] as $point) {
-                //each point as 16 bit
-                $point = max(0, min(
+                // each point as 16 bit
+                $point = floor(max(0, min(
                     $bpcd,
                     ((($point - $coords_min) / ($coords_max - $coords_min)) * $bpcd)
-                ));
+                )));
                 $this->gradients[$ngr]['stream'] .= chr(floor($point / 256))
-                    .chr(floor($point % (float)256));
+                    .chr(floor($point % 256));
             }
             foreach ($par['colors'] as $color) {
-                //each color component as 8 bit
+                // each color component as 8 bit
                 $this->gradients[$ngr]['stream'] .= chr($color['red']).chr($color['green']).chr($color['blue']);
             }
         }
