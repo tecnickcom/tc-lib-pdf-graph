@@ -376,11 +376,11 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             $this->gradients[$ngr]['stream'] .= chr($par['f']); // start with the edge flag as 8 bit
             foreach ($par['points'] as $point) {
                 //each point as 16 bit
-                $point = (float)max(0, min(
+                $point = max(0, min(
                     $bpcd,
                     ((($point - $coords_min) / ($coords_max - $coords_min)) * $bpcd)
                 ));
-                $this->gradients[$ngr]['stream'] .= chr((int)floor($point / 256)).chr((int)floor($point % 256));
+                $this->gradients[$ngr]['stream'] .= chr((int)floor((float)$point / 256)).chr((int)floor((float)$point % 256));
             }
             foreach ($par['colors'] as $color) {
                 //each color component as 8 bit
