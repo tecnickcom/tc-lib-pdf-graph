@@ -387,7 +387,6 @@ abstract class Base
 
         $out = '';
         foreach ($this->gradients as $idx => $grad) {
-            
             $gcol = $this->getOutGradientCols($grad, 'color');
             if (!empty($gcol)) {
                 $out .= $gcol;

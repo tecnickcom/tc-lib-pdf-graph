@@ -102,8 +102,8 @@ class BaseTest extends TestUtil
 
         $res = $testObj->getOutGradientResources();
         $this->assertEquals(
-            ' /Pattern << /p1 13 0 R /p2 13 0 R >>'."\n"
-            .' /Shading << /Sh1 12 0 R /Sh2 12 0 R >>'."\n",
+            ' /Pattern << /p1 13 0 R >>'."\n"
+            .' /Shading << /Sh1 12 0 R >>'."\n",
             $res
         );
     }
