@@ -285,6 +285,6 @@ class TransformTest extends TestUtil
         $tma = array(3.1, 5.2, 7.3, 11.4, 13.5, 17.6);
         $tmb = array(19.1, 23.2, 29.3, 31.4, 37.5, 41.6);
         $ctm = $testObj->getCtmProduct($tma, $tmb);
-        $this->assertEqualsWithDelta(array(228.570, 363.800, 320.050, 510.320, 433.430, 686.840), $ctm, 0.001);
+        $this->bcAssertEqualsWithDelta(array(228.570, 363.800, 320.050, 510.320, 433.430, 686.840), $ctm, 0.001);
     }
 }
