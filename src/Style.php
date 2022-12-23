@@ -27,6 +27,8 @@ use \Com\Tecnick\Pdf\Graph\Exception as GraphException;
  * @copyright   2011-2016 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
 {
@@ -265,6 +267,8 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      * @param array $style Style to represent.
      *
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function getLineModeCmd(array $style)
     {
@@ -272,21 +276,21 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
         if (isset($style['lineCap']) && isset(self::$linecapmap[$style['lineCap']])) {
             $out .= self::$linecapmap[$style['lineCap']].' J'."\n";
         }
-
         if (isset($style['lineJoin']) && isset(self::$linejoinmap[$style['lineJoin']])) {
             $out .= self::$linejoinmap[$style['lineJoin']].' j'."\n";
         }
-
         if (isset($style['miterLimit'])) {
             $out .= sprintf('%F M'."\n", ((float) $style['miterLimit'] * $this->kunit));
         }
-
-        if (!empty($style['dashArray'])) {
+        if (isset($style['dashArray']) && is_array($style['dashArray'])) {
             $dash = array();
             foreach ($style['dashArray'] as $val) {
                 $dash[] = sprintf('%F', ((float) $val * $this->kunit));
             }
-            $out .= sprintf('[%s] %F d'."\n", implode(' ', $dash), ((float) $style['dashPhase'] * $this->kunit));
+            if (!isset($style['dashPhase'])) {
+                $style['dashPhase'] = 0;
+            }
+            $out .= sprintf('[%s] %F d'."\n", implode(' ', $dash), $style['dashPhase']);
         }
         return $out;
     }

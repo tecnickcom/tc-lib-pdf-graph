@@ -51,6 +51,7 @@ class StyleTest extends TestUtil
             .'0 J'."\n"
             .'0 j'."\n"
             .'10.000000 M'."\n"
+            .'[] 0.000000 d'."\n"
             .'/CS1 CS 1.000000 SCN'."\n"
             .'/CS1 cs 1.000000 scn'."\n";
         $this->assertEquals($exp1, $res);
