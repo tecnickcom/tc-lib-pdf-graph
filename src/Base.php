@@ -6,7 +6,7 @@
  * @category    Library
  * @package     PdfGraph
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2016 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2011-2022 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  *
@@ -303,8 +303,8 @@ abstract class Base
             $grad['colspace'] = 'DeviceGray';
         }
         
-        $objref = ++$this->pon;
-        $out = $objref.' 0 obj'."\n"
+        $oid = ++$this->pon;
+        $out = $oid.' 0 obj'."\n"
             .'<<'
             .' /ShadingType '.$grad['type']
             .' /ColorSpace /'.$grad['colspace'];
@@ -360,7 +360,7 @@ abstract class Base
             .'<<'
             .' /Type /Pattern'
             .' /PatternType 2'
-            .' /Shading '.$objref.' 0 R'
+            .' /Shading '.$oid.' 0 R'
             .' >>'."\n"
             .'endobj'
             ."\n";
@@ -387,14 +387,21 @@ abstract class Base
 
         $out = '';
         foreach ($this->gradients as $idx => $grad) {
-            $out .= $this->getOutGradientCols($grad, 'color');
-            $this->gradients[$idx]['id'] = ($this->pon - 1);
-            $this->gradients[$idx]['pattern'] = $this->pon;
+            
+            $gcol = $this->getOutGradientCols($grad, 'color');
+            if (!empty($gcol)) {
+                $out .= $gcol;
+                $this->gradients[$idx]['id'] = ($this->pon - 1);
+                $this->gradients[$idx]['pattern'] = $this->pon;
+            }
 
-            $out .= $this->getOutGradientCols($grad, 'opacity');
-            $idgs = ($idx + $idt);
-            $this->gradients[$idgs]['id'] = ($this->pon - 1);
-            $this->gradients[$idgs]['pattern'] = $this->pon;
+            $gopa = $this->getOutGradientCols($grad, 'opacity');
+            if (!empty($gopa)) {
+                $out .= $gopa;
+                $idgs = ($idx + $idt);
+                $this->gradients[$idgs]['id'] = ($this->pon - 1);
+                $this->gradients[$idgs]['pattern'] = $this->pon;
+            }
 
             if ($grad['transparency']) {
                 $oid = ++$this->pon;
