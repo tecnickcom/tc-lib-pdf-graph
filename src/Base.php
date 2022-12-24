@@ -90,6 +90,13 @@ abstract class Base
     protected $pdfa = false;
 
     /**
+     * Enable stream compression.
+     *
+     * @var int
+     */
+    protected $compress = true;
+
+    /**
      * Initialize
      *
      * @param float    $kunit    Unit of measure conversion ratio.
