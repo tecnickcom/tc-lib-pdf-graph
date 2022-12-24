@@ -92,20 +92,29 @@ abstract class Base
     /**
      * Initialize
      *
-     * @param float    $kunit  Unit of measure conversion ratio.
-     * @param float    $pagew  Page width.
-     * @param float    $pageh  Page height.
-     * @param PdfColor $color  Color object.
-     * @param bool     $pdfa   True if we are in PDF/A mode.
+     * @param float    $kunit    Unit of measure conversion ratio.
+     * @param float    $pagew    Page width.
+     * @param float    $pageh    Page height.
+     * @param PdfColor $color    Color object.
+     * @param bool     $pdfa     True if we are in PDF/A mode.
+     * @param bool     $compress Set to false to disable stream compression.
      */
-    public function __construct($kunit, $pagew, $pageh, PdfColor $color, Encrypt $enc, $pdfa = false)
-    {
+    public function __construct(
+        $kunit,
+        $pagew,
+        $pageh,
+        PdfColor $color,
+        Encrypt $enc,
+        $pdfa = false,
+        $compress = true
+    ) {
         $this->setKUnit($kunit);
         $this->setPageWidth($pagew);
         $this->setPageHeight($pageh);
         $this->col = $color;
         $this->enc = $enc;
         $this->pdfa = (bool) $pdfa;
+        $this->compress = (bool) $compress;
         $this->init();
     }
 
@@ -406,18 +415,20 @@ abstract class Base
                 $oid = ++$this->pon;
                 $pwidth = ($this->pagew * $this->kunit);
                 $pheight = ($this->pageh * $this->kunit);
-                $stream = 'q /a0 gs /Pattern cs /p'.$idgs.' scn 0 0 '.$pwidth.' '.$pheight.' re f Q';
-                $stream = gzcompress($stream);
-                $stream = $this->enc->encryptString($stream, $oid);
                 $rect = sprintf('%F %F', $pwidth, $pheight);
 
                 $out .= $oid.' 0 obj'."\n"
                     .'<<'
                     .' /Type /XObject'
                     .' /Subtype /Form'
-                    .' /FormType 1'
-                    .' /Filter /FlateDecode'
-                    .' /Length '.strlen($stream)
+                    .' /FormType 1';
+                $stream = 'q /a0 gs /Pattern cs /p'.$idgs.' scn 0 0 '.$pwidth.' '.$pheight.' re f Q';
+                if ($this->compress) {
+                    $stream = gzcompress($stream);
+                    $out .= ' /Filter /FlateDecode';
+                }
+                $stream = $this->enc->encryptString($stream, $oid);
+                $out .= ' /Length '.strlen($stream)
                     .' /BBox [0 0 '.$rect.']'
                     .' /Group << /Type /Group /S /Transparency /CS /DeviceGray >>'
                     .' /Resources <<'

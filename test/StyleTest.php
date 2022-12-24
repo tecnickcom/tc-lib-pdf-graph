@@ -42,11 +42,39 @@ class StyleTest extends TestUtil
         );
     }
 
+    public function testGetStyleCmd()
+    {
+        $testObj = $this->getTestObject();
+
+        $res1 = $testObj->getStyleCmd(array());
+        $exp1 = '';
+        $this->assertEquals($exp1, $res1);
+
+        $style2 = array(
+            'lineWidth'  => 3,
+            'lineCap'    => 'round',
+            'lineJoin'   => 'bevel',
+            'miterLimit' => 11,
+            'dashArray'  => array(5, 7),
+            'lineColor'  => 'greenyellow',
+            'fillColor'  => '["RGB",0.250000,0.500000,0.750000]',
+        );
+        $res2 = $testObj->getStyleCmd($style2);
+        $exp2 = '3.000000 w'."\n"
+            .'1 J'."\n"
+            .'2 j'."\n"
+            .'11.000000 M'."\n"
+            .'[5.000000 7.000000] 0.000000 d'."\n"
+            .'0.678431 1.000000 0.184314 RG'."\n"
+            .'0.250000 0.500000 0.750000 rg'."\n";
+        $this->assertEquals($exp2, $res2);
+    }
+
     public function testStyle()
     {
         $testObj = $this->getTestObject();
         $style = array();
-        $res = $testObj->add($style, true);
+        $res1 = $testObj->add($style, true);
         $exp1 = '1.000000 w'."\n"
             .'0 J'."\n"
             .'0 j'."\n"
@@ -54,7 +82,7 @@ class StyleTest extends TestUtil
             .'[] 0.000000 d'."\n"
             .'/CS1 CS 1.000000 SCN'."\n"
             .'/CS1 cs 1.000000 scn'."\n";
-        $this->assertEquals($exp1, $res);
+        $this->assertEquals($exp1, $res1);
 
         $style = array(
             'lineWidth'  => 3,
@@ -66,7 +94,7 @@ class StyleTest extends TestUtil
             'lineColor'  => 'greenyellow',
             'fillColor'  => '["RGB",0.250000,0.500000,0.750000]',
         );
-        $res = $testObj->add($style, false);
+        $res2 = $testObj->add($style, false);
         $exp2 = '3.000000 w'."\n"
             .'1 J'."\n"
             .'2 j'."\n"
@@ -74,7 +102,7 @@ class StyleTest extends TestUtil
             .'[5.000000 7.000000] 1.000000 d'."\n"
             .'0.678431 1.000000 0.184314 RG'."\n"
             .'0.250000 0.500000 0.750000 rg'."\n";
-        $this->assertEquals($exp2, $res);
+        $this->assertEquals($exp2, $res2);
         $this->assertEquals($style, $testObj->getCurrentStyleArray());
 
         $style = array(
@@ -83,19 +111,38 @@ class StyleTest extends TestUtil
             'lineColor'  => 'transparent',
             'fillColor'  => 'cmyk(67,33,0,25)',
         );
-        $res = $testObj->add($style, true);
+        $res3 = $testObj->add($style, true);
         $exp3 = '3.000000 w'."\n"
             .'1 J'."\n"
             .'2 j'."\n"
             .'11.000000 M'."\n"
             .'[5.000000 7.000000] 1.000000 d'."\n"
             .'0.670000 0.330000 0.000000 0.250000 k'."\n";
-        $this->assertEquals($exp3, $res);
+        $this->assertEquals($exp3, $res3);
+
+        $style = array(
+            'lineCap'    => 'round',
+            'lineJoin'   => 'bevel',
+            'lineColor'  => 'transparent',
+            'fillColor'  => 'cmyk(67,33,0,25)',
+            'dashArray'  => array(),
+        );
+        $res4 = $testObj->add($style, true);
+        $exp4 = '3.000000 w'."\n"
+            .'1 J'."\n"
+            .'2 j'."\n"
+            .'11.000000 M'."\n"
+            .'[] 1.000000 d'."\n"
+            .'0.670000 0.330000 0.000000 0.250000 k'."\n";
+        $this->assertEquals($exp4, $res4);
 
         $style = array('lineWidth'  => 7.123);
-        $res = $testObj->add($style, false);
-        $exp4 = '7.123000 w'."\n";
-        $this->assertEquals($exp4, $res);
+        $res5 = $testObj->add($style, false);
+        $exp5 = '7.123000 w'."\n";
+        $this->assertEquals($exp5, $res5);
+
+        $res = $testObj->pop();
+        $this->assertEquals($exp5, $res);
 
         $res = $testObj->pop();
         $this->assertEquals($exp4, $res);
