@@ -26,7 +26,7 @@ use \Com\Tecnick\Pdf\Graph\Exception as GraphException;
  * @category    Library
  * @package     PdfGraph
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2016 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2011-2022 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  */
@@ -256,6 +256,8 @@ abstract class Base
      * @param string $type Type of output: 'color' or 'opacity'
      *
      * @return string PDF command
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function getOutGradientCols($grad, $type)
     {
@@ -264,7 +266,6 @@ abstract class Base
         }
 
         $out = '';
-
         if (($grad['type'] == 2) || ($grad['type'] == 3)) {
             $num_cols = count($grad['colors']);
             $lastcols = ($num_cols - 1);
@@ -273,6 +274,17 @@ abstract class Base
             $encode = array();
 
             for ($idx = 1; $idx < $num_cols; ++$idx) {
+                $col0 = $grad['colors'][($idx - 1)][$type];
+                $col1 = $grad['colors'][$idx][$type];
+                if ($type == 'color') {
+                    $col0 = $this->col->getColorObject($grad['colors'][($idx - 1)][$type]);
+                    $col1 = $this->col->getColorObject($grad['colors'][$idx][$type]);
+                    if (($col0 === null) || ($col1 === null)) {
+                        continue;
+                    }
+                    $col0 = $col0->getComponentsString();
+                    $col1 = $col1->getComponentsString();
+                }
                 $encode[] = '0 1';
                 if ($idx < $lastcols) {
                     $bounds[] = sprintf('%F ', $grad['colors'][$idx]['offset']);
@@ -281,8 +293,8 @@ abstract class Base
                 .'<<'
                 .' /FunctionType 2'
                 .' /Domain [0 1]'
-                .' /C0 ['.$grad['colors'][($idx - 1)][$type].']'
-                .' /C1 ['.$grad['colors'][$idx][$type].']'
+                .' /C0 ['.$col0.']'
+                .' /C1 ['.$col1.']'
                 .' /N '.$grad['colors'][$idx]['exponent']
                 .' >>'."\n"
                 .'endobj'."\n";

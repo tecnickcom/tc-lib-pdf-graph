@@ -6,7 +6,7 @@
  * @category    Library
  * @package     PdfGraph
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2016 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2011-2022 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  *
@@ -24,7 +24,7 @@ use \Com\Tecnick\Pdf\Graph\Exception as GraphException;
  * @category    Library
  * @package     PdfGraph
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2016 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2011-2022 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  */
@@ -380,12 +380,13 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
                     $bpcd,
                     ((($point - $coords_min) / ($coords_max - $coords_min)) * $bpcd)
                 )));
-                $this->gradients[$ngr]['stream'] .= chr(floor($point / 256))
-                    .chr(floor($point % 256));
+                $this->gradients[$ngr]['stream'] .= chr(floor($point / 256)).chr(floor($point % 256));
             }
             foreach ($par['colors'] as $color) {
                 // each color component as 8 bit
-                $this->gradients[$ngr]['stream'] .= chr($color['red']).chr($color['green']).chr($color['blue']);
+                $this->gradients[$ngr]['stream'] .= chr(floor($color['red'] * 255))
+                .chr(floor($color['green'] * 255))
+                .chr(floor($color['blue'] * 255));
             }
         }
 
@@ -433,13 +434,13 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
 
         // set bar measures
         if ($vertical) {
-            $coords = array(0, 0, 0, 1); // coordinates for gradient transition
+            $coords = array(0, 1, 0, 0); // coordinates for gradient transition
             $wbr = ($width / $numbars);  // bar width
             $hbr = $height;              // bar height
             $xdt = $wbr;                 // delta x
             $ydt = 0;                    // delta y
         } else {
-            $coords = array(1, 0, 0, 0);
+            $coords = array(0, 0, 1, 0);
             $wbr = $width;
             $hbr = ($height / $numbars);
             $xdt = 0;
