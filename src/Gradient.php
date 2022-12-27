@@ -465,7 +465,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
                     // colored rectangle
                     $out .= $this->getStartTransform()
                         .$this->col->getColorObject($col[0])->getPdfColor()
-                        .$this->getRect($xbr, $ybr, $wbr, $hbr, 'F')
+                        .$this->getBasicRect($xbr, $ybr, $wbr, $hbr, 'F')
                         .$this->getStopTransform();
                 }
             }
