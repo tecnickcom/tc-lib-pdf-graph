@@ -340,7 +340,8 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     public function isFillingMode($mode)
     {
         return (!empty(self::$ppopmap[$mode])
-            && in_array(self::$ppopmap[$mode], array('f', 'f*', 'B', 'B*', 'b', 'b*'))
+            && (in_array(self::$ppopmap[$mode], array('f', 'f*', 'B', 'B*', 'b', 'b*'))
+            || $this->isClippingMode($mode))
         );
     }
 
@@ -368,7 +369,8 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     public function isClosingMode($mode)
     {
         return (!empty(self::$ppopmap[$mode])
-            && (in_array(self::$ppopmap[$mode], array('b','b*','s')) || $this->isClippingMode($mode))
+            && (in_array(self::$ppopmap[$mode], array('b','b*','s'))
+            || $this->isClippingMode($mode))
         );
     }
 

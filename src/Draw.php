@@ -296,11 +296,6 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
 
         $out = $this->getDefaultSegStyle($styles);
 
-        // paint the filling
-        if ($this->isFillingMode($mode)) {
-            $out .= $this->getBasicPolygon($points, $this->getModeWithoutStroke($mode));
-        }
-
         if ($this->isClosingMode($mode)
             && (($points[($nco - 2)] != $points[0]) || ($points[($nco - 1)] != $points[1]))
         ) {
@@ -311,11 +306,15 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
             $styles[($nseg - 1)] = $styles[0];
         }
 
-        $nco -= 3;
-
-        if ($this->isClippingMode($mode)) {
-            return $this->getBasicPolygon($points, $mode);
+        // paint the filling
+        if ($this->isFillingMode($mode)) {
+            $out .= $this->getBasicPolygon($points, $this->getModeWithoutStroke($mode));
+            if ($this->isClippingMode($mode)) {
+                return $out;
+            }
         }
+
+        $nco -= 3;
 
         // paint the outline
         for ($idx = 0; $idx < $nco; $idx += 2) {
