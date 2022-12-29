@@ -170,12 +170,12 @@ class StyleTest extends TestUtil
         $testObj->add(array('lineWidth' => 1), false);
         $testObj->add(array('lineWidth' => 2), false);
         $testObj->add(array('lineWidth' => 3), false);
-        $testObj->saveStyleStaus();
+        $testObj->saveStyleStatus();
         $testObj->add(array('lineWidth' => 4), false);
         $testObj->add(array('lineWidth' => 5), false);
         $testObj->add(array('lineWidth' => 6), false);
         $this->assertEquals(array('lineWidth' => 6), $testObj->getCurrentStyleArray());
-        $testObj->restoreStyleStaus();
+        $testObj->restoreStyleStatus();
         $this->assertEquals(array('lineWidth' => 3), $testObj->getCurrentStyleArray());
     }
 

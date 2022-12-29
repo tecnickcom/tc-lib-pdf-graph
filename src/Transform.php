@@ -73,7 +73,7 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
      */
     public function getStartTransform()
     {
-        $this->saveStyleStaus();
+        $this->saveStyleStatus();
         $this->ctm[++$this->ctmid] = array();
         return 'q'."\n";
     }
@@ -91,7 +91,7 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
         }
         unset($this->ctm[$this->ctmid]);
         --$this->ctmid;
-        $this->restoreStyleStaus();
+        $this->restoreStyleStatus();
         return 'Q'."\n";
     }
 

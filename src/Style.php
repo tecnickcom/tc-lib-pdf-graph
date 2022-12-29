@@ -174,7 +174,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     /**
      * Save the current style ID to be restored later.
      */
-    public function saveStyleStaus()
+    public function saveStyleStatus()
     {
         $this->stylemark[] = $this->styleid;
     }
@@ -182,7 +182,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     /**
      * Restore the saved style status.
      */
-    public function restoreStyleStaus()
+    public function restoreStyleStatus()
     {
         $this->styleid = array_pop($this->stylemark);
         $this->style = array_slice($this->style, 0, ($this->styleid + 1), true);
