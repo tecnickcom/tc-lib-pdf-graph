@@ -3,7 +3,7 @@
   "description": "PHP library containing PDF graphic and geometric methods",
   "type": "library",
   "homepage": "http://www.tecnick.com",
-  "license": "LGPL-3.0",
+  "license": "LGPL-3.0-or-later",
   "keywords": [
     "tc-lib-pdf-graph",
     "PDF",
