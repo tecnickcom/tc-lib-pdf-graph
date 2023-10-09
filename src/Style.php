@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Style.php
  *
@@ -15,7 +16,7 @@
 
 namespace Com\Tecnick\Pdf\Graph;
 
-use \Com\Tecnick\Pdf\Graph\Exception as GraphException;
+use Com\Tecnick\Pdf\Graph\Exception as GraphException;
 
 /**
  * Com\Tecnick\Pdf\Graph\Style
@@ -65,7 +66,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      *
      * @var array
      */
-    protected static $linecapmap = array(0 => 0, 1 => 1, 2 => 2, 'butt' => 0, 'round'=> 1, 'square' => 2);
+    protected static $linecapmap = array(0 => 0, 1 => 1, 2 => 2, 'butt' => 0, 'round' => 1, 'square' => 2);
 
     /**
      * Map values for lineJoin.
@@ -224,7 +225,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     public function getCurrentStyleItem($item)
     {
         if (!isset($this->style[$this->styleid][$item])) {
-            throw new GraphException('The '.$item.' value is not set in the current style');
+            throw new GraphException('The ' . $item . ' value is not set in the current style');
         }
         return $this->style[$this->styleid][$item];
     }
@@ -249,7 +250,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     {
         $out = '';
         if (isset($style['lineWidth'])) {
-            $out .= sprintf('%F w'."\n", ((float) $style['lineWidth'] * $this->kunit));
+            $out .= sprintf('%F w' . "\n", ((float) $style['lineWidth'] * $this->kunit));
         }
         $out .= $this->getLineModeCmd($style);
         if (isset($style['lineColor'])) {
@@ -274,13 +275,13 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     {
         $out = '';
         if (isset($style['lineCap']) && isset(self::$linecapmap[$style['lineCap']])) {
-            $out .= self::$linecapmap[$style['lineCap']].' J'."\n";
+            $out .= self::$linecapmap[$style['lineCap']] . ' J' . "\n";
         }
         if (isset($style['lineJoin']) && isset(self::$linejoinmap[$style['lineJoin']])) {
-            $out .= self::$linejoinmap[$style['lineJoin']].' j'."\n";
+            $out .= self::$linejoinmap[$style['lineJoin']] . ' j' . "\n";
         }
         if (isset($style['miterLimit'])) {
-            $out .= sprintf('%F M'."\n", ((float) $style['miterLimit'] * $this->kunit));
+            $out .= sprintf('%F M' . "\n", ((float) $style['miterLimit'] * $this->kunit));
         }
         if (isset($style['dashArray']) && is_array($style['dashArray'])) {
             $dash = array();
@@ -290,7 +291,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
             if (!isset($style['dashPhase'])) {
                 $style['dashPhase'] = 0;
             }
-            $out .= sprintf('[%s] %F d'."\n", implode(' ', $dash), $style['dashPhase']);
+            $out .= sprintf('[%s] %F d' . "\n", implode(' ', $dash), $style['dashPhase']);
         }
         return $out;
     }
@@ -322,10 +323,10 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     public function getPathPaintOp($mode, $default = 'S')
     {
         if (!empty(self::$ppopmap[$mode])) {
-            return self::$ppopmap[$mode]."\n";
+            return self::$ppopmap[$mode] . "\n";
         }
         if (!empty(self::$ppopmap[$default])) {
-            return self::$ppopmap[$default]."\n";
+            return self::$ppopmap[$default] . "\n";
         }
         return '';
     }
@@ -460,6 +461,6 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
         if (empty($this->extgstates[$gsx])) {
             $this->extgstates[$gsx] = array('parms' => $parms);
         }
-        return '/GS'.$gsx.' gs'."\n";
+        return '/GS' . $gsx . ' gs' . "\n";
     }
 }

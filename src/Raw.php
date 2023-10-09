@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Raw.php
  *
@@ -15,7 +16,7 @@
 
 namespace Com\Tecnick\Pdf\Graph;
 
-use \Com\Tecnick\Pdf\Graph\Exception as GraphException;
+use Com\Tecnick\Pdf\Graph\Exception as GraphException;
 
 /**
  * Com\Tecnick\Pdf\Graph\Raw
@@ -42,7 +43,7 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
     public function getRawPoint($posx, $posy)
     {
         return sprintf(
-            '%F %F m'."\n",
+            '%F %F m' . "\n",
             ($posx * $this->kunit),
             (($this->pageh - $posy) * $this->kunit)
         );
@@ -60,7 +61,7 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
     public function getRawLine($posx, $posy)
     {
         return sprintf(
-            '%F %F l'."\n",
+            '%F %F l' . "\n",
             ($posx * $this->kunit),
             (($this->pageh - $posy) * $this->kunit)
         );
@@ -80,7 +81,7 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
     public function getRawRect($posx, $posy, $width, $height)
     {
         return sprintf(
-            '%F %F %F %F re'."\n",
+            '%F %F %F %F re' . "\n",
             ($posx * $this->kunit),
             (($this->pageh - $posy) * $this->kunit),
             ($width * $this->kunit),
@@ -106,7 +107,7 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
     public function getRawCurve($posx1, $posy1, $posx2, $posy2, $posx3, $posy3)
     {
         return sprintf(
-            '%F %F %F %F %F %F c'."\n",
+            '%F %F %F %F %F %F c' . "\n",
             ($posx1 * $this->kunit),
             (($this->pageh - $posy1) * $this->kunit),
             ($posx2 * $this->kunit),
@@ -132,7 +133,7 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
     public function getRawCurveV($posx2, $posy2, $posx3, $posy3)
     {
         return sprintf(
-            '%F %F %F %F v'."\n",
+            '%F %F %F %F v' . "\n",
             ($posx2 * $this->kunit),
             (($this->pageh - $posy2) * $this->kunit),
             ($posx3 * $this->kunit),
@@ -156,7 +157,7 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
     public function getRawCurveY($posx1, $posy1, $posx3, $posy3)
     {
         return sprintf(
-            '%F %F %F %F y'."\n",
+            '%F %F %F %F y' . "\n",
             ($posx1 * $this->kunit),
             (($this->pageh - $posy1) * $this->kunit),
             ($posx3 * $this->kunit),

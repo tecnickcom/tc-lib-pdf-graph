@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Gradient.php
  *
@@ -15,7 +16,7 @@
 
 namespace Com\Tecnick\Pdf\Graph;
 
-use \Com\Tecnick\Pdf\Graph\Exception as GraphException;
+use Com\Tecnick\Pdf\Graph\Exception as GraphException;
 
 /**
  * Com\Tecnick\Pdf\Graph\Gradient
@@ -70,9 +71,9 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         $coords = array(0,0,1,0)
     ) {
         return $this->getStartTransform()
-        .$this->getClippingRect($posx, $posy, $width, $height)
-        .$this->getGradientTransform($posx, $posy, $width, $height)
-        .$this->getGradient(
+        . $this->getClippingRect($posx, $posy, $width, $height)
+        . $this->getGradientTransform($posx, $posy, $width, $height)
+        . $this->getGradient(
             2,
             $coords,
             array(
@@ -90,7 +91,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             '',
             false
         )
-        .$this->getStopTransform();
+        . $this->getStopTransform();
     }
 
     /**
@@ -119,9 +120,9 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         $coords = array(0.5,0.5,0.5,0.5,1)
     ) {
         return $this->getStartTransform()
-        .$this->getClippingRect($posx, $posy, $width, $height)
-        .$this->getGradientTransform($posx, $posy, $width, $height)
-        .$this->getGradient(
+        . $this->getClippingRect($posx, $posy, $width, $height)
+        . $this->getGradientTransform($posx, $posy, $width, $height)
+        . $this->getGradient(
             3,
             $coords,
             array(
@@ -139,7 +140,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             '',
             false
         )
-        .$this->getStopTransform();
+        . $this->getStopTransform();
     }
 
     /**
@@ -155,7 +156,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
     public function getClippingRect($posx, $posy, $width, $height)
     {
         return sprintf(
-            '%F %F %F %F re W n'."\n",
+            '%F %F %F %F re W n' . "\n",
             ($posx * $this->kunit),
             (($this->pageh - $posy) * $this->kunit),
             ($width * $this->kunit),
@@ -226,14 +227,14 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             ),
             $stops
         );
-        
+
         $out = '';
         if ($this->gradients[$ngr]['transparency']) {
             // paint luminosity gradient
-            $out .= '/TGS'.$ngr.' gs'."\n";
+            $out .= '/TGS' . $ngr . ' gs' . "\n";
         }
         // paint the gradient
-        $out .= '/Sh'.$ngr.' sh'."\n";
+        $out .= '/Sh' . $ngr . ' sh' . "\n";
 
         return $out;
     }
@@ -342,7 +343,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         if ($this->pdfa) {
             return '';
         }
-        
+
         $ngr = (1 + count($this->gradients));
         $this->gradients[$ngr] = array(
             'type' => 6, //coons patch mesh
@@ -371,7 +372,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         $bpcd = 65535; // 16 bits per coordinate
         // build the data stream
         $this->gradients[$ngr]['stream'] = '';
- 
+
         foreach ($patch_array as $par) {
             $this->gradients[$ngr]['stream'] .= chr($par['f']); // start with the edge flag as 8 bit
             foreach ($par['points'] as $point) {
@@ -380,21 +381,21 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
                     $bpcd,
                     ((($point - $coords_min) / ($coords_max - $coords_min)) * $bpcd)
                 )));
-                $this->gradients[$ngr]['stream'] .= chr(floor($point / 256)).chr(floor($point % 256));
+                $this->gradients[$ngr]['stream'] .= chr(floor($point / 256)) . chr(floor($point % 256));
             }
             foreach ($par['colors'] as $color) {
                 // each color component as 8 bit
                 $this->gradients[$ngr]['stream'] .= chr(floor($color['red'] * 255))
-                .chr(floor($color['green'] * 255))
-                .chr(floor($color['blue'] * 255));
+                . chr(floor($color['green'] * 255))
+                . chr(floor($color['blue'] * 255));
             }
         }
 
         return $this->getStartTransform()
-            .$this->getClippingRect($posx, $posy, $width, $height)
-            .$this->getGradientTransform($posx, $posy, $width, $height)
-            .'/Sh'.$ngr.' sh'."\n"
-            .$this->getStopTransform();
+            . $this->getClippingRect($posx, $posy, $width, $height)
+            . $this->getGradientTransform($posx, $posy, $width, $height)
+            . '/Sh' . $ngr . ' sh' . "\n"
+            . $this->getStopTransform();
     }
 
     /**
@@ -448,7 +449,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         }
         $xbr = $posx;
         $ybr = $posy;
-        
+
         $out = '';
         foreach ($colors as $col) {
             if (!empty($col)) {
@@ -464,9 +465,9 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
                 } else {
                     // colored rectangle
                     $out .= $this->getStartTransform()
-                        .$this->col->getColorObject($col[0])->getPdfColor()
-                        .$this->getBasicRect($xbr, $ybr, $wbr, $hbr, 'F')
-                        .$this->getStopTransform();
+                        . $this->col->getColorObject($col[0])->getPdfColor()
+                        . $this->getBasicRect($xbr, $ybr, $wbr, $hbr, 'F')
+                        . $this->getStopTransform();
                 }
             }
             $xbr += $xdt;
@@ -533,18 +534,18 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
                     continue 2;
             }
             $out .= $this->getRawPoint($posx1, $posy1)
-                .$this->getRawLine($posx2, $posy2)
-                .$this->getPathPaintOp('S');
+                . $this->getRawLine($posx2, $posy2)
+                . $this->getPathPaintOp('S');
         }
-        
+
         if (empty($out)) {
             return '';
         }
 
         return $this->getStartTransform()
-            .$this->getStyleCmd($style)
-            .$out
-            .$this->getStopTransform();
+            . $this->getStyleCmd($style)
+            . $out
+            . $this->getStopTransform();
     }
 
     /**
@@ -623,7 +624,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             array(
                 'CA' => floatval($stroking),
                 'ca' => floatval($nonstroking),
-                'BM' => '/'.$bmv,
+                'BM' => '/' . $bmv,
                 'AIS' => ($ais && true),
             )
         );

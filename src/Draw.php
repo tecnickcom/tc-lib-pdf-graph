@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Draw.php
  *
@@ -15,7 +16,7 @@
 
 namespace Com\Tecnick\Pdf\Graph;
 
-use \Com\Tecnick\Pdf\Graph\Exception as GraphException;
+use Com\Tecnick\Pdf\Graph\Exception as GraphException;
 
 /**
  * Com\Tecnick\Pdf\Graph\Draw
@@ -46,9 +47,9 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     public function getLine($posx1, $posy1, $posx2, $posy2, array $style = array())
     {
         return $this->getStyleCmd($style)
-            .$this->getRawPoint($posx1, $posy1)
-            .$this->getRawLine($posx2, $posy2)
-            .$this->getPathPaintOp('S');
+            . $this->getRawPoint($posx1, $posy1)
+            . $this->getRawLine($posx2, $posy2)
+            . $this->getPathPaintOp('S');
     }
 
     /**
@@ -83,9 +84,9 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         array $style = array()
     ) {
         return $this->getStyleCmd($style)
-            .$this->getRawPoint($posx0, $posy0)
-            .$this->getRawCurve($posx1, $posy1, $posx2, $posy2, $posx3, $posy3)
-            .$this->getPathPaintOp($mode);
+            . $this->getRawPoint($posx0, $posy0)
+            . $this->getRawCurve($posx1, $posy1, $posx2, $posy2, $posx3, $posy3)
+            . $this->getPathPaintOp($mode);
     }
 
     /**
@@ -103,7 +104,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     public function getPolycurve($posx0, $posy0, $segments, $mode = 'S', array $style = array())
     {
         $out = $this->getStyleCmd($style)
-            .$this->getRawPoint($posx0, $posy0);
+            . $this->getRawPoint($posx0, $posy0);
         foreach ($segments as $seg) {
             list($posx1, $posy1, $posx2, $posy2, $posx3, $posy3) = $seg;
             $out .= $this->getRawCurve($posx1, $posy1, $posx2, $posy2, $posx3, $posy3);
@@ -147,7 +148,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
             $vrad = $hrad;
         }
         return $this->getStyleCmd($style)
-            .$this->getRawEllipticalArc(
+            . $this->getRawEllipticalArc(
                 $posx,
                 $posy,
                 $hrad,
@@ -161,7 +162,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
                 true,
                 false
             )
-            .$this->getPathPaintOp($mode);
+            . $this->getPathPaintOp($mode);
     }
 
     /**
@@ -217,7 +218,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         $ncv = 2
     ) {
         return $this->getStyleCmd($style)
-            .$this->getRawEllipticalArc(
+            . $this->getRawEllipticalArc(
                 $posx,
                 $posy,
                 $rad,
@@ -231,7 +232,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
                 true,
                 false
             )
-            .$this->getPathPaintOp($mode);
+            . $this->getPathPaintOp($mode);
     }
 
     /**
@@ -247,7 +248,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     {
         $nco = count($points); // number of coordinates
         $out = $this->getStyleCmd($style)
-            .$this->getRawPoint($points[0], $points[1]);
+            . $this->getRawPoint($points[0], $points[1]);
         for ($idx = 2; $idx < $nco; $idx += 2) {
             $out .= $this->getRawLine($points[$idx], $points[($idx + 1)]);
         }
@@ -296,7 +297,8 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
 
         $out = $this->getDefaultSegStyle($styles);
 
-        if ($this->isClosingMode($mode)
+        if (
+            $this->isClosingMode($mode)
             && (($points[($nco - 2)] != $points[0]) || ($points[($nco - 1)] != $points[1]))
         ) {
             // close polygon by adding the first point (x, y) at the end
@@ -322,7 +324,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
             if (!isset($styles[$segid])) {
                 $styles[$segid] = array();
             }
-            $out .=$this->getLine(
+            $out .= $this->getLine(
                 $points[$idx],
                 $points[($idx + 1)],
                 $points[($idx + 2)],
@@ -415,7 +417,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         if (!empty($cirmode)) {
             $out .= $this->getCircle($posx, $posy, $radius, 0, 360, $cirmode, $cirstyle);
         }
-        
+
         $points2 = array();
         $visited = array();
         for ($idx = 0; $idx < $nvert; ++$idx) {
@@ -424,7 +426,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
             $points2[] = $posy + ($radius * cos($angrad));
             $visited[] = false;
         }
-        
+
         $points = array();
         $idx = 0;
         do {
@@ -454,8 +456,8 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     public function getBasicRect($posx, $posy, $width, $height, $mode = 'S', array $style = array())
     {
         return $this->getStyleCmd($style)
-            .$this->getRawRect($posx, $posy, $width, $height)
-            .$this->getPathPaintOp($mode);
+            . $this->getRawRect($posx, $posy, $width, $height)
+            . $this->getPathPaintOp($mode);
     }
 
     /**
@@ -486,7 +488,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         );
         return $this->getPolygon($points, $mode, $styles);
     }
-    
+
     /**
      * Draws a rounded rectangle.
      *
@@ -531,7 +533,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         $arc = (4 / 3 * (sqrt(2) - 1));
         $harc = ($hrad * $arc);
         $varc = ($vrad * $arc);
-        
+
         if ($corner[0]) {
             $out .= $this->getRawCurve(
                 ($posxc + $harc),
@@ -684,24 +686,24 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
             'fillColor'  => $color,
         );
         $out = $this->col->getColorObject($color)->getPdfColor()
-            .$this->getPieSector($posx, $posy, $rad, 90, 180, 'F')
-            .$this->getPieSector($posx, $posy, $rad, 270, 360, 'F')
-            .$this->getCircle($posx, $posy, $rad, 0, 360, 'S', array(), 8);
+            . $this->getPieSector($posx, $posy, $rad, 90, 180, 'F')
+            . $this->getPieSector($posx, $posy, $rad, 270, 360, 'F')
+            . $this->getCircle($posx, $posy, $rad, 0, 360, 'S', array(), 8);
         if ($double) {
             $radi = ($rad * 0.5);
             $out .= $this->col->getColorObject($color)->invertColor()->getPdfColor()
-            .$this->getPieSector($posx, $posy, $radi, 90, 180, 'F')
-            .$this->getPieSector($posx, $posy, $radi, 270, 360, 'F')
-            .$this->getCircle($posx, $posy, $radi, 0, 360, 'S', array(), 8)
-            .$this->col->getColorObject($color)->getPdfColor()
-            .$this->getPieSector($posx, $posy, $radi, 0, 90, 'F')
-            .$this->getPieSector($posx, $posy, $radi, 180, 270, 'F')
-            .$this->getCircle($posx, $posy, $radi, 0, 360, 'S', array(), 8);
+            . $this->getPieSector($posx, $posy, $radi, 90, 180, 'F')
+            . $this->getPieSector($posx, $posy, $radi, 270, 360, 'F')
+            . $this->getCircle($posx, $posy, $radi, 0, 360, 'S', array(), 8)
+            . $this->col->getColorObject($color)->getPdfColor()
+            . $this->getPieSector($posx, $posy, $radi, 0, 90, 'F')
+            . $this->getPieSector($posx, $posy, $radi, 180, 270, 'F')
+            . $this->getCircle($posx, $posy, $radi, 0, 360, 'S', array(), 8);
         }
         return $this->getStartTransform()
-            .$this->getStyleCmd($style)
-            .$out
-            .$this->getStopTransform();
+            . $this->getStyleCmd($style)
+            . $out
+            . $this->getStopTransform();
     }
 
     /**
@@ -731,20 +733,20 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
             'fillColor'  => '',
         );
         return $this->getStartTransform()
-            .$this->col->getColorObject('Cyan')->getPdfColor()
-            .$this->getPieSector($posx, $posy, $radi, 270, 360, 'F')
-            .$this->col->getColorObject('Magenta')->getPdfColor()
-            .$this->getPieSector($posx, $posy, $radi, 0, 90, 'F')
-            .$this->col->getColorObject('Yellow')->getPdfColor()
-            .$this->getPieSector($posx, $posy, $radi, 90, 180, 'F')
-            .$this->col->getColorObject('Key')->getPdfColor()
-            .$this->getPieSector($posx, $posy, $radi, 180, 270, 'F')
-            .$this->getStyleCmd($style)
-            .$this->getCircle($posx, $posy, $rad, 0, 360, 'S', array(), 8)
-            .$this->getLine($posx, ($posy - $rade), $posx, ($posy - $radi))
-            .$this->getLine($posx, ($posy + $radi), $posx, ($posy + $rade))
-            .$this->getLine(($posx - $rade), $posy, ($posx - $radi), $posy)
-            .$this->getLine(($posx + $radi), $posy, ($posx + $rade), $posy)
-            .$this->getStopTransform();
+            . $this->col->getColorObject('Cyan')->getPdfColor()
+            . $this->getPieSector($posx, $posy, $radi, 270, 360, 'F')
+            . $this->col->getColorObject('Magenta')->getPdfColor()
+            . $this->getPieSector($posx, $posy, $radi, 0, 90, 'F')
+            . $this->col->getColorObject('Yellow')->getPdfColor()
+            . $this->getPieSector($posx, $posy, $radi, 90, 180, 'F')
+            . $this->col->getColorObject('Key')->getPdfColor()
+            . $this->getPieSector($posx, $posy, $radi, 180, 270, 'F')
+            . $this->getStyleCmd($style)
+            . $this->getCircle($posx, $posy, $rad, 0, 360, 'S', array(), 8)
+            . $this->getLine($posx, ($posy - $rade), $posx, ($posy - $radi))
+            . $this->getLine($posx, ($posy + $radi), $posx, ($posy + $rade))
+            . $this->getLine(($posx - $rade), $posy, ($posx - $radi), $posy)
+            . $this->getLine(($posx + $radi), $posy, ($posx + $rade), $posy)
+            . $this->getStopTransform();
     }
 }

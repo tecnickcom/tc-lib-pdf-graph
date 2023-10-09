@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Base.php
  *
@@ -15,9 +16,9 @@
 
 namespace Com\Tecnick\Pdf\Graph;
 
-use \Com\Tecnick\Color\Pdf as PdfColor;
-use \Com\Tecnick\Pdf\Encrypt\Encrypt;
-use \Com\Tecnick\Pdf\Graph\Exception as GraphException;
+use Com\Tecnick\Color\Pdf as PdfColor;
+use Com\Tecnick\Pdf\Encrypt\Encrypt;
+use Com\Tecnick\Pdf\Graph\Exception as GraphException;
 
 /**
  * Com\Tecnick\Pdf\Graph\Base
@@ -172,7 +173,7 @@ abstract class Base
         $this->kunit = (float) $kunit;
         return $this;
     }
-    
+
     /**
      * Get the PDF output string for ExtGState
      *
@@ -186,8 +187,8 @@ abstract class Base
         $out = '';
         foreach ($this->extgstates as $idx => $ext) {
             $this->extgstates[$idx]['n'] = ++$this->pon;
-            $out .= $this->pon.' 0 obj'."\n"
-                .'<< /Type /ExtGState';
+            $out .= $this->pon . ' 0 obj' . "\n"
+                . '<< /Type /ExtGState';
             foreach ($ext['parms'] as $key => $val) {
                 if (is_numeric($val)) {
                     $val = sprintf('%F', $val);
@@ -196,10 +197,10 @@ abstract class Base
                 } elseif ($val === false) {
                     $val = 'false';
                 }
-                $out .= ' /'.$key.' '.$val;
+                $out .= ' /' . $key . ' ' . $val;
             }
-            $out .= ' >>'."\n"
-            .'endobj'."\n";
+            $out .= ' >>' . "\n"
+            . 'endobj' . "\n";
         }
         return $out;
     }
@@ -217,16 +218,16 @@ abstract class Base
         $out = ' /ExtGState <<';
         foreach ($this->extgstates as $key => $ext) {
             if (isset($ext['name'])) {
-                $out .= ' /'.$ext['name'];
+                $out .= ' /' . $ext['name'];
             } else {
-                $out .= ' /GS'.$key;
+                $out .= ' /GS' . $key;
             }
-            $out .= ' '.$ext['n'].' 0 R';
+            $out .= ' ' . $ext['n'] . ' 0 R';
         }
-        $out .= ' >>'."\n";
+        $out .= ' >>' . "\n";
         return $out;
     }
-    
+
     /**
      * Get the PDF output string for Gradients Resource Dictionary
      *
@@ -241,12 +242,12 @@ abstract class Base
         $grs = '';
         foreach ($this->gradients as $idx => $grad) {
             // gradient patterns
-            $grp .= ' /p'.$idx.' '.$grad['pattern'].' 0 R';
+            $grp .= ' /p' . $idx . ' ' . $grad['pattern'] . ' 0 R';
             // gradient shadings
-            $grs .= ' /Sh'.$idx.' '.$grad['id'].' 0 R';
+            $grs .= ' /Sh' . $idx . ' ' . $grad['id'] . ' 0 R';
         }
-        return ' /Pattern <<'.$grp.' >>'."\n"
-            .' /Shading <<'.$grs.' >>'."\n";
+        return ' /Pattern <<' . $grp . ' >>' . "\n"
+            . ' /Shading <<' . $grs . ' >>' . "\n";
     }
 
     /**
@@ -289,27 +290,27 @@ abstract class Base
                 if ($idx < $lastcols) {
                     $bounds[] = sprintf('%F ', $grad['colors'][$idx]['offset']);
                 }
-                $out .= ++$this->pon.' 0 obj'."\n"
-                .'<<'
-                .' /FunctionType 2'
-                .' /Domain [0 1]'
-                .' /C0 ['.$col0.']'
-                .' /C1 ['.$col1.']'
-                .' /N '.$grad['colors'][$idx]['exponent']
-                .' >>'."\n"
-                .'endobj'."\n";
-                $funct[] = $this->pon.' 0 R';
+                $out .= ++$this->pon . ' 0 obj' . "\n"
+                . '<<'
+                . ' /FunctionType 2'
+                . ' /Domain [0 1]'
+                . ' /C0 [' . $col0 . ']'
+                . ' /C1 [' . $col1 . ']'
+                . ' /N ' . $grad['colors'][$idx]['exponent']
+                . ' >>' . "\n"
+                . 'endobj' . "\n";
+                $funct[] = $this->pon . ' 0 R';
             }
 
-            $out .= ++$this->pon.' 0 obj'."\n"
-                .'<<'
-                .' /FunctionType 3'
-                .' /Domain [0 1]'
-                .' /Functions ['.implode(' ', $funct).']'
-                .' /Bounds ['.implode(' ', $bounds).']'
-                .' /Encode ['.implode(' ', $encode).']'
-                .' >>'."\n"
-                .'endobj'."\n";
+            $out .= ++$this->pon . ' 0 obj' . "\n"
+                . '<<'
+                . ' /FunctionType 3'
+                . ' /Domain [0 1]'
+                . ' /Functions [' . implode(' ', $funct) . ']'
+                . ' /Bounds [' . implode(' ', $bounds) . ']'
+                . ' /Encode [' . implode(' ', $encode) . ']'
+                . ' >>' . "\n"
+                . 'endobj' . "\n";
         }
 
         $out .= $this->getOutPatternObj($grad, $this->pon);
@@ -330,34 +331,34 @@ abstract class Base
         if ($grad['transparency']) {
             $grad['colspace'] = 'DeviceGray';
         }
-        
+
         $oid = ++$this->pon;
-        $out = $oid.' 0 obj'."\n"
-            .'<<'
-            .' /ShadingType '.$grad['type']
-            .' /ColorSpace /'.$grad['colspace'];
+        $out = $oid . ' 0 obj' . "\n"
+            . '<<'
+            . ' /ShadingType ' . $grad['type']
+            . ' /ColorSpace /' . $grad['colspace'];
         if (!empty($grad['background'])) {
-            $out .= ' /Background ['.$grad['background']->getComponentsString().']';
+            $out .= ' /Background [' . $grad['background']->getComponentsString() . ']';
         }
         if (!empty($grad['antialias'])) {
             $out .= ' /AntiAlias true';
         }
         if ($grad['type'] == 2) {
-            $out .= ' '.sprintf(
+            $out .= ' ' . sprintf(
                 '/Coords [%F %F %F %F]',
                 $grad['coords'][0],
                 $grad['coords'][1],
                 $grad['coords'][2],
                 $grad['coords'][3]
             )
-                .' /Domain [0 1]'
-                .' /Function '.$objref.' 0 R'
-                .' /Extend [true true]'
-                .' >>'."\n";
+                . ' /Domain [0 1]'
+                . ' /Function ' . $objref . ' 0 R'
+                . ' /Extend [true true]'
+                . ' >>' . "\n";
         } elseif ($grad['type'] == 3) {
             // x0, y0, r0, x1, y1, r1
             // the  radius of the inner circle is 0
-            $out .= ' '.sprintf(
+            $out .= ' ' . sprintf(
                 '/Coords [%F %F 0 %F %F %F]',
                 $grad['coords'][0],
                 $grad['coords'][1],
@@ -365,33 +366,33 @@ abstract class Base
                 $grad['coords'][3],
                 $grad['coords'][4]
             )
-                .' /Domain [0 1]'
-                .' /Function '.$objref.' 0 R'
-                .' /Extend [true true]'
-                .' >>'."\n";
+                . ' /Domain [0 1]'
+                . ' /Function ' . $objref . ' 0 R'
+                . ' /Extend [true true]'
+                . ' >>' . "\n";
         } elseif ($grad['type'] == 6) {
             $stream = $this->enc->encryptString($grad['stream'], $this->pon);
             $out .= ' /BitsPerCoordinate 16'
-                .' /BitsPerComponent 8'
-                .' /Decode[0 1 0 1 0 1 0 1 0 1]'
-                .' /BitsPerFlag 8'
-                .' /Length '.strlen($stream)
-                .' >>'."\n"
-                .' stream'."\n"
-                .$stream."\n"
-                .'endstream'."\n";
+                . ' /BitsPerComponent 8'
+                . ' /Decode[0 1 0 1 0 1 0 1 0 1]'
+                . ' /BitsPerFlag 8'
+                . ' /Length ' . strlen($stream)
+                . ' >>' . "\n"
+                . ' stream' . "\n"
+                . $stream . "\n"
+                . 'endstream' . "\n";
         }
-        $out .= 'endobj'."\n";
+        $out .= 'endobj' . "\n";
 
         // pattern object
-        $out .= ++$this->pon.' 0 obj'."\n"
-            .'<<'
-            .' /Type /Pattern'
-            .' /PatternType 2'
-            .' /Shading '.$oid.' 0 R'
-            .' >>'."\n"
-            .'endobj'
-            ."\n";
+        $out .= ++$this->pon . ' 0 obj' . "\n"
+            . '<<'
+            . ' /Type /Pattern'
+            . ' /PatternType 2'
+            . ' /Shading ' . $oid . ' 0 R'
+            . ' >>' . "\n"
+            . 'endobj'
+            . "\n";
 
         return $out;
     }
@@ -436,50 +437,50 @@ abstract class Base
                 $pheight = ($this->pageh * $this->kunit);
                 $rect = sprintf('%F %F', $pwidth, $pheight);
 
-                $out .= $oid.' 0 obj'."\n"
-                    .'<<'
-                    .' /Type /XObject'
-                    .' /Subtype /Form'
-                    .' /FormType 1';
-                $stream = 'q /a0 gs /Pattern cs /p'.$idgs.' scn 0 0 '.$pwidth.' '.$pheight.' re f Q';
+                $out .= $oid . ' 0 obj' . "\n"
+                    . '<<'
+                    . ' /Type /XObject'
+                    . ' /Subtype /Form'
+                    . ' /FormType 1';
+                $stream = 'q /a0 gs /Pattern cs /p' . $idgs . ' scn 0 0 ' . $pwidth . ' ' . $pheight . ' re f Q';
                 if ($this->compress) {
                     $stream = gzcompress($stream);
                     $out .= ' /Filter /FlateDecode';
                 }
                 $stream = $this->enc->encryptString($stream, $oid);
-                $out .= ' /Length '.strlen($stream)
-                    .' /BBox [0 0 '.$rect.']'
-                    .' /Group << /Type /Group /S /Transparency /CS /DeviceGray >>'
-                    .' /Resources <<'
-                    .' /ExtGState << /a0 << /ca 1 /CA 1 >>  >>'
-                    .' /Pattern << /p'.$idgs.' '.$this->gradients[$idgs]['pattern'].' 0 R >>'
-                    .' >>'
-                    .' >>'."\n"
-                    .' stream'."\n"
-                    .$stream."\n"
-                    .'endstream'."\n"
-                    .'endobj'."\n";
+                $out .= ' /Length ' . strlen($stream)
+                    . ' /BBox [0 0 ' . $rect . ']'
+                    . ' /Group << /Type /Group /S /Transparency /CS /DeviceGray >>'
+                    . ' /Resources <<'
+                    . ' /ExtGState << /a0 << /ca 1 /CA 1 >>  >>'
+                    . ' /Pattern << /p' . $idgs . ' ' . $this->gradients[$idgs]['pattern'] . ' 0 R >>'
+                    . ' >>'
+                    . ' >>' . "\n"
+                    . ' stream' . "\n"
+                    . $stream . "\n"
+                    . 'endstream' . "\n"
+                    . 'endobj' . "\n";
 
                 // SMask
                 $objsm = ++$this->pon;
-                $out .= $objsm.' 0 obj'."\n"
-                    .'<<'
-                    .' /Type /Mask'
-                    .' /S /Luminosity'
-                    .' /G '.$oid.' 0 R'
-                    .' >>'."\n"
-                    .'endobj'."\n";
+                $out .= $objsm . ' 0 obj' . "\n"
+                    . '<<'
+                    . ' /Type /Mask'
+                    . ' /S /Luminosity'
+                    . ' /G ' . $oid . ' 0 R'
+                    . ' >>' . "\n"
+                    . 'endobj' . "\n";
 
                 // ExtGState
                 $objext = ++$this->pon;
-                $out .= ++$objext.' 0 obj'."\n"
-                    .'<<'
-                    .' /Type /ExtGState'
-                    .' /SMask '.$objsm.' 0 R'
-                    .' /AIS false'
-                    .' >>'."\n"
-                    .'endobj'."\n";
-                $this->extgstates[] = array('n' => $objext, 'name' => 'TGS'.$idx);
+                $out .= ++$objext . ' 0 obj' . "\n"
+                    . '<<'
+                    . ' /Type /ExtGState'
+                    . ' /SMask ' . $objsm . ' 0 R'
+                    . ' /AIS false'
+                    . ' >>' . "\n"
+                    . 'endobj' . "\n";
+                $this->extgstates[] = array('n' => $objext, 'name' => 'TGS' . $idx);
             }
         }
 

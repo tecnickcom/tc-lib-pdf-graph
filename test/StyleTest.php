@@ -1,4 +1,5 @@
 <?php
+
 /**
  * StyleTest.php
  *
@@ -60,13 +61,13 @@ class StyleTest extends TestUtil
             'fillColor'  => '["RGB",0.250000,0.500000,0.750000]',
         );
         $res2 = $testObj->getStyleCmd($style2);
-        $exp2 = '3.000000 w'."\n"
-            .'1 J'."\n"
-            .'2 j'."\n"
-            .'11.000000 M'."\n"
-            .'[5.000000 7.000000] 0.000000 d'."\n"
-            .'0.678431 1.000000 0.184314 RG'."\n"
-            .'0.250000 0.500000 0.750000 rg'."\n";
+        $exp2 = '3.000000 w' . "\n"
+            . '1 J' . "\n"
+            . '2 j' . "\n"
+            . '11.000000 M' . "\n"
+            . '[5.000000 7.000000] 0.000000 d' . "\n"
+            . '0.678431 1.000000 0.184314 RG' . "\n"
+            . '0.250000 0.500000 0.750000 rg' . "\n";
         $this->assertEquals($exp2, $res2);
     }
 
@@ -75,13 +76,13 @@ class StyleTest extends TestUtil
         $testObj = $this->getTestObject();
         $style = array();
         $res1 = $testObj->add($style, true);
-        $exp1 = '1.000000 w'."\n"
-            .'0 J'."\n"
-            .'0 j'."\n"
-            .'10.000000 M'."\n"
-            .'[] 0.000000 d'."\n"
-            .'/CS1 CS 1.000000 SCN'."\n"
-            .'/CS1 cs 1.000000 scn'."\n";
+        $exp1 = '1.000000 w' . "\n"
+            . '0 J' . "\n"
+            . '0 j' . "\n"
+            . '10.000000 M' . "\n"
+            . '[] 0.000000 d' . "\n"
+            . '/CS1 CS 1.000000 SCN' . "\n"
+            . '/CS1 cs 1.000000 scn' . "\n";
         $this->assertEquals($exp1, $res1);
 
         $style = array(
@@ -95,13 +96,13 @@ class StyleTest extends TestUtil
             'fillColor'  => '["RGB",0.250000,0.500000,0.750000]',
         );
         $res2 = $testObj->add($style, false);
-        $exp2 = '3.000000 w'."\n"
-            .'1 J'."\n"
-            .'2 j'."\n"
-            .'11.000000 M'."\n"
-            .'[5.000000 7.000000] 1.000000 d'."\n"
-            .'0.678431 1.000000 0.184314 RG'."\n"
-            .'0.250000 0.500000 0.750000 rg'."\n";
+        $exp2 = '3.000000 w' . "\n"
+            . '1 J' . "\n"
+            . '2 j' . "\n"
+            . '11.000000 M' . "\n"
+            . '[5.000000 7.000000] 1.000000 d' . "\n"
+            . '0.678431 1.000000 0.184314 RG' . "\n"
+            . '0.250000 0.500000 0.750000 rg' . "\n";
         $this->assertEquals($exp2, $res2);
         $this->assertEquals($style, $testObj->getCurrentStyleArray());
 
@@ -112,12 +113,12 @@ class StyleTest extends TestUtil
             'fillColor'  => 'cmyk(67,33,0,25)',
         );
         $res3 = $testObj->add($style, true);
-        $exp3 = '3.000000 w'."\n"
-            .'1 J'."\n"
-            .'2 j'."\n"
-            .'11.000000 M'."\n"
-            .'[5.000000 7.000000] 1.000000 d'."\n"
-            .'0.670000 0.330000 0.000000 0.250000 k'."\n";
+        $exp3 = '3.000000 w' . "\n"
+            . '1 J' . "\n"
+            . '2 j' . "\n"
+            . '11.000000 M' . "\n"
+            . '[5.000000 7.000000] 1.000000 d' . "\n"
+            . '0.670000 0.330000 0.000000 0.250000 k' . "\n";
         $this->assertEquals($exp3, $res3);
 
         $style = array(
@@ -128,17 +129,17 @@ class StyleTest extends TestUtil
             'dashArray'  => array(),
         );
         $res4 = $testObj->add($style, true);
-        $exp4 = '3.000000 w'."\n"
-            .'1 J'."\n"
-            .'2 j'."\n"
-            .'11.000000 M'."\n"
-            .'[] 1.000000 d'."\n"
-            .'0.670000 0.330000 0.000000 0.250000 k'."\n";
+        $exp4 = '3.000000 w' . "\n"
+            . '1 J' . "\n"
+            . '2 j' . "\n"
+            . '11.000000 M' . "\n"
+            . '[] 1.000000 d' . "\n"
+            . '0.670000 0.330000 0.000000 0.250000 k' . "\n";
         $this->assertEquals($exp4, $res4);
 
         $style = array('lineWidth'  => 7.123);
         $res5 = $testObj->add($style, false);
-        $exp5 = '7.123000 w'."\n";
+        $exp5 = '7.123000 w' . "\n";
         $this->assertEquals($exp5, $res5);
 
         $res = $testObj->pop();
@@ -210,18 +211,18 @@ class StyleTest extends TestUtil
         $testObj = $this->getTestObject();
         $res = $testObj->getPathPaintOp('', '');
         $this->assertEquals('', $res);
-    
+
         $res = $testObj->getPathPaintOp('');
-        $this->assertEquals('S'."\n", $res);
-    
+        $this->assertEquals('S' . "\n", $res);
+
         $res = $testObj->getPathPaintOp('', 'df');
-        $this->assertEquals('b'."\n", $res);
-    
+        $this->assertEquals('b' . "\n", $res);
+
         $res = $testObj->getPathPaintOp('CEO');
-        $this->assertEquals('W* n'."\n", $res);
-    
+        $this->assertEquals('W* n' . "\n", $res);
+
         $res = $testObj->getPathPaintOp('F*D');
-        $this->assertEquals('B*'."\n", $res);
+        $this->assertEquals('B*' . "\n", $res);
     }
 
     public function testIsFillingMode()
@@ -309,15 +310,15 @@ class StyleTest extends TestUtil
     {
         $testObj = $this->getTestObject();
         $this->assertEquals(
-            '/GS1 gs'."\n",
+            '/GS1 gs' . "\n",
             $testObj->getExtGState(array('A' => 'B'))
         );
         $this->assertEquals(
-            '/GS1 gs'."\n",
+            '/GS1 gs' . "\n",
             $testObj->getExtGState(array('A' => 'B'))
         );
         $this->assertEquals(
-            '/GS2 gs'."\n",
+            '/GS2 gs' . "\n",
             $testObj->getExtGState(array('C' => 'D'))
         );
     }
