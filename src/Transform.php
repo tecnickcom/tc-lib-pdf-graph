@@ -359,4 +359,17 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
             (((float) $tma[1] * (float) $tmb[4]) + ((float) $tma[3] * (float) $tmb[5]) + (float) $tma[5])
         );
     }
+
+    /**
+     * Converts the number in degrees to the radian equivalent.
+     * We use this instead of $this->degToRad to avoid precision problems with hhvm.
+     *
+     * @param float $deg Angular value in degrees.
+     *
+     * @return float Angle in radiants
+     */
+    public function degToRad($deg)
+    {
+        return ($deg * self::MPI / 180);
+    }
 }

@@ -442,25 +442,6 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     }
 
     /**
-     * Draws a basic rectangle
-     *
-     * @param float  $posx   Abscissa of upper-left corner.
-     * @param float  $posy   Ordinate of upper-left corner.
-     * @param float  $width  Width.
-     * @param float  $height Height.
-     * @param string $mode   Mode of rendering. @see getPathPaintOp()
-     * @param array  $style  Style.
-     *
-     * @return string PDF command
-     */
-    public function getBasicRect($posx, $posy, $width, $height, $mode = 'S', array $style = array())
-    {
-        return $this->getStyleCmd($style)
-            . $this->getRawRect($posx, $posy, $width, $height)
-            . $this->getPathPaintOp($mode);
-    }
-
-    /**
      * Draws a rectangle with a different style for each segment.
      *
      * @param float  $posx   Abscissa of upper-left corner.

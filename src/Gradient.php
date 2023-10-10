@@ -49,6 +49,25 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
     }
 
     /**
+     * Draws a basic rectangle
+     *
+     * @param float  $posx   Abscissa of upper-left corner.
+     * @param float  $posy   Ordinate of upper-left corner.
+     * @param float  $width  Width.
+     * @param float  $height Height.
+     * @param string $mode   Mode of rendering. @see getPathPaintOp()
+     * @param array  $style  Style.
+     *
+     * @return string PDF command
+     */
+    public function getBasicRect($posx, $posy, $width, $height, $mode = 'S', array $style = array())
+    {
+        return $this->getStyleCmd($style)
+            . $this->getRawRect($posx, $posy, $width, $height)
+            . $this->getPathPaintOp($mode);
+    }
+
+    /**
      * Get a linear colour gradient command.
      *
      * @param float  $posx       Abscissa of the top left corner of the rectangle.

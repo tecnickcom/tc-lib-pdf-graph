@@ -115,13 +115,6 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     );
 
     /**
-     * Array of transparency objects and parameters.
-     *
-     * @var array
-     */
-    protected $extgstates = array();
-
-    /**
      * Initialize default style
      */
     public function init()

@@ -98,6 +98,13 @@ abstract class Base
     protected $compress = true;
 
     /**
+     * Array of transparency objects and parameters.
+     *
+     * @var array
+     */
+    protected $extgstates = array();
+
+    /**
      * Initialize
      *
      * @param float    $kunit    Unit of measure conversion ratio.

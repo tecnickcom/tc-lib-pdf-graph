@@ -341,17 +341,4 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
         }
         return $angle;
     }
-
-    /**
-     * Converts the number in degrees to the radian equivalent.
-     * We use this instead of $this->degToRad to avoid precision problems with hhvm.
-     *
-     * @param float $deg Angular value in degrees.
-     *
-     * @return float Angle in radiants
-     */
-    public function degToRad($deg)
-    {
-        return ($deg * self::MPI / 180);
-    }
 }
