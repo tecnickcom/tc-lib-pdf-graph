@@ -66,11 +66,11 @@ class TransformTest extends TestUtil
             $obj->getTransformation($tmx)
         );
 
-        $this->assertEquals(
+        $this->bcAssertEqualsWithDelta(
             array(0 => array(0 => array(0.1, 1.2, 2.3, 3.4, 4.5, 5.6))),
             $obj->getTransformStack(),
-            '',
-            0.0001
+            0.0001,
+            ''
         );
 
         $this->assertEquals('Q' . "\n", $obj->getStopTransform());

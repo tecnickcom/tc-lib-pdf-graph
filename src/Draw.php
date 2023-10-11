@@ -95,7 +95,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      *
      * @param float  $posx0    Abscissa of start point.
      * @param float  $posy0    Ordinate of start point.
-     * @param float  $segments An array of bezier descriptions. Format: array(x1, y1, x2, y2, x3, y3).
+     * @param array  $segments An array of bezier descriptions. Format: array(x1, y1, x2, y2, x3, y3).
      * @param string $mode     Mode of rendering. @see getPathPaintOp()
      * @param array  $style    Style.
      *
@@ -650,7 +650,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * @param float   $posy   Ordinate of center point.
      * @param float   $rad    Radius.
      * @param boolean $double If true prints two concentric crop marks.
-     * @param array   $color  Color.
+     * @param string  $color  Color.
      *
      * @return string PDF command
      */

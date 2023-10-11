@@ -332,9 +332,9 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      *                      8 pairs of coordinates for the following patches,
      *                      ignoring the coordinates already defined by the precedent patch
      *                      colors: must be 4 colors for the first patch, 2 colors for the following patches
-     * @param array $coords_min Minimum value used by the coordinates.
+     * @param float $coords_min Minimum value used by the coordinates.
      *                          If a coordinate's value is smaller than this it will be cut to coords_min.
-     * @param array $coords_max Maximum value used by the coordinates.
+     * @param float $coords_max Maximum value used by the coordinates.
      *                          If a coordinate's value is greater than this it will be cut to coords_max.
      * @param boolean $antialias Flag indicating whether to filter the shading function to prevent aliasing artifacts.
      *
@@ -400,13 +400,13 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
                     $bpcd,
                     ((($point - $coords_min) / ($coords_max - $coords_min)) * $bpcd)
                 )));
-                $this->gradients[$ngr]['stream'] .= chr(floor($point / 256)) . chr(floor($point % 256));
+                $this->gradients[$ngr]['stream'] .= chr((int)floor($point / 256)) . chr((int)floor($point % 256));
             }
             foreach ($par['colors'] as $color) {
                 // each color component as 8 bit
-                $this->gradients[$ngr]['stream'] .= chr(floor($color['red'] * 255))
-                . chr(floor($color['green'] * 255))
-                . chr(floor($color['blue'] * 255));
+                $this->gradients[$ngr]['stream'] .= chr((int)floor($color['red'] * 255))
+                . chr((int)floor($color['green'] * 255))
+                . chr((int)floor($color['blue'] * 255));
             }
         }
 
@@ -581,15 +581,15 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      *
      * @return string PDF command
      */
-    public function getOverprint($stroking = true, $nonstroking = '', $mode = 0)
+    public function getOverprint($stroking = true, $nonstroking = null, $mode = 0)
     {
-        if ($nonstroking == '') {
+        if ($nonstroking === null) {
             $nonstroking = $stroking;
         }
         return $this->getExtGState(
             array(
-                'OP' => ($stroking && true),
-                'op' => ($nonstroking && true),
+                'OP' => (bool)$stroking,
+                'op' => (bool)$nonstroking,
                 'OPM' => max(0, min(1, (int) $mode)),
             )
         );
@@ -602,7 +602,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      * @param string $bmv         Blend mode, one of the following:
      *                            Normal, Multiply, Screen, Overlay, Darken, Lighten, ColorDodge, ColorBurn,
      *                            HardLight, SoftLight, Difference, Exclusion, Hue, Saturation, Color, Luminosity.
-     * @param float  $nonstroking Alpha value for non-stroking operations:
+     * @param float|string  $nonstroking Alpha value for non-stroking operations:
      *                            real value from 0 (transparent) to 1 (opaque).
      * @param boolean $ais
      *
@@ -644,7 +644,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
                 'CA' => floatval($stroking),
                 'ca' => floatval($nonstroking),
                 'BM' => '/' . $bmv,
-                'AIS' => ($ais && true),
+                'AIS' => (bool)$ais,
             )
         );
     }

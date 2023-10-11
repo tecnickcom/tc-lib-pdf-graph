@@ -93,7 +93,7 @@ abstract class Base
     /**
      * Enable stream compression.
      *
-     * @var int
+     * @var bool
      */
     protected $compress = true;
 
@@ -431,9 +431,10 @@ abstract class Base
             }
 
             $gopa = $this->getOutGradientCols($grad, 'opacity');
+            $idgs = ($idx + $idt);
+
             if (!empty($gopa)) {
                 $out .= $gopa;
-                $idgs = ($idx + $idt);
                 $this->gradients[$idgs]['id'] = ($this->pon - 1);
                 $this->gradients[$idgs]['pattern'] = $this->pon;
             }

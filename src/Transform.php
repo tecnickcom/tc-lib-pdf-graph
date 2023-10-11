@@ -235,9 +235,9 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
     /**
      * Reflection against a straight line through point (x, y) with the gradient angle (angle).
      *
-     * @param float $angle Gradient angle in degrees of the straight line.
-     * @param float $posx  Abscissa of the mirroring point.
-     * @param float $posy  Ordinate of the mirroring point.
+     * @param float $ang  Gradient angle in degrees of the straight line.
+     * @param float $posx Abscissa of the mirroring point.
+     * @param float $posy Ordinate of the mirroring point.
      *
      * @return string Transformation string
      */

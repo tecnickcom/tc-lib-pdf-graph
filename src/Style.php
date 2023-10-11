@@ -196,7 +196,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      * Returns the last set value of the specified property.
      *
      * @param string $property Property to search.
-     * @param mixed  default   Default value to return in case the property is not found.
+     * @param mixed  $default  Default value to return in case the property is not found.
      *
      * @return mixed Property value or $default in case the property is not found.
      */
