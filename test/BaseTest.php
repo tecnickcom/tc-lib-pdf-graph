@@ -111,29 +111,38 @@ class BaseTest extends TestUtil
     public function testGetOutShaders(): void
     {
         $draw = $this->getTestObject();
-        $stops = [[
-            'color' => 'red',
-            'exponent' => 1,
-            'opacity' => 0.5,
-        ], [
-            'color' => 'blue',
-            'offset' => 0.2,
-            'exponent' => 1,
-            'opacity' => 0.6,
-        ], [
-            'color' => '#98fb98',
-            'exponent' => 1,
-            'opacity' => 0.7,
-        ], [
-            'color' => 'rgb(64,128,191)',
-            'offset' => 0.8,
-            'exponent' => 1,
-            'opacity' => 0.8,
-        ], [
-            'color' => 'skyblue',
-            'exponent' => 1,
-            'opacity' => 0.9,
-        ]];
+        $stops = [
+            [
+                'color' => 'red',
+                'exponent' => 1,
+                'offset' => 0.0,
+                'opacity' => 0.5,
+            ],
+            [
+                'color' => 'blue',
+                'exponent' => 1,
+                'offset' => 0.2,
+                'opacity' => 0.6,
+            ],
+            [
+                'color' => '#98fb98',
+                'exponent' => 1,
+                'offset' => 0.0,
+                'opacity' => 0.7,
+            ],
+            [
+                'color' => 'rgb(64,128,191)',
+                'exponent' => 1,
+                'offset' => 0.8,
+                'opacity' => 0.8,
+            ],
+            [
+                'color' => 'skyblue',
+                'exponent' => 1,
+                'offset' => 0.0,
+                'opacity' => 0.9,
+            ],
+        ];
         $this->assertEquals(
             '/TGS1 gs' . "\n"
             . '/Sh1 sh' . "\n",
@@ -160,15 +169,20 @@ class BaseTest extends TestUtil
         $draw->getGradient(
             3,
             [0.6, 0.5, 0.4, 0.3, 1],
-            [[
-                'color' => 'red',
-                'offset' => 0,
-                'exponent' => 1,
-            ], [
-                'color' => 'green',
-                'offset' => 1,
-                'exponent' => 1,
-            ]],
+            [
+                [
+                    'color' => 'red',
+                    'exponent' => 1,
+                    'offset' => 0,
+                    'opacity' => 0,
+                ],
+                [
+                    'color' => 'green',
+                    'exponent' => 1,
+                    'offset' => 1,
+                    'opacity' => 0,
+                ],
+            ],
             'white',
             true
         );

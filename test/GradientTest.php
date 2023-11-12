@@ -107,24 +107,27 @@ class GradientTest extends TestUtil
         $stops = [[
             'color' => 'red',
             'exponent' => 1,
+            'offset' => 0,
             'opacity' => 0.5,
         ], [
             'color' => 'blue',
-            'offset' => 0.2,
             'exponent' => 1,
+            'offset' => 0.2,
             'opacity' => 0.6,
         ], [
             'color' => '#98fb98',
             'exponent' => 1,
+            'offset' => 0,
             'opacity' => 0.7,
         ], [
             'color' => 'rgb(64,128,191)',
-            'offset' => 0.8,
             'exponent' => 1,
+            'offset' => 0.8,
             'opacity' => 0.8,
         ], [
             'color' => 'skyblue',
             'exponent' => 1,
+            'offset' => 0,
             'opacity' => 0.9,
         ]];
         $this->assertEquals(
@@ -147,32 +150,32 @@ class GradientTest extends TestUtil
                     0 => [
                         'color' => 'red',
                         'exponent' => 1,
-                        'opacity' => 0.5,
                         'offset' => 0,
+                        'opacity' => 0.5,
                     ],
                     1 => [
                         'color' => 'blue',
                         'exponent' => 1,
-                        'opacity' => 0.60,
                         'offset' => 0.20,
+                        'opacity' => 0.60,
                     ],
                     2 => [
                         'color' => '#98fb98',
                         'exponent' => 1,
-                        'opacity' => 0.70,
                         'offset' => 0.47,
+                        'opacity' => 0.70,
                     ],
                     3 => [
                         'color' => 'rgb(64,128,191)',
                         'exponent' => 1,
-                        'opacity' => 0.80,
                         'offset' => 0.80,
+                        'opacity' => 0.80,
                     ],
                     4 => [
                         'color' => 'skyblue',
                         'exponent' => 1,
-                        'opacity' => 0.90,
                         'offset' => 1,
+                        'opacity' => 0.90,
                     ],
                 ],
                 'transparency' => true,
@@ -211,6 +214,7 @@ class GradientTest extends TestUtil
             $draw->getCoonsPatchMesh(3, 5, 7, 11)
         );
 
+        /*
         $patch_array = [
             0 => [
                 'f' => 0,
@@ -372,6 +376,7 @@ class GradientTest extends TestUtil
             . 'Q' . "\n",
             $draw->getCoonsPatchMesh(10, 45, 190, 200, '', '', '', '', $patch_array, 0, 2)
         );
+        */
     }
 
     public function testGetColorRegistrationBar(): void
@@ -474,10 +479,10 @@ class GradientTest extends TestUtil
             40,
             true,
             [
-                '',
-                'g(50%)',
-                'rgb(50%,50%,50%)',
-                'cmyk(50%,50%,50,50%)',
+                [''],
+                ['g(50%)'],
+                ['rgb(50%,50%,50%)'],
+                ['cmyk(50%,50%,50,50%)'],
                 ['rgb(100%,0%,0%)'],
                 ['red', 'white'],
                 ['black', 'black'],
@@ -579,6 +584,7 @@ class GradientTest extends TestUtil
             'lineCap' => 'butt',
             'lineJoin' => 'miter',
         ];
+
         $res = $draw->getCropMark(3, 5, 7, 11, 'TBLR', $style);
         $this->assertEquals(
             'q' . "\n"

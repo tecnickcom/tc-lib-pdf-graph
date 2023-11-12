@@ -102,15 +102,15 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      * @param float             $width  Width.
      * @param float             $height Height.
      * @param string            $mode   Mode of rendering. @see getPathPaintOp()
-     * @param ?array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      } $style  Style.
      *
      * @return string PDF command
@@ -121,7 +121,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         float $width,
         float $height,
         string $mode = 'S',
-        ?array $style = null
+        array $style = []
     ): string {
         return $this->getStyleCmd($style)
             . $this->getRawRect($posx, $posy, $width, $height)
@@ -786,10 +786,6 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         $out = '';
         foreach ($colors as $color) {
             if (! empty($color)) {
-                if (! is_array($color)) {
-                    $color = [$color, $color];
-                }
-
                 if (! isset($color[1])) {
                     $color[1] = $color[0];
                 }
@@ -827,15 +823,15 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      * @param float             $height Height of the crop-mark.
      * @param string            $type   Type of crop mark - one symbol per type:
      *                                  T = TOP, B = BOTTOM, L = LEFT, R = RIGHT
-     * @param ?array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      }  $style  Line style to apply.
      *
      * @return string PDF command
@@ -846,7 +842,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         float $width,
         float $height,
         string $type = 'TBLR',
-        ?array $style = null
+        array $style = []
     ): string {
         $crops = array_unique(str_split(strtoupper($type), 1));
         $space_ratio = 4;

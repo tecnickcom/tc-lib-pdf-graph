@@ -45,9 +45,9 @@ class StyleTest extends TestUtil
     {
         $draw = $this->getTestObject();
 
-        $res1 = $draw->getStyleCmd([]);
+        $styleCmd = $draw->getStyleCmd();
         $exp1 = '';
-        $this->assertEquals($exp1, $res1);
+        $this->assertEquals($exp1, $styleCmd);
 
         $style2 = [
             'lineWidth' => 3,
@@ -55,6 +55,7 @@ class StyleTest extends TestUtil
             'lineJoin' => 'bevel',
             'miterLimit' => 11,
             'dashArray' => [5, 7],
+            'dashPhase' => 0,
             'lineColor' => 'greenyellow',
             'fillColor' => '["RGB",0.250000,0.500000,0.750000]',
         ];

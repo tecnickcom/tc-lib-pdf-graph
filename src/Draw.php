@@ -40,15 +40,15 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * @param float  $posy1 Ordinate of first point.
      * @param float  $posx2 Abscissa of second point.
      * @param float  $posy2 Ordinate of second point.
-     * @param ?array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      } $style Line style to apply.
      *
      * @return string PDF command
@@ -58,7 +58,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         float $posy1,
         float $posx2,
         float $posy2,
-        ?array $style = null,
+        array $style = [],
     ): string {
         return $this->getStyleCmd($style)
             . $this->getRawPoint($posx1, $posy1)
@@ -79,15 +79,15 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * @param float  $posx3 Abscissa of end point.
      * @param float  $posy3 Ordinate of end point.
      * @param string $mode  Mode of rendering. @see getPathPaintOp()
-     * @param ?array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      } $style Style.
      *
      * @return string PDF command
@@ -104,7 +104,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         float $posx3,
         float $posy3,
         string $mode = 'S',
-        ?array $style = null,
+        array $style = [],
     ): string {
         return $this->getStyleCmd($style)
             . $this->getRawPoint($posx0, $posy0)
@@ -120,15 +120,15 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * @param float        $posy0    Ordinate of start point.
      * @param array<array<float>> $segments An array of bezier descriptions. Format: array(x1, y1, x2, y2, x3, y3).
      * @param string       $mode     Mode of rendering. @see getPathPaintOp()
-     * @param ?array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      } $style    Style.
      *
      * @return string PDF command
@@ -138,7 +138,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         float $posy0,
         array $segments,
         string $mode = 'S',
-        ?array $style = null,
+        array $style = [],
     ): string {
         $out = $this->getStyleCmd($style)
             . $this->getRawPoint($posx0, $posy0);
@@ -162,16 +162,16 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * @param float  $angs  Angle in degrees at which starting drawing.
      * @param float  $angf  Angle in degrees at which stop drawing.
      * @param string $mode  Mode of rendering. @see getPathPaintOp()
-     * @param ?array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
-     *      }  $style Style.
+     * @param array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
+     *      } $style Style.
      * @param int    $ncv   Number of curves used to draw a 90 degrees portion of ellipse.
      *
      * @return string PDF command
@@ -187,7 +187,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         float $angs = 0,
         float $angf = 360,
         string $mode = 'S',
-        ?array $style = null,
+        array $style = [],
         int $ncv = 2
     ): string {
         if (empty($vrad)) {
@@ -222,15 +222,15 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * @param float  $angs Angle in degrees at which starting drawing.
      * @param float  $angf Angle in degrees at which stop drawing.
      * @param string $mode Mode of rendering. @see getPathPaintOp()
-     * @param ?array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      }  $style Style.
      * @param int    $ncv  Number of curves used to draw a 90 degrees portion of ellipse.
      *
@@ -243,7 +243,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         float $angs = 0,
         float $angf = 360,
         string $mode = 'S',
-        ?array $style = null,
+        array $style = [],
         int $ncv = 2
     ): string {
         return $this->getEllipse($posx, $posy, $rad, $rad, 0, $angs, $angf, $mode, $style, $ncv);
@@ -258,15 +258,15 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * @param float  $angs Angle in degrees at which starting drawing.
      * @param float  $angf Angle in degrees at which stop drawing.
      * @param string $mode Mode of rendering. @see getPathPaintOp()
-     * @param ?array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      }  $style Style.
      * @param int    $ncv  Number of curves used to draw a 90 degrees portion of ellipse.
      *
@@ -279,7 +279,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         float $angs = 0,
         float $angf = 360,
         string $mode = 'FD',
-        ?array $style = null,
+        array $style = [],
         int $ncv = 2
     ): string {
         return $this->getStyleCmd($style)
@@ -305,15 +305,15 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      *
      * @param array<float> $points Points - array containing 4 points for each segment: (x0, y0, x1, y1, x2, y2, ...)
      * @param string       $mode   Mode of rendering. @see getPathPaintOp()
-     * @param ?array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      }  $style  Style.
      *
      * @return string PDF command
@@ -321,7 +321,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     public function getBasicPolygon(
         array $points,
         string $mode = 'S',
-        ?array $style = null,
+        array $style = [],
     ): string {
         $nco = count($points); // number of coordinates
         $out = $this->getStyleCmd($style)
@@ -336,15 +336,15 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     /**
      * Returns the polygon default style command and initialize the first segment style if missing.
      *
-     * @param array<int, array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array<array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      }> $styles Array of styles - one style entry for each polygon segment and/or one global "all" entry.
      *
      * @return string PDF command
@@ -368,15 +368,15 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      *
      * @param array<float>      $points Points - array with values (x0, y0, x1, y1,..., x(n-1), y(n-1))
      * @param string            $mode   Mode of rendering. @see getPathPaintOp()
-     * @param array<int, array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array<array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      }>  $styles Array of styles - one style entry for each polygon segment and/or one global "all" entry.
      *
      * @return string PDF command
@@ -420,7 +420,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         for ($idx = 0; $idx < $nco; $idx += 2) {
             $segid = (int) ($idx / 2);
             if (! isset($styles[$segid])) {
-                $styles[$segid] = null;
+                $styles[$segid] = [];
             }
 
             $out .= $this->getLine(
@@ -444,26 +444,26 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * @param int               $sides   Number of sides.
      * @param float             $angle   Angle of the orientation (anti-clockwise).
      * @param string            $mode    Mode of rendering. @see getPathPaintOp()
-     * @param array<int, array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array<array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      }>  $styles   Array of styles - one style entry for each polygon segment and/or one global "all" entry.
      * @param string            $cirmode Mode of rendering of the inscribed circle (if any). @see getPathPaintOp()
-     * @param ?array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      }  $cirstyle Style of inscribed circle.
      *
      * @return string PDF command
@@ -477,7 +477,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         string $mode = 'S',
         array $styles = [],
         string $cirmode = '',
-        ?array $cirstyle = null
+        array $cirstyle = []
     ): string {
         if ($sides < 3) { // triangle is the minimum polygon
             return '';
@@ -508,26 +508,26 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * @param int               $ngaps   Number of gaps (if ($ngaps % $nvert = 1) then is a regular polygon).
      * @param float             $angle   Angle oriented (anti-clockwise).
      * @param string            $mode    Mode of rendering. @see getPathPaintOp()
-     * @param array<int, array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array<array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      }>  $styles   Array of styles - one style entry for each polygon segment and/or one global "all" entry.
      * @param string            $cirmode Mode of rendering of the inscribed circle (if any). @see getPathPaintOp()
-     * @param ?array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      }  $cirstyle Style of inscribed circle.
      *
      * @return string PDF command
@@ -544,7 +544,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         string $mode = 'S',
         array $styles = [],
         string $cirmode = '',
-        ?array $cirstyle = null
+        array $cirstyle = []
     ): string {
         if ($nvert < 2) {
             return '';
@@ -585,15 +585,15 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * @param float             $width  Width.
      * @param float             $height Height.
      * @param string            $mode   Mode of rendering. @see getPathPaintOp()
-     * @param array<int, array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array<array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      }>  $styles Array of styles - one style entry for each side (T,R,B,L) and/or one global "all" entry.
 
      * @return string PDF command
@@ -628,15 +628,15 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * @param string $corner Round corners to draw: 0 (square i-corner) or 1 (rounded i-corner) in i-position.
      *                       Positions are int the following order: top right, bottom right, bottom left and top left.
      * @param string $mode   Mode of rendering. @see getPathPaintOp()
-     * @param ?array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      } $style  Style.
      *
      * @return string PDF command
@@ -653,7 +653,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         float $vrad,
         string $corner = '1111',
         string $mode = 'S',
-        ?array $style = null,
+        array $style = [],
     ): string {
         if (($corner === '0000') || (empty($hrad) && empty($vrad))) {
             // basic rectangle with straight corners
@@ -758,15 +758,15 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      *                         filled head.
      * @param float  $armsize  Length of head arms.
      * @param int    $armangle Angle between an head arm and the arrow shaft.
-     * @param ?array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      } $style    Line style to apply.
      *
      * @return string PDF command
@@ -779,7 +779,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         int $headmode = 0,
         float $armsize = 5,
         int $armangle = 15,
-        ?array $style = null,
+        array $style = [],
     ): string {
         // getting arrow direction angle; 0 deg angle is when both arms go along X axis; angle grows clockwise.
         $dir_angle = atan2(($posy0 - $posy1), ($posx0 - $posx1));
@@ -855,17 +855,17 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         $out = $colobj->getPdfColor()
             . $this->getPieSector($posx, $posy, $rad, 90, 180, 'F')
             . $this->getPieSector($posx, $posy, $rad, 270, 360, 'F')
-            . $this->getCircle($posx, $posy, $rad, 0, 360, 'S', null, 8);
+            . $this->getCircle($posx, $posy, $rad, 0, 360, 'S', [], 8);
         if ($double) {
             $radi = ($rad * 0.5);
             $out .= $colobj->invertColor()->getPdfColor()
             . $this->getPieSector($posx, $posy, $radi, 90, 180, 'F')
             . $this->getPieSector($posx, $posy, $radi, 270, 360, 'F')
-            . $this->getCircle($posx, $posy, $radi, 0, 360, 'S', null, 8)
+            . $this->getCircle($posx, $posy, $radi, 0, 360, 'S', [], 8)
             . $colobj->getPdfColor()
             . $this->getPieSector($posx, $posy, $radi, 0, 90, 'F')
             . $this->getPieSector($posx, $posy, $radi, 180, 270, 'F')
-            . $this->getCircle($posx, $posy, $radi, 0, 360, 'S', null, 8);
+            . $this->getCircle($posx, $posy, $radi, 0, 360, 'S', [], 8);
         }
 
         return $this->getStartTransform()
@@ -910,7 +910,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
             . '0.000000 0.000000 0.000000 1.000000 k' . "\n" // key
             . $this->getPieSector($posx, $posy, $radi, 180, 270, 'F')
             . $this->getStyleCmd($style)
-            . $this->getCircle($posx, $posy, $rad, 0, 360, 'S', null, 8)
+            . $this->getCircle($posx, $posy, $rad, 0, 360, 'S', [], 8)
             . $this->getLine($posx, ($posy - $rade), $posx, ($posy - $radi))
             . $this->getLine($posx, ($posy + $radi), $posx, ($posy + $rade))
             . $this->getLine(($posx - $rade), $posy, ($posx - $radi), $posy)

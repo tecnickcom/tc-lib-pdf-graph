@@ -206,7 +206,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      *          'lineJoin'?: string,
      *          'miterLimit'?: float,
      *          'dashArray'?: array<int>,
-     *          'dashPhase'?: int,
+     *          'dashPhase'?: float,
      *          'lineColor'?: string,
      *          'fillColor'?: string,
      *      } $style       Style to add.
@@ -270,14 +270,14 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      * Returns the last style array.
      *
      * @return array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      }
      */
     public function getCurrentStyleArray(): array
@@ -329,47 +329,53 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     /**
      * Returns the PDF string of the specified style.
      *
-     * @param ?array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @param array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      } $style Style to represent.
      */
-    public function getStyleCmd(?array $style): string
+    public function getStyleCmd(array $style = []): string
     {
-        if ($style === null) {
-            return '';
+        $out = '';
+        if (isset($style['lineWidth'])) {
+            $out .= sprintf('%F w' . "\n", ($style['lineWidth'] * $this->kunit));
         }
 
-        $out = sprintf('%F w' . "\n", ($style['lineWidth'] * $this->kunit));
         $out .= $this->getLineModeCmd($style);
-        $out .= $this->pdfColor->getPdfColor($style['lineColor'], true);
+        if (isset($style['lineColor'])) {
+            $out .= $this->pdfColor->getPdfColor($style['lineColor'], true);
+        }
 
-        return $out . $this->pdfColor->getPdfColor($style['fillColor'], false);
+        if (isset($style['fillColor'])) {
+            $out .= $this->pdfColor->getPdfColor($style['fillColor'], false);
+        }
+
+        return $out;
     }
 
     /**
      * Returns the PDF string of the specified line style.
      *
      * @param array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      } $style Style to represent.
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function getLineModeCmd(array $style): string
+    protected function getLineModeCmd(array $style = []): string
     {
         $out = '';
         if (isset($style['lineCap']) && isset(self::LINECAPMAP[$style['lineCap']])) {
@@ -380,10 +386,15 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
             $out .= self::LINEJOINMAP[$style['lineJoin']] . ' j' . "\n";
         }
 
-        $out .= sprintf('%F M' . "\n", ($style['miterLimit'] * $this->kunit));
+        if (isset($style['miterLimit'])) {
+            $out .= sprintf('%F M' . "\n", ($style['miterLimit'] * $this->kunit));
+        }
+
         $dash = [];
-        foreach ($style['dashArray'] as $val) {
-            $dash[] = sprintf('%F', ((float) $val * $this->kunit));
+        if (isset($style['dashArray'])) {
+            foreach ($style['dashArray'] as $val) {
+                $dash[] = sprintf('%F', ((float) $val * $this->kunit));
+            }
         }
 
         if (! isset($style['dashPhase'])) {

@@ -223,7 +223,7 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
      * @param float      $angs       Angle in degrees at which starting drawing.
      * @param float      $angf       Angle in degrees at which stop drawing.
      * @param bool       $pie        If true do not mark the border point (used to draw pie sectors).
-     * @param int        $ncv        Number of curves used to draw a 90 degrees portion of ellipse.
+     * @param float        $ncv        Number of curves used to draw a 90 degrees portion of ellipse.
      * @param bool       $startpoint If true output a starting point.
      * @param bool       $ccw        If true draws in counter-clockwise direction.
      * @param bool       $svg        If true the angles are in svg mode (already calculated).
@@ -244,7 +244,7 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
         float $angs = 0.0,
         float $angf = 360.0,
         bool $pie = false,
-        int $ncv = 2,
+        float $ncv = 2,
         bool $startpoint = true,
         bool $ccw = true,
         bool $svg = false,

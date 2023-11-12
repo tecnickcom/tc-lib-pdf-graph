@@ -68,15 +68,15 @@ abstract class Base
     /**
      * Stack containing style data.
      *
-     * @var array<int, array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': int,
-     *          'lineColor': string,
-     *          'fillColor': string,
+     * @var array<array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
      *      }>
      */
     protected array $style = [];
@@ -157,20 +157,31 @@ abstract class Base
     /**
      * Returns the default style.
      *
+     * @param array{
+     *          'lineWidth'?: float,
+     *          'lineCap'?: string,
+     *          'lineJoin'?: string,
+     *          'miterLimit'?: float,
+     *          'dashArray'?: array<int>,
+     *          'dashPhase'?: float,
+     *          'lineColor'?: string,
+     *          'fillColor'?: string,
+     *      } $style Style parameters to merge to the default ones.
+     *
      * @return array{
      *          'lineWidth': float,
      *          'lineCap': string,
      *          'lineJoin': string,
      *          'miterLimit': float,
      *          'dashArray': array<int>,
-     *          'dashPhase': int,
+     *          'dashPhase': float,
      *          'lineColor': string,
      *          'fillColor': string,
      *      }
      */
-    public function getDefaultStyle(): array
+    public function getDefaultStyle(array $style = []): array
     {
-        return [
+        $def = [
             // line thickness in user units
             'lineWidth' => (1.0 / $this->kunit),
             // shape of the endpoints for any open path that is stroked
@@ -188,6 +199,8 @@ abstract class Base
             // background (filling) color
             'fillColor' => 'black',
         ];
+
+        return array_merge($def, $style);
     }
 
     /**
