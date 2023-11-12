@@ -104,32 +104,38 @@ class GradientTest extends TestUtil
     public function testGetGradient(): void
     {
         $draw = $this->getTestObject();
-        $stops = [[
-            'color' => 'red',
-            'exponent' => 1,
-            'offset' => 0,
-            'opacity' => 0.5,
-        ], [
-            'color' => 'blue',
-            'exponent' => 1,
-            'offset' => 0.2,
-            'opacity' => 0.6,
-        ], [
-            'color' => '#98fb98',
-            'exponent' => 1,
-            'offset' => 0,
-            'opacity' => 0.7,
-        ], [
-            'color' => 'rgb(64,128,191)',
-            'exponent' => 1,
-            'offset' => 0.8,
-            'opacity' => 0.8,
-        ], [
-            'color' => 'skyblue',
-            'exponent' => 1,
-            'offset' => 0,
-            'opacity' => 0.9,
-        ]];
+        $stops = [
+            [
+                'color' => 'red',
+                'exponent' => 1.0,
+                'offset' => 0.0,
+                'opacity' => 0.5,
+            ],
+            [
+                'color' => 'blue',
+                'exponent' => 1.0,
+                'offset' => 0.2,
+                'opacity' => 0.6,
+            ],
+            [
+                'color' => '#98fb98',
+                'exponent' => 1.0,
+                'offset' => 0.47,
+                'opacity' => 0.7,
+            ],
+            [
+                'color' => 'rgb(64,128,191)',
+                'exponent' => 1.0,
+                'offset' => 0.8,
+                'opacity' => 0.8,
+            ],
+            [
+                'color' => 'skyblue',
+                'exponent' => 1.0,
+                'offset' => 1.0,
+                'opacity' => 0.9,
+            ],
+        ];
         $this->assertEquals(
             '/TGS1 gs' . "\n"
             . '/Sh1 sh' . "\n",
@@ -181,6 +187,9 @@ class GradientTest extends TestUtil
                 'transparency' => true,
                 'background' => null,
                 'colspace' => 'DeviceCMYK',
+                'id' => 0,
+                'pattern' => 0,
+                'stream' => '',
             ],
         ];
         $this->bcAssertEqualsWithDelta($exp, $draw->getGradientsArray());

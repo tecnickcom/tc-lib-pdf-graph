@@ -29,6 +29,8 @@ use Com\Tecnick\Pdf\Encrypt\Encrypt;
  * @copyright 2011-2023 Nicola Asuni - Tecnick.com LTD
  * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 abstract class Base
 {
@@ -43,7 +45,7 @@ abstract class Base
     /**
      * Current PDF object number
      */
-    protected int $pon;
+    protected int $pon = 0;
 
     /**
      * Current page height
@@ -100,9 +102,9 @@ abstract class Base
      *          'background': ?\Com\Tecnick\Color\Model,
      *          'colors': array<int, array{
      *              'color': string,
-     *              'exponent': float,
-     *              'opacity': float,
-     *              'offset': float,
+     *              'exponent'?: float,
+     *              'opacity'?: float,
+     *              'offset'?: float,
      *          }>,
      *          'colspace': string,
      *          'coords': array<float>,
@@ -335,9 +337,9 @@ abstract class Base
      *          'background': ?\Com\Tecnick\Color\Model,
      *          'colors': array<int, array{
      *              'color': string,
-     *              'exponent': float,
-     *              'opacity': float,
-     *              'offset': float,
+     *              'exponent'?: float,
+     *              'opacity'?: float,
+     *              'offset'?: float,
      *          }>,
      *          'colspace': string,
      *          'coords': array<float>,
@@ -386,7 +388,7 @@ abstract class Base
                 }
 
                 $encode[] = '0 1';
-                if ($idx < $lastcols) {
+                if ($idx < $lastcols && isset($grad['colors'][$idx]['offset'])) {
                     $bounds[] = sprintf('%F ', $grad['colors'][$idx]['offset']);
                 }
 
@@ -395,9 +397,12 @@ abstract class Base
                 . ' /FunctionType 2'
                 . ' /Domain [0 1]'
                 . ' /C0 [' . $col0 . ']'
-                . ' /C1 [' . $col1 . ']'
-                . ' /N ' . $grad['colors'][$idx]['exponent']
-                . ' >>' . "\n"
+                . ' /C1 [' . $col1 . ']';
+                if (isset($grad['colors'][$idx]['exponent'])) {
+                    $out .= ' /N ' . $grad['colors'][$idx]['exponent'];
+                }
+
+                $out .= ' >>' . "\n"
                 . 'endobj' . "\n";
                 $funct[] = $this->pon . ' 0 R';
             }
@@ -424,9 +429,9 @@ abstract class Base
      *          'background': ?\Com\Tecnick\Color\Model,
      *          'colors': array<int, array{
      *              'color': string,
-     *              'exponent': float,
-     *              'opacity': float,
-     *              'offset': float,
+     *              'exponent'?: float,
+     *              'opacity'?: float,
+     *              'offset'?: float,
      *          }>,
      *          'colspace': string,
      *          'coords': array<float>,

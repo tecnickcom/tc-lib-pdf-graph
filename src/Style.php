@@ -216,12 +216,10 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function add(array $style = [], bool $inheritlast = false): string
     {
-        $refstyleid = 0;
         if ($inheritlast) {
-            $refstyleid = $this->styleid;
+            $style = array_merge($this->style[$this->styleid], $style);
         }
 
-        $style = array_merge($this->style[$refstyleid], $style);
         $this->style[++$this->styleid] = $style;
         return $this->getStyle();
     }
@@ -348,6 +346,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
         }
 
         $out .= $this->getLineModeCmd($style);
+
         if (isset($style['lineColor'])) {
             $out .= $this->pdfColor->getPdfColor($style['lineColor'], true);
         }
@@ -378,6 +377,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     protected function getLineModeCmd(array $style = []): string
     {
         $out = '';
+
         if (isset($style['lineCap']) && isset(self::LINECAPMAP[$style['lineCap']])) {
             $out .= self::LINECAPMAP[$style['lineCap']] . ' J' . "\n";
         }
@@ -390,18 +390,20 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
             $out .= sprintf('%F M' . "\n", ($style['miterLimit'] * $this->kunit));
         }
 
-        $dash = [];
         if (isset($style['dashArray'])) {
+            $dash = [];
             foreach ($style['dashArray'] as $val) {
                 $dash[] = sprintf('%F', ((float) $val * $this->kunit));
             }
+
+            if (! isset($style['dashPhase'])) {
+                $style['dashPhase'] = 0;
+            }
+
+            return $out .= sprintf('[%s] %F d' . "\n", implode(' ', $dash), $style['dashPhase']);
         }
 
-        if (! isset($style['dashPhase'])) {
-            $style['dashPhase'] = 0;
-        }
-
-        return $out . sprintf('[%s] %F d' . "\n", implode(' ', $dash), $style['dashPhase']);
+        return $out;
     }
 
     /**

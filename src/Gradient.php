@@ -76,9 +76,9 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      *          'background': ?\Com\Tecnick\Color\Model,
      *          'colors': array<int, array{
      *              'color': string,
-     *              'exponent': float,
-     *              'opacity': float,
-     *              'offset': float,
+     *              'exponent'?: float,
+     *              'opacity'?: float,
+     *              'offset'?: float,
      *          }>,
      *          'colspace': string,
      *          'coords': array<float>,
@@ -159,15 +159,15 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             [
                 [
                     'color' => $colorstart,
-                    'exponent' => 1,
-                    'offset' => 0,
-                    'opacity' => 1,
+                    'exponent' => 1.0,
+                    'offset' => 0.0,
+                    'opacity' => 1.0,
                 ],
                 [
                     'color' => $colorend,
-                    'exponent' => 1,
-                    'offset' => 1,
-                    'opacity' => 1,
+                    'exponent' => 1.0,
+                    'offset' => 1.0,
+                    'opacity' => 1.0,
                 ],
             ],
             '',
@@ -212,15 +212,15 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             [
                 [
                     'color' => $colorstart,
-                    'exponent' => 1,
-                    'offset' => 0,
-                    'opacity' => 1,
+                    'exponent' => 1.0,
+                    'offset' => 0.0,
+                    'opacity' => 1.0,
                 ],
                 [
                     'color' => $colorend,
-                    'exponent' => 1,
-                    'offset' => 1,
-                    'opacity' => 1,
+                    'exponent' => 1.0,
+                    'offset' => 1.0,
+                    'opacity' => 1.0,
                 ],
             ],
             '',
@@ -280,9 +280,9 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      * @param array<float>      $coords    Array of coordinates.
      * @param array<int, array{
      *            'color': string,
-     *            'exponent': float,
-     *            'opacity': float,
-     *            'offset': float,
+     *            'exponent'?: float,
+     *            'opacity'?: float,
+     *            'offset'?: float,
      *        }>  $stops     Array gradient color components:
      *                          color = color; offset = (0 to 1)
      *                          represents a location along the
@@ -349,9 +349,9 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      *          'background': ?\Com\Tecnick\Color\Model,
      *          'colors': array<int, array{
      *              'color': string,
-     *              'exponent': float,
-     *              'opacity': float,
-     *              'offset': float,
+     *              'exponent'?: float,
+     *              'opacity'?: float,
+     *              'offset'?: float,
      *          }>,
      *          'colspace': string,
      *          'coords': array<float>,
@@ -363,9 +363,9 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      *      } $grad Array containing gradient info
      * @param array<int, array{
      *                'color': string,
-     *                'exponent': float,
-     *                'opacity': float,
-     *                'offset': float,
+     *                'exponent'?: float,
+     *                'opacity'?: float,
+     *                'offset'?: float,
      *             }> $stops Array gradient color components:
      *         color = color;
      *         offset = (0 to 1) represents a location along the gradient vector;
@@ -376,9 +376,9 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      *          'background': ?\Com\Tecnick\Color\Model,
      *          'colors': array<int, array{
      *              'color': string,
-     *              'exponent': float,
-     *              'opacity': float,
-     *              'offset': float,
+     *              'exponent'?: float,
+     *              'opacity'?: float,
+     *              'offset'?: float,
      *          }>,
      *          'colspace': string,
      *          'coords': array<float>,
@@ -403,10 +403,11 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
                 $grad['colors'][$key]['exponent'] = $stop['exponent'];
             }
 
-            $grad['colors'][$key]['opacity'] = $stop['opacity'];
-            $grad['transparency'] = ($grad['transparency'] || ($stop['opacity'] < 1));
-
-            $grad['colors'][$key]['offset'] = 0.0;
+            $grad['colors'][$key]['opacity'] = 1.0;
+            if (isset($stop['opacity'])) {
+                $grad['colors'][$key]['opacity'] = $stop['opacity'];
+                $grad['transparency'] = ($grad['transparency'] || ($stop['opacity'] < 1));
+            }
 
             // offset represents a location along the gradient vector
             if (isset($stop['offset'])) {
@@ -415,9 +416,9 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
                 $grad['colors'][$key]['offset'] = 0.0;
             } elseif ($key == $last_stop_id) {
                 $grad['colors'][$key]['offset'] = 1.0;
-            } else {
-                $offsetstep = ((1 - $grad['colors'][($key - 1)]['offset']) / ($num_stops - $key));
-                $grad['colors'][$key]['offset'] = $grad['colors'][($key - 1)]['offset'] + $offsetstep;
+            } elseif (isset($grad['colors'][($key - 1)]['offset'])) {
+                $offsetstep = ((1.0 - $grad['colors'][($key - 1)]['offset']) / ($num_stops - $key));
+                $grad['colors'][$key]['offset'] = ($grad['colors'][($key - 1)]['offset'] + $offsetstep);
             }
         }
 
@@ -785,7 +786,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
 
         $out = '';
         foreach ($colors as $color) {
-            if (! empty($color)) {
+            if (! empty($color) && ! empty($color[0])) {
                 if (! isset($color[1])) {
                     $color[1] = $color[0];
                 }

@@ -900,14 +900,19 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
             'lineColor' => 'All',
             'fillColor' => '',
         ];
+
         return $this->getStartTransform()
-            . '1.000000 0.000000 0.000000 0.000000 k' . "\n" // cyan
+            . (($this->pdfColor->getColorObject('Cyan') instanceof \Com\Tecnick\Color\Model)
+                ? $this->pdfColor->getColorObject('Cyan')->getPdfColor() : '')
             . $this->getPieSector($posx, $posy, $radi, 270, 360, 'F')
-            . '0.000000 1.000000 0.000000 0.000000 k' . "\n" // magenta
+            . (($this->pdfColor->getColorObject('Magenta') instanceof \Com\Tecnick\Color\Model)
+                ? $this->pdfColor->getColorObject('Magenta')->getPdfColor() : '')
             . $this->getPieSector($posx, $posy, $radi, 0, 90, 'F')
-            . '0.000000 0.000000 1.000000 0.000000 k' . "\n" // yellow
+            . (($this->pdfColor->getColorObject('Yellow') instanceof \Com\Tecnick\Color\Model)
+                ? $this->pdfColor->getColorObject('Yellow')->getPdfColor() : '')
             . $this->getPieSector($posx, $posy, $radi, 90, 180, 'F')
-            . '0.000000 0.000000 0.000000 1.000000 k' . "\n" // key
+            . (($this->pdfColor->getColorObject('Key') instanceof \Com\Tecnick\Color\Model)
+                ? $this->pdfColor->getColorObject('Key')->getPdfColor() : '')
             . $this->getPieSector($posx, $posy, $radi, 180, 270, 'F')
             . $this->getStyleCmd($style)
             . $this->getCircle($posx, $posy, $rad, 0, 360, 'S', [], 8)

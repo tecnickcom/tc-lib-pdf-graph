@@ -329,9 +329,9 @@ class DrawTest extends TestUtil
             'b*',
             [
                 'all' => $testStyle,
-                0 => $draw->getDefaultStyle([
+                0 => [
                     'lineColor' => '#ff0000',
-                ]),
+                ],
             ]
         );
         $this->assertEquals(
@@ -399,14 +399,14 @@ class DrawTest extends TestUtil
             'b*',
             [
                 'all' => $testStyle,
-                0 => $draw->getDefaultStyle([
+                0 => [
                     'lineColor' => '#ff0000',
-                ]),
+                ],
             ],
             'f',
-            $draw->getDefaultStyle([
+            [
                 'fillColor' => '#cccccc',
-            ])
+            ]
         );
         $this->assertEquals(
             '0.800000 0.800000 0.800000 rg' . "\n"
@@ -508,14 +508,14 @@ class DrawTest extends TestUtil
             'b*',
             [
                 'all' => $testStyle,
-                0 => $draw->getDefaultStyle([
+                0 => [
                     'lineColor' => '#ff0000',
-                ]),
+                ],
             ],
             'f',
-            $draw->getDefaultStyle([
+            [
                 'fillColor' => '#cccccc',
-            ])
+            ]
         );
         $this->assertEquals(
             '0.800000 0.800000 0.800000 rg' . "\n"
@@ -644,9 +644,9 @@ class DrawTest extends TestUtil
             'b*',
             [
                 'all' => $testStyle,
-                1 => $draw->getDefaultStyle([
+                1 => [
                     'lineColor' => '#ff0000',
-                ]),
+                ],
             ]
         );
         $this->assertEquals(
