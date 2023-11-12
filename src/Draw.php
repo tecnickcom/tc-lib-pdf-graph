@@ -116,10 +116,10 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * Draws a poly-Bezier curve.
      * Each Bezier curve segment is a tangent to the line between the control points at either end of the curve.
      *
-     * @param float        $posx0    Abscissa of start point.
-     * @param float        $posy0    Ordinate of start point.
+     * @param float               $posx0    Abscissa of start point.
+     * @param float               $posy0    Ordinate of start point.
      * @param array<array<float>> $segments An array of bezier descriptions. Format: array(x1, y1, x2, y2, x3, y3).
-     * @param string       $mode     Mode of rendering. @see getPathPaintOp()
+     * @param string              $mode     Mode of rendering. @see getPathPaintOp()
      * @param array{
      *          'lineWidth'?: float,
      *          'lineCap'?: string,
@@ -366,8 +366,8 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     /**
      * Draws a polygon with a different style for each segment.
      *
-     * @param array<float>      $points Points - array with values (x0, y0, x1, y1,..., x(n-1), y(n-1))
-     * @param string            $mode   Mode of rendering. @see getPathPaintOp()
+     * @param array<float> $points Points - array with values (x0, y0, x1, y1,..., x(n-1), y(n-1))
+     * @param string       $mode   Mode of rendering. @see getPathPaintOp()
      * @param array<array{
      *          'lineWidth'?: float,
      *          'lineCap'?: string,
@@ -438,12 +438,12 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     /**
      * Draws a regular polygon.
      *
-     * @param float             $posx    Abscissa of center point.
-     * @param float             $posy    Ordinate of center point.
-     * @param float             $radius  Radius of inscribed circle.
-     * @param int               $sides   Number of sides.
-     * @param float             $angle   Angle of the orientation (anti-clockwise).
-     * @param string            $mode    Mode of rendering. @see getPathPaintOp()
+     * @param float        $posx    Abscissa of center point.
+     * @param float        $posy    Ordinate of center point.
+     * @param float        $radius  Radius of inscribed circle.
+     * @param int          $sides   Number of sides.
+     * @param float        $angle   Angle of the orientation (anti-clockwise).
+     * @param string       $mode    Mode of rendering. @see getPathPaintOp()
      * @param array<array{
      *          'lineWidth'?: float,
      *          'lineCap'?: string,
@@ -454,7 +454,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      *          'lineColor'?: string,
      *          'fillColor'?: string,
      *      }>  $styles   Array of styles - one style entry for each polygon segment and/or one global "all" entry.
-     * @param string            $cirmode Mode of rendering of the inscribed circle (if any). @see getPathPaintOp()
+     * @param string       $cirmode Mode of rendering of the inscribed circle (if any). @see getPathPaintOp()
      * @param array{
      *          'lineWidth'?: float,
      *          'lineCap'?: string,
@@ -501,13 +501,13 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     /**
      * Draws a star polygon.
      *
-     * @param float             $posx    Abscissa of center point.
-     * @param float             $posy    Ordinate of center point.
-     * @param float             $radius  Radius of inscribed circle.
-     * @param int               $nvert   Number of vertices.
-     * @param int               $ngaps   Number of gaps (if ($ngaps % $nvert = 1) then is a regular polygon).
-     * @param float             $angle   Angle oriented (anti-clockwise).
-     * @param string            $mode    Mode of rendering. @see getPathPaintOp()
+     * @param float        $posx    Abscissa of center point.
+     * @param float        $posy    Ordinate of center point.
+     * @param float        $radius  Radius of inscribed circle.
+     * @param int          $nvert   Number of vertices.
+     * @param int          $ngaps   Number of gaps (if ($ngaps % $nvert = 1) then is a regular polygon).
+     * @param float        $angle   Angle oriented (anti-clockwise).
+     * @param string       $mode    Mode of rendering. @see getPathPaintOp()
      * @param array<array{
      *          'lineWidth'?: float,
      *          'lineCap'?: string,
@@ -518,7 +518,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      *          'lineColor'?: string,
      *          'fillColor'?: string,
      *      }>  $styles   Array of styles - one style entry for each polygon segment and/or one global "all" entry.
-     * @param string            $cirmode Mode of rendering of the inscribed circle (if any). @see getPathPaintOp()
+     * @param string       $cirmode Mode of rendering of the inscribed circle (if any). @see getPathPaintOp()
      * @param array{
      *          'lineWidth'?: float,
      *          'lineCap'?: string,
@@ -580,11 +580,11 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     /**
      * Draws a rectangle with a different style for each segment.
      *
-     * @param float             $posx   Abscissa of upper-left corner.
-     * @param float             $posy   Ordinate of upper-left corner.
-     * @param float             $width  Width.
-     * @param float             $height Height.
-     * @param string            $mode   Mode of rendering. @see getPathPaintOp()
+     * @param float        $posx   Abscissa of upper-left corner.
+     * @param float        $posy   Ordinate of upper-left corner.
+     * @param float        $width  Width.
+     * @param float        $height Height.
+     * @param string       $mode   Mode of rendering. @see getPathPaintOp()
      * @param array<array{
      *          'lineWidth'?: float,
      *          'lineCap'?: string,

@@ -97,11 +97,11 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
     /**
      * Draws a basic rectangle
      *
-     * @param float             $posx   Abscissa of upper-left corner.
-     * @param float             $posy   Ordinate of upper-left corner.
-     * @param float             $width  Width.
-     * @param float             $height Height.
-     * @param string            $mode   Mode of rendering. @see getPathPaintOp()
+     * @param float  $posx   Abscissa of upper-left corner.
+     * @param float  $posy   Ordinate of upper-left corner.
+     * @param float  $width  Width.
+     * @param float  $height Height.
+     * @param string $mode   Mode of rendering. @see getPathPaintOp()
      * @param array{
      *          'lineWidth'?: float,
      *          'lineCap'?: string,
@@ -316,6 +316,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         $this->gradients[$ngr] = $this->getGradientStops(
             [
                 'antialias' => $antialias,
+                'background' => $this->pdfColor->getColorObject($bgcolor),
                 'colors' => [],
                 'colspace' => self::COLSPACE[$model->getType()],
                 'coords' => $coords,
@@ -324,7 +325,6 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
                 'stream' => '',
                 'transparency' => false,
                 'type' => $type,
-                'background' => $this->pdfColor->getColorObject($bgcolor),
             ],
             $stops
         );
@@ -397,13 +397,13 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         foreach ($stops as $key => $stop) {
             $grad['colors'][$key] = [];
             $grad['colors'][$key]['color'] = $stop['color'];
-            $grad['colors'][$key]['exponent'] = 1.0;
+            $grad['colors'][$key]['exponent'] = 1;
             if (isset($stop['exponent'])) {
                 // exponent for the interpolation function
                 $grad['colors'][$key]['exponent'] = $stop['exponent'];
             }
 
-            $grad['colors'][$key]['opacity'] = 1.0;
+            $grad['colors'][$key]['opacity'] = 1;
             if (isset($stop['opacity'])) {
                 $grad['colors'][$key]['opacity'] = $stop['opacity'];
                 $grad['transparency'] = ($grad['transparency'] || ($stop['opacity'] < 1));
@@ -413,9 +413,9 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             if (isset($stop['offset'])) {
                 $grad['colors'][$key]['offset'] = $stop['offset'];
             } elseif ($key == 0) {
-                $grad['colors'][$key]['offset'] = 0.0;
+                $grad['colors'][$key]['offset'] = 0;
             } elseif ($key == $last_stop_id) {
-                $grad['colors'][$key]['offset'] = 1.0;
+                $grad['colors'][$key]['offset'] = 1;
             } elseif (isset($grad['colors'][($key - 1)]['offset'])) {
                 $offsetstep = ((1.0 - $grad['colors'][($key - 1)]['offset']) / ($num_stops - $key));
                 $grad['colors'][$key]['offset'] = ($grad['colors'][($key - 1)]['offset'] + $offsetstep);
@@ -685,8 +685,6 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         ];
 
         $bpcd = 65535; // 16 bits per coordinate
-        // build the data stream
-        $this->gradients[$ngr]['stream'] = '';
 
         foreach ($patch_array as $par) {
             $this->gradients[$ngr]['stream'] .= chr($par['f']); // start with the edge flag as 8 bit
@@ -818,12 +816,12 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
     /**
      * Get a crop-mark.
      *
-     * @param float             $posx   Abscissa of the crop-mark center.
-     * @param float             $posy   Ordinate of the crop-mark center.
-     * @param float             $width  Width of the crop-mark.
-     * @param float             $height Height of the crop-mark.
-     * @param string            $type   Type of crop mark - one symbol per type:
-     *                                  T = TOP, B = BOTTOM, L = LEFT, R = RIGHT
+     * @param float  $posx   Abscissa of the crop-mark center.
+     * @param float  $posy   Ordinate of the crop-mark center.
+     * @param float  $width  Width of the crop-mark.
+     * @param float  $height Height of the crop-mark.
+     * @param string $type   Type of crop mark - one symbol per type:
+     *                       T = TOP, B = BOTTOM, L = LEFT, R = RIGHT
      * @param array{
      *          'lineWidth'?: float,
      *          'lineCap'?: string,

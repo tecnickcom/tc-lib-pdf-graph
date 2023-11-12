@@ -349,7 +349,7 @@ abstract class Base
      *          'transparency': bool,
      *          'type': int,
      *      }  $grad Array of gradient colors
-     * @param string            $type Type of output: 'color' or 'opacity'
+     * @param string $type Type of output: 'color' or 'opacity'
      *
      * @return string PDF command
      *
@@ -441,7 +441,7 @@ abstract class Base
      *          'transparency': bool,
      *          'type': int,
      *      } $grad   Array of gradient colors
-     * @param int               $objref Refrence object number
+     * @param int    $objref Refrence object number
      *
      * @return string PDF command
      */
@@ -533,7 +533,6 @@ abstract class Base
         }
 
         $idt = count($this->gradients); // index for transparency gradients
-
         $out = '';
         foreach ($this->gradients as $idx => $grad) {
             $gcol = $this->getOutGradientCols($grad, 'color');

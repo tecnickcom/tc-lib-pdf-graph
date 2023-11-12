@@ -223,7 +223,6 @@ class GradientTest extends TestUtil
             $draw->getCoonsPatchMesh(3, 5, 7, 11)
         );
 
-        /*
         $patch_array = [
             0 => [
                 'f' => 0,
@@ -383,9 +382,8 @@ class GradientTest extends TestUtil
             . '142.500000 0.000000 0.000000 150.000000 7.500000 -108.750000 cm' . "\n"
             . '/Sh2 sh' . "\n"
             . 'Q' . "\n",
-            $draw->getCoonsPatchMesh(10, 45, 190, 200, '', '', '', '', $patch_array, 0, 2)
+            $draw->getCoonsPatchMesh(10, 45, 190, 200, $patch_array, 0, 2)
         );
-        */
     }
 
     public function testGetColorRegistrationBar(): void

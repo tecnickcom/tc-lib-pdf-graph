@@ -96,7 +96,7 @@ class BaseTest extends TestUtil
             $res
         );
 
-        $draw->getCoonsPatchMesh(3, 5, 7, 11);
+        $draw->getCoonsPatchMeshWithCoords(3, 5, 7, 11);
         $draw->getOutGradientShaders(11);
         $this->assertEquals(13, $draw->getObjectNumber());
 
@@ -115,7 +115,6 @@ class BaseTest extends TestUtil
             [
                 'color' => 'red',
                 'exponent' => 1,
-                'offset' => 0.0,
                 'opacity' => 0.5,
             ],
             [
@@ -127,7 +126,6 @@ class BaseTest extends TestUtil
             [
                 'color' => '#98fb98',
                 'exponent' => 1,
-                'offset' => 0.0,
                 'opacity' => 0.7,
             ],
             [
@@ -139,7 +137,6 @@ class BaseTest extends TestUtil
             [
                 'color' => 'skyblue',
                 'exponent' => 1,
-                'offset' => 0.0,
                 'opacity' => 0.9,
             ],
         ];
@@ -166,7 +163,7 @@ class BaseTest extends TestUtil
     public function testGetOutShadersRadial(): void
     {
         $draw = $this->getTestObject();
-        $draw->getGradient(
+        $out = $draw->getGradient(
             3,
             [0.6, 0.5, 0.4, 0.3, 1],
             [
@@ -174,19 +171,23 @@ class BaseTest extends TestUtil
                     'color' => 'red',
                     'exponent' => 1,
                     'offset' => 0,
-                    'opacity' => 0,
                 ],
                 [
                     'color' => 'green',
                     'exponent' => 1,
                     'offset' => 1,
-                    'opacity' => 0,
                 ],
             ],
             'white',
             true
         );
 
+        $this->assertEquals(
+            '/Sh1 sh' . "\n",
+            $out
+        );
+
+        $this->assertEquals(0, $draw->getObjectNumber());
         $draw->getOutGradientShaders($draw->getObjectNumber());
         $this->assertEquals(4, $draw->getObjectNumber());
     }
