@@ -29,6 +29,8 @@ use Com\Tecnick\Pdf\Graph\Exception as GraphException;
  * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  *
+ * @phpstan-import-type StyleDataOpt from \Com\Tecnick\Pdf\Graph\Base
+ *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
@@ -200,17 +202,8 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     /**
      * Add a new style
      *
-     * @param array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      } $style       Style to add.
-     * @param bool   $inheritlast If true inherit missing values from the last style.
+     * @param StyleDataOpt $style       Style to add.
+     * @param bool         $inheritlast If true inherit missing values from the last style.
      *
      * @return string PDF style string
      */
@@ -267,16 +260,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     /**
      * Returns the last style array.
      *
-     * @return array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      }
+     * @return StyleDataOpt
      */
     public function getCurrentStyleArray(): array
     {
@@ -327,16 +311,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     /**
      * Returns the PDF string of the specified style.
      *
-     * @param array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      } $style Style to represent.
+     * @param StyleDataOpt $style Style to represent.
      */
     public function getStyleCmd(array $style = []): string
     {
@@ -361,16 +336,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     /**
      * Returns the PDF string of the specified line style.
      *
-     * @param array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      } $style Style to represent.
+     * @param StyleDataOpt $style Style to represent.
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */

@@ -30,6 +30,46 @@ use Com\Tecnick\Pdf\Encrypt\Encrypt;
  * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  *
+ * @phpstan-type StyleData array{
+ *          'lineWidth': float,
+ *          'lineCap': string,
+ *          'lineJoin': string,
+ *          'miterLimit': float,
+ *          'dashArray': array<int>,
+ *          'dashPhase': float,
+ *          'lineColor': string,
+ *          'fillColor': string,
+ *      }
+ *
+ * @phpstan-type StyleDataOpt array{
+ *          'lineWidth'?: float,
+ *          'lineCap'?: string,
+ *          'lineJoin'?: string,
+ *          'miterLimit'?: float,
+ *          'dashArray'?: array<int>,
+ *          'dashPhase'?: float,
+ *          'lineColor'?: string,
+ *          'fillColor'?: string,
+ *      }
+ *
+ * @phpstan-type GradientData array{
+ *          'antialias': bool,
+ *          'background': ?\Com\Tecnick\Color\Model,
+ *          'colors': array<int, array{
+ *              'color': string,
+ *              'exponent'?: float,
+ *              'opacity'?: float,
+ *              'offset'?: float,
+ *          }>,
+ *          'colspace': string,
+ *          'coords': array<float>,
+ *          'id': int,
+ *          'pattern': int,
+ *          'stream': string,
+ *          'transparency': bool,
+ *          'type': int,
+ *      }
+ *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 abstract class Base
@@ -70,16 +110,7 @@ abstract class Base
     /**
      * Stack containing style data.
      *
-     * @var array<array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      }>
+     * @var array<StyleDataOpt>
      */
     protected array $style = [];
 
@@ -97,23 +128,7 @@ abstract class Base
     /**
      * Array of gradients
      *
-     * @var array<int, array{
-     *          'antialias': bool,
-     *          'background': ?\Com\Tecnick\Color\Model,
-     *          'colors': array<int, array{
-     *              'color': string,
-     *              'exponent'?: float,
-     *              'opacity'?: float,
-     *              'offset'?: float,
-     *          }>,
-     *          'colspace': string,
-     *          'coords': array<float>,
-     *          'id': int,
-     *          'pattern': int,
-     *          'stream': string,
-     *          'transparency': bool,
-     *          'type': int,
-     *      }>
+     * @var array<int, GradientData>
      */
     protected array $gradients = [];
 
@@ -159,27 +174,9 @@ abstract class Base
     /**
      * Returns the default style.
      *
-     * @param array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      } $style Style parameters to merge to the default ones.
+     * @param StyleDataOpt $style Style parameters to merge to the default ones.
      *
-     * @return array{
-     *          'lineWidth': float,
-     *          'lineCap': string,
-     *          'lineJoin': string,
-     *          'miterLimit': float,
-     *          'dashArray': array<int>,
-     *          'dashPhase': float,
-     *          'lineColor': string,
-     *          'fillColor': string,
-     *      }
+     * @return StyleData
      */
     public function getDefaultStyle(array $style = []): array
     {
@@ -332,24 +329,8 @@ abstract class Base
     /**
      * Get the PDF output string for gradient colors and transparency
      *
-     * @param array{
-     *          'antialias': bool,
-     *          'background': ?\Com\Tecnick\Color\Model,
-     *          'colors': array<int, array{
-     *              'color': string,
-     *              'exponent'?: float,
-     *              'opacity'?: float,
-     *              'offset'?: float,
-     *          }>,
-     *          'colspace': string,
-     *          'coords': array<float>,
-     *          'id': int,
-     *          'pattern': int,
-     *          'stream': string,
-     *          'transparency': bool,
-     *          'type': int,
-     *      }  $grad Array of gradient colors
-     * @param string $type Type of output: 'color' or 'opacity'
+     * @param GradientData $grad Array of gradient colors
+     * @param string       $type Type of output: 'color' or 'opacity'
      *
      * @return string PDF command
      *
@@ -424,24 +405,8 @@ abstract class Base
     /**
      * Get the PDF output string for the pattern and shading object
      *
-     * @param array{
-     *          'antialias': bool,
-     *          'background': ?\Com\Tecnick\Color\Model,
-     *          'colors': array<int, array{
-     *              'color': string,
-     *              'exponent'?: float,
-     *              'opacity'?: float,
-     *              'offset'?: float,
-     *          }>,
-     *          'colspace': string,
-     *          'coords': array<float>,
-     *          'id': int,
-     *          'pattern': int,
-     *          'stream': string,
-     *          'transparency': bool,
-     *          'type': int,
-     *      } $grad   Array of gradient colors
-     * @param int    $objref Refrence object number
+     * @param GradientData $grad   Array of gradient colors
+     * @param int          $objref Refrence object number
      *
      * @return string PDF command
      */

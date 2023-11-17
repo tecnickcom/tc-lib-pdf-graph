@@ -29,6 +29,8 @@ use Com\Tecnick\Pdf\Graph\Exception as GraphException;
  * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  *
+ * @phpstan-import-type StyleDataOpt from \Com\Tecnick\Pdf\Graph\Base
+ *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
@@ -36,20 +38,11 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     /**
      * Draws a line between two points.
      *
-     * @param float  $posx1 Abscissa of first point.
-     * @param float  $posy1 Ordinate of first point.
-     * @param float  $posx2 Abscissa of second point.
-     * @param float  $posy2 Ordinate of second point.
-     * @param array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      } $style Line style to apply.
+     * @param float        $posx1 Abscissa of first point.
+     * @param float        $posy1 Ordinate of first point.
+     * @param float        $posx2 Abscissa of second point.
+     * @param float        $posy2 Ordinate of second point.
+     * @param StyleDataOpt $style Line style to apply.
      *
      * @return string PDF command
      */
@@ -70,25 +63,16 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * Draws a Bezier curve.
      * The Bezier curve is a tangent to the line between the control points at either end of the curve.
      *
-     * @param float  $posx0 Abscissa of start point.
-     * @param float  $posy0 Ordinate of start point.
-     * @param float  $posx1 Abscissa of control point 1.
-     * @param float  $posy1 Ordinate of control point 1.
-     * @param float  $posx2 Abscissa of control point 2.
-     * @param float  $posy2 Ordinate of control point 2.
-     * @param float  $posx3 Abscissa of end point.
-     * @param float  $posy3 Ordinate of end point.
-     * @param string $mode  Mode of rendering. @see getPathPaintOp()
-     * @param array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      } $style Style.
+     * @param float        $posx0 Abscissa of start point.
+     * @param float        $posy0 Ordinate of start point.
+     * @param float        $posx1 Abscissa of control point 1.
+     * @param float        $posy1 Ordinate of control point 1.
+     * @param float        $posx2 Abscissa of control point 2.
+     * @param float        $posy2 Ordinate of control point 2.
+     * @param float        $posx3 Abscissa of end point.
+     * @param float        $posy3 Ordinate of end point.
+     * @param string       $mode  Mode of rendering. @see getPathPaintOp()
+     * @param StyleDataOpt $style Style.
      *
      * @return string PDF command
      *
@@ -120,16 +104,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * @param float               $posy0    Ordinate of start point.
      * @param array<array<float>> $segments An array of bezier descriptions. Format: array(x1, y1, x2, y2, x3, y3).
      * @param string              $mode     Mode of rendering. @see getPathPaintOp()
-     * @param array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      } $style    Style.
+     * @param StyleDataOpt        $style    Style.
      *
      * @return string PDF command
      */
@@ -154,25 +129,16 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * Draws an ellipse.
      * An ellipse is formed from n Bezier curves.
      *
-     * @param float  $posx  Abscissa of center point.
-     * @param float  $posy  Ordinate of center point.
-     * @param float  $hrad  Horizontal radius.
-     * @param float  $vrad  Vertical radius.
-     * @param float  $angle Angle oriented (anti-clockwise). Default value: 0.
-     * @param float  $angs  Angle in degrees at which starting drawing.
-     * @param float  $angf  Angle in degrees at which stop drawing.
-     * @param string $mode  Mode of rendering. @see getPathPaintOp()
-     * @param array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      } $style Style.
-     * @param int    $ncv   Number of curves used to draw a 90 degrees portion of ellipse.
+     * @param float        $posx  Abscissa of center point.
+     * @param float        $posy  Ordinate of center point.
+     * @param float        $hrad  Horizontal radius.
+     * @param float        $vrad  Vertical radius.
+     * @param float        $angle Angle oriented (anti-clockwise). Default value: 0.
+     * @param float        $angs  Angle in degrees at which starting drawing.
+     * @param float        $angf  Angle in degrees at which stop drawing.
+     * @param string       $mode  Mode of rendering. @see getPathPaintOp()
+     * @param StyleDataOpt $style Style.
+     * @param int          $ncv   Number of curves used to draw a 90 degrees portion of ellipse.
      *
      * @return string PDF command
      *
@@ -216,23 +182,14 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * Draws a circle.
      * A circle is formed from n Bezier curves.
      *
-     * @param float  $posx Abscissa of center point.
-     * @param float  $posy Ordinate of center point.
-     * @param float  $rad  Radius.
-     * @param float  $angs Angle in degrees at which starting drawing.
-     * @param float  $angf Angle in degrees at which stop drawing.
-     * @param string $mode Mode of rendering. @see getPathPaintOp()
-     * @param array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      }  $style Style.
-     * @param int    $ncv  Number of curves used to draw a 90 degrees portion of ellipse.
+     * @param float        $posx  Abscissa of center point.
+     * @param float        $posy  Ordinate of center point.
+     * @param float        $rad   Radius.
+     * @param float        $angs  Angle in degrees at which starting drawing.
+     * @param float        $angf  Angle in degrees at which stop drawing.
+     * @param string       $mode  Mode of rendering. @see getPathPaintOp()
+     * @param StyleDataOpt $style Style.
+     * @param int          $ncv   Number of curves used to draw a 90 degrees portion of ellipse.
      *
      * @return string PDF command
      */
@@ -252,23 +209,14 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     /**
      * Draws a circle pie sector.
      *
-     * @param float  $posx Abscissa of center point.
-     * @param float  $posy Ordinate of center point.
-     * @param float  $rad  Radius.
-     * @param float  $angs Angle in degrees at which starting drawing.
-     * @param float  $angf Angle in degrees at which stop drawing.
-     * @param string $mode Mode of rendering. @see getPathPaintOp()
-     * @param array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      }  $style Style.
-     * @param int    $ncv  Number of curves used to draw a 90 degrees portion of ellipse.
+     * @param float        $posx  Abscissa of center point.
+     * @param float        $posy  Ordinate of center point.
+     * @param float        $rad   Radius.
+     * @param float        $angs  Angle in degrees at which starting drawing.
+     * @param float        $angf  Angle in degrees at which stop drawing.
+     * @param string       $mode  Mode of rendering. @see getPathPaintOp()
+     * @param StyleDataOpt $style Style.
+     * @param int          $ncv   Number of curves used to draw a 90 degrees portion of ellipse.
      *
      * @return string PDF command
      */
@@ -305,16 +253,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      *
      * @param array<float> $points Points - array containing 4 points for each segment: (x0, y0, x1, y1, x2, y2, ...)
      * @param string       $mode   Mode of rendering. @see getPathPaintOp()
-     * @param array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      }  $style  Style.
+     * @param StyleDataOpt $style  Style.
      *
      * @return string PDF command
      */
@@ -336,16 +275,8 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     /**
      * Returns the polygon default style command and initialize the first segment style if missing.
      *
-     * @param array<array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      }> $styles Array of styles - one style entry for each polygon segment and/or one global "all" entry.
+     * @param array<StyleDataOpt> $styles Array of styles -
+     *        one style entry for each polygon segment and/or one global "all" entry.
      *
      * @return string PDF command
      */
@@ -366,18 +297,10 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     /**
      * Draws a polygon with a different style for each segment.
      *
-     * @param array<float> $points Points - array with values (x0, y0, x1, y1,..., x(n-1), y(n-1))
-     * @param string       $mode   Mode of rendering. @see getPathPaintOp()
-     * @param array<array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      }>  $styles Array of styles - one style entry for each polygon segment and/or one global "all" entry.
+     * @param array<float>        $points Points - array with values (x0, y0, x1, y1,..., x(n-1), y(n-1))
+     * @param string              $mode   Mode of rendering. @see getPathPaintOp()
+     * @param array<StyleDataOpt> $styles Array of styles -
+     *        one style entry for each polygon segment and/or one global "all" entry.
      *
      * @return string PDF command
      *
@@ -438,33 +361,16 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     /**
      * Draws a regular polygon.
      *
-     * @param float        $posx    Abscissa of center point.
-     * @param float        $posy    Ordinate of center point.
-     * @param float        $radius  Radius of inscribed circle.
-     * @param int          $sides   Number of sides.
-     * @param float        $angle   Angle of the orientation (anti-clockwise).
-     * @param string       $mode    Mode of rendering. @see getPathPaintOp()
-     * @param array<array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      }>  $styles   Array of styles - one style entry for each polygon segment and/or one global "all" entry.
-     * @param string       $cirmode Mode of rendering of the inscribed circle (if any). @see getPathPaintOp()
-     * @param array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      }  $cirstyle Style of inscribed circle.
+     * @param float               $posx     Abscissa of center point.
+     * @param float               $posy     Ordinate of center point.
+     * @param float               $radius   Radius of inscribed circle.
+     * @param int                 $sides    Number of sides.
+     * @param float               $angle    Angle of the orientation (anti-clockwise).
+     * @param string              $mode     Mode of rendering. @see getPathPaintOp()
+     * @param array<StyleDataOpt> $styles   Array of styles -
+     *        one style entry for each polygon segment and/or one global "all" entry.
+     * @param string              $cirmode  Mode of rendering of the inscribed circle (if any). @see getPathPaintOp()
+     * @param StyleDataOpt        $cirstyle Style of inscribed circle.
      *
      * @return string PDF command
      */
@@ -501,34 +407,17 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     /**
      * Draws a star polygon.
      *
-     * @param float        $posx    Abscissa of center point.
-     * @param float        $posy    Ordinate of center point.
-     * @param float        $radius  Radius of inscribed circle.
-     * @param int          $nvert   Number of vertices.
-     * @param int          $ngaps   Number of gaps (if ($ngaps % $nvert = 1) then is a regular polygon).
-     * @param float        $angle   Angle oriented (anti-clockwise).
-     * @param string       $mode    Mode of rendering. @see getPathPaintOp()
-     * @param array<array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      }>  $styles   Array of styles - one style entry for each polygon segment and/or one global "all" entry.
-     * @param string       $cirmode Mode of rendering of the inscribed circle (if any). @see getPathPaintOp()
-     * @param array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      }  $cirstyle Style of inscribed circle.
+     * @param float               $posx     Abscissa of center point.
+     * @param float               $posy     Ordinate of center point.
+     * @param float               $radius   Radius of inscribed circle.
+     * @param int                 $nvert    Number of vertices.
+     * @param int                 $ngaps    Number of gaps (if ($ngaps % $nvert = 1) then is a regular polygon).
+     * @param float               $angle    Angle oriented (anti-clockwise).
+     * @param string              $mode     Mode of rendering. @see getPathPaintOp()
+     * @param array<StyleDataOpt> $styles   Array of styles -
+     *        one style entry for each polygon segment and/or one global "all" entry.
+     * @param string              $cirmode  Mode of rendering of the inscribed circle (if any). @see getPathPaintOp()
+     * @param StyleDataOpt        $cirstyle Style of inscribed circle.
      *
      * @return string PDF command
      *
@@ -580,21 +469,13 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     /**
      * Draws a rectangle with a different style for each segment.
      *
-     * @param float        $posx   Abscissa of upper-left corner.
-     * @param float        $posy   Ordinate of upper-left corner.
-     * @param float        $width  Width.
-     * @param float        $height Height.
-     * @param string       $mode   Mode of rendering. @see getPathPaintOp()
-     * @param array<array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      }>  $styles Array of styles - one style entry for each side (T,R,B,L) and/or one global "all" entry.
+     * @param float               $posx   Abscissa of upper-left corner.
+     * @param float               $posy   Ordinate of upper-left corner.
+     * @param float               $width  Width.
+     * @param float               $height Height.
+     * @param string              $mode   Mode of rendering. @see getPathPaintOp()
+     * @param array<StyleDataOpt> $styles Array of styles -
+     *        one style entry for each side (T,R,B,L) and/or one global "all" entry.
 
      * @return string PDF command
      */
@@ -619,25 +500,17 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     /**
      * Draws a rounded rectangle.
      *
-     * @param float  $posx   Abscissa of upper-left corner.
-     * @param float  $posy   Ordinate of upper-left corner.
-     * @param float  $width  Width.
-     * @param float  $height Height.
-     * @param float  $hrad   X-axis radius of the ellipse used to round off the corners of the rectangle.
-     * @param float  $vrad   Y-axis radius of the ellipse used to round off the corners of the rectangle.
-     * @param string $corner Round corners to draw: 0 (square i-corner) or 1 (rounded i-corner) in i-position.
-     *                       Positions are int the following order: top right, bottom right, bottom left and top left.
-     * @param string $mode   Mode of rendering. @see getPathPaintOp()
-     * @param array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      } $style  Style.
+     * @param float        $posx   Abscissa of upper-left corner.
+     * @param float        $posy   Ordinate of upper-left corner.
+     * @param float        $width  Width.
+     * @param float        $height Height.
+     * @param float        $hrad   X-axis radius of the ellipse used to round off the corners of the rectangle.
+     * @param float        $vrad   Y-axis radius of the ellipse used to round off the corners of the rectangle.
+     * @param string       $corner Round corners to draw: 0 (square i-corner) or 1 (rounded i-corner) in i-position.
+     *                             Positions are int the following order: top right, bottom right, bottom left and
+     *                             top left.
+     * @param string       $mode   Mode of rendering. @see getPathPaintOp()
+     * @param StyleDataOpt $style  Style.
      *
      * @return string PDF command
      *
@@ -744,30 +617,21 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
     /**
      * Draws an arrow.
      *
-     * @param float  $posx0    Abscissa of first point.
-     * @param float  $posy0    Ordinate of first point.
-     * @param float  $posx1    Abscissa of second point (head side).
-     * @param float  $posy1    Ordinate of second point (head side)
-     * @param int    $headmode Arrow head mode:
-     *                         0 = draw only
-     *                         head arms; 1 =
-     *                         draw closed head
-     *                         without filling;
-     *                         2 = closed and
-     *                         filled head; 3 =
-     *                         filled head.
-     * @param float  $armsize  Length of head arms.
-     * @param int    $armangle Angle between an head arm and the arrow shaft.
-     * @param array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      } $style    Line style to apply.
+     * @param float        $posx0    Abscissa of first point.
+     * @param float        $posy0    Ordinate of first point.
+     * @param float        $posx1    Abscissa of second point (head side).
+     * @param float        $posy1    Ordinate of second point (head side)
+     * @param int          $headmode Arrow head mode:
+     *                               0 = draw only
+     *                               head arms; 1 =
+     *                               draw closed head
+     *                               without filling;
+     *                               2 = closed and
+     *                               filled head; 3 =
+     *                               filled head.
+     * @param float        $armsize  Length of head arms.
+     * @param int          $armangle Angle between an head arm and the arrow shaft.
+     * @param StyleDataOpt $style    Line style to apply.
      *
      * @return string PDF command
      */

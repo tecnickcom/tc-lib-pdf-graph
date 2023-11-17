@@ -29,6 +29,9 @@ use Com\Tecnick\Pdf\Graph\Exception as GraphException;
  * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  *
+ * @phpstan-import-type GradientData from \Com\Tecnick\Pdf\Graph\Base
+ * @phpstan-import-type StyleDataOpt from \Com\Tecnick\Pdf\Graph\Base
+ *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
@@ -71,23 +74,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
     /**
      * Returns the gradients array
      *
-     * @return array<int, array{
-     *          'antialias': bool,
-     *          'background': ?\Com\Tecnick\Color\Model,
-     *          'colors': array<int, array{
-     *              'color': string,
-     *              'exponent'?: float,
-     *              'opacity'?: float,
-     *              'offset'?: float,
-     *          }>,
-     *          'colspace': string,
-     *          'coords': array<float>,
-     *          'id': int,
-     *          'pattern': int,
-     *          'stream': string,
-     *          'transparency': bool,
-     *          'type': int,
-     *      }>
+     * @return array<int, GradientData>
      */
     public function getGradientsArray(): array
     {
@@ -97,21 +84,12 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
     /**
      * Draws a basic rectangle
      *
-     * @param float  $posx   Abscissa of upper-left corner.
-     * @param float  $posy   Ordinate of upper-left corner.
-     * @param float  $width  Width.
-     * @param float  $height Height.
-     * @param string $mode   Mode of rendering. @see getPathPaintOp()
-     * @param array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      } $style  Style.
+     * @param float        $posx   Abscissa of upper-left corner.
+     * @param float        $posy   Ordinate of upper-left corner.
+     * @param float        $width  Width.
+     * @param float        $height Height.
+     * @param string       $mode   Mode of rendering. @see getPathPaintOp()
+     * @param StyleDataOpt $style  Style.
      *
      * @return string PDF command
      */
@@ -344,23 +322,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
     /**
      * Process the gradient stops.
      *
-     * @param array{
-     *          'antialias': bool,
-     *          'background': ?\Com\Tecnick\Color\Model,
-     *          'colors': array<int, array{
-     *              'color': string,
-     *              'exponent'?: float,
-     *              'opacity'?: float,
-     *              'offset'?: float,
-     *          }>,
-     *          'colspace': string,
-     *          'coords': array<float>,
-     *          'id': int,
-     *          'pattern': int,
-     *          'stream': string,
-     *          'transparency': bool,
-     *          'type': int,
-     *      } $grad Array containing gradient info
+     * @param GradientData      $grad Array containing gradient info
      * @param array<int, array{
      *                'color': string,
      *                'exponent'?: float,
@@ -371,23 +333,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      *         offset = (0 to 1) represents a location along the gradient vector;
      *         exponent = exponent of the exponential interpolation function (default = 1).
      *
-     * @return array{
-     *          'antialias': bool,
-     *          'background': ?\Com\Tecnick\Color\Model,
-     *          'colors': array<int, array{
-     *              'color': string,
-     *              'exponent'?: float,
-     *              'opacity'?: float,
-     *              'offset'?: float,
-     *          }>,
-     *          'colspace': string,
-     *          'coords': array<float>,
-     *          'id': int,
-     *          'pattern': int,
-     *          'stream': string,
-     *          'transparency': bool,
-     *          'type': int,
-     *      } Gradient array.
+     * @return GradientData Gradient array.
      */
     protected function getGradientStops(array $grad, array $stops): array
     {
@@ -816,22 +762,13 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
     /**
      * Get a crop-mark.
      *
-     * @param float  $posx   Abscissa of the crop-mark center.
-     * @param float  $posy   Ordinate of the crop-mark center.
-     * @param float  $width  Width of the crop-mark.
-     * @param float  $height Height of the crop-mark.
-     * @param string $type   Type of crop mark - one symbol per type:
-     *                       T = TOP, B = BOTTOM, L = LEFT, R = RIGHT
-     * @param array{
-     *          'lineWidth'?: float,
-     *          'lineCap'?: string,
-     *          'lineJoin'?: string,
-     *          'miterLimit'?: float,
-     *          'dashArray'?: array<int>,
-     *          'dashPhase'?: float,
-     *          'lineColor'?: string,
-     *          'fillColor'?: string,
-     *      }  $style  Line style to apply.
+     * @param float        $posx   Abscissa of the crop-mark center.
+     * @param float        $posy   Ordinate of the crop-mark center.
+     * @param float        $width  Width of the crop-mark.
+     * @param float        $height Height of the crop-mark.
+     * @param string       $type   Type of crop mark - one symbol per type:
+     *                             T = TOP, B = BOTTOM, L = LEFT, R = RIGHT
+     * @param StyleDataOpt $style  Line style to apply.
      *
      * @return string PDF command
      */
