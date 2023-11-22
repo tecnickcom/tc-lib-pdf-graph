@@ -325,8 +325,10 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
             // close polygon by adding the first point (x, y) at the end
             $points[$nco++] = $points[0];
             $points[$nco++] = $points[1];
-            // copy style for the last segment
-            $styles[($nseg - 1)] = $styles[0];
+            if (!empty($styles[0])) {
+                // copy style for the last segment
+                $styles[($nseg - 1)] = $styles[0];
+            }
         }
 
         // paint the filling
