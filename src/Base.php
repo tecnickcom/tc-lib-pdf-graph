@@ -278,18 +278,31 @@ abstract class Base
     }
 
     /**
-     * Get the PDF output string for ExtGState Resource Dictionary
+     * Returns the last extgstate ID to be used with XOBjects.
+     *
+     * @return ?int
+     */
+    public function getLastExtGStateID(): ?int
+    {
+        return array_key_last($this->extgstates);
+    }
+
+    /**
+     * Get the PDF output string for ExtGState Resource Dictionary.
+     *
+     * @param array<int, array{'name': string, 'n': int}> $data extgstates data.
      *
      * @return string PDF command
      */
-    public function getOutExtGStateResources(): string
+    private function getOutExtGStateResDict(array $data): string
     {
         if ($this->pdfa || $this->extgstates === []) {
             return '';
         }
 
         $out = ' /ExtGState <<';
-        foreach ($this->extgstates as $key => $ext) {
+
+        foreach ($data as $key => $ext) {
             if (! empty($ext['name'])) {
                 $out .= ' /' . $ext['name'];
             } else {
@@ -303,19 +316,56 @@ abstract class Base
     }
 
     /**
-     * Get the PDF output string for Gradients Resource Dictionary
+     * Get the PDF output string for ExtGState Resource Dictionary
      *
      * @return string PDF command
      */
-    public function getOutGradientResources(): string
+    public function getOutExtGStateResources(): string
     {
-        if ($this->pdfa || $this->gradients === []) {
+        return $this->getOutExtGStateResDict($this->extgstates);
+    }
+
+    /**
+     * Get the PDF output string for ExtGState Resource Dictionary for XOBjects.
+     *
+     * @param array<int> $keys Array of extgstates keys.
+     *
+     * @return string PDF command
+     */
+    public function getOutExtGStateResourcesByKeys(array $keys): string
+    {
+        if (empty($keys)) {
+            return '';
+        }
+
+        $data = [];
+        foreach ($keys as $key) {
+            $data[$key] = [
+                'name' => $this->extgstates[$key]['name'],
+                'n' => $this->extgstates[$key]['n'],
+            ];
+        }
+
+        return $this->getOutExtGStateResDict($data);
+    }
+
+    /**
+     * Get the PDF output string for Gradients Resource Dictionary.
+     *
+     * @param array<int, array{'id': int, 'pattern': int}> $data gradients data.
+     *
+     * @return string PDF command
+     */
+    private function getOutGradientResDict(array $data): string
+    {
+        if ($this->pdfa || empty($data)) {
             return '';
         }
 
         $grp = '';
         $grs = '';
-        foreach ($this->gradients as $idx => $grad) {
+
+        foreach ($data as $idx => $grad) {
             // gradient patterns
             $grp .= ' /p' . $idx . ' ' . $grad['pattern'] . ' 0 R';
             // gradient shadings
@@ -324,6 +374,41 @@ abstract class Base
 
         return ' /Pattern <<' . $grp . ' >>' . "\n"
             . ' /Shading <<' . $grs . ' >>' . "\n";
+    }
+
+    /**
+     * Get the PDF output string for Gradients Resource Dictionary
+     *
+     * @return string PDF command
+     */
+    public function getOutGradientResources(): string
+    {
+        return $this->getOutGradientResDict($this->gradients);
+    }
+
+
+    /**
+     * Returns the PDF command to output gradient resources.
+     *
+     * @param array<int> $keys Array of gradient keys.
+     *
+     * @return string PDF command
+     */
+    public function getOutGradientResourcesByKeys(array $keys): string
+    {
+        if (empty($keys)) {
+            return '';
+        }
+
+        $data = [];
+        foreach ($keys as $key) {
+            $data[$key] = [
+                'id' => $this->gradients[$key]['id'],
+                'pattern' => $this->gradients[$key]['pattern'],
+            ];
+        }
+
+        return $this->getOutGradientResDict($data);
     }
 
     /**

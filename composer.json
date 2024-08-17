@@ -21,7 +21,7 @@
   "require": {
     "php": ">=8.0",
     "ext-zlib": "*",
-    "tecnickcom/tc-lib-color": "^2.0",
+    "tecnickcom/tc-lib-color": "^2.2",
     "tecnickcom/tc-lib-pdf-encrypt": "^2.1"
   },
   "require-dev": {

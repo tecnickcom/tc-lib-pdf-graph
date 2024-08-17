@@ -99,6 +99,8 @@ class GradientTest extends TestUtil
             '',
             $draw->getGradient(2, [], [], '', false)
         );
+
+        $this->assertNull($draw->getLastGradientID());
     }
 
     public function testGetGradient(): void
@@ -193,6 +195,8 @@ class GradientTest extends TestUtil
             ],
         ];
         $this->bcAssertEqualsWithDelta($exp, $draw->getGradientsArray());
+
+        $this->assertEquals(1, $draw->getLastGradientID());
     }
 
     public function testGetCoonsPatchMeshPDFA(): void

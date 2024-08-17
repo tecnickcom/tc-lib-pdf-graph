@@ -65,6 +65,8 @@ class BaseTest extends TestUtil
         );
 
         $this->assertEquals(12, $draw->getObjectNumber());
+
+        $this->assertEquals(2, $draw->getLastExtGStateID());
     }
 
     /**
@@ -105,6 +107,13 @@ class BaseTest extends TestUtil
             ' /Pattern << /p1 13 0 R >>' . "\n"
             . ' /Shading << /Sh1 12 0 R >>' . "\n",
             $res
+        );
+
+        $resx = $draw->getOutGradientResourcesByKeys([1]);
+        $this->assertEquals(
+            ' /Pattern << /p1 13 0 R >>' . "\n"
+            . ' /Shading << /Sh1 12 0 R >>' . "\n",
+            $resx
         );
     }
 
@@ -157,6 +166,12 @@ class BaseTest extends TestUtil
         $this->assertEquals(
             ' /ExtGState << /GS1 1 0 R /GS2 2 0 R /TGS1 20 0 R >>' . "\n",
             $res
+        );
+
+        $resx = $draw->getOutExtGStateResourcesByKeys([1,2]);
+        $this->assertEquals(
+            ' /ExtGState << /GS1 1 0 R /GS2 2 0 R >>' . "\n",
+            $resx
         );
     }
 

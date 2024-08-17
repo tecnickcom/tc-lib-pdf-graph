@@ -248,7 +248,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
     }
 
     /**
-     * Get a color gradient command.
+     * Get a color gradient PDF command.
      *
      * @param int               $type      Type of gradient (Not all types are currently supported):
      *                                     1 = Function-based shading; 2 = Axial shading; 3 = Radial
@@ -317,6 +317,16 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         $out .= '/Sh' . $ngr . ' sh' . "\n";
 
         return $out;
+    }
+
+    /**
+     * Returns the last gradient ID to be used with XOBjects.
+     *
+     * @return ?int
+     */
+    public function getLastGradientID(): ?int
+    {
+        return array_key_last($this->gradients);
     }
 
     /**
