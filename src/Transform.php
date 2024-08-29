@@ -28,6 +28,8 @@ use Com\Tecnick\Pdf\Graph\Exception as GraphException;
  * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
  * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
+ *
+ * @phpstan-import-type TTMatrix from \Com\Tecnick\Pdf\Graph\Base
  */
 abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
 {
@@ -40,14 +42,14 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
      * Array (stack) of Current Transformation Matrix (CTM),
      * which maps user space coordinates used within a PDF content stream into output device coordinates.
      *
-     * @var array<int, array<int, array<float>>>
+     * @var array<int, array<int, TTMatrix>>
      */
     protected array $ctm = [];
 
     /**
      * Returns the transformation stack.
      *
-     * @return array<int, array<int, array<float>>>
+     * @return array<int, array<int, TTMatrix>>
      */
     public function getTransformStack(): array
     {
@@ -92,7 +94,7 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
     /**
      * Get the tranformation matrix (CTM) PDF string
      *
-     * @param array<float> $ctm Transformation matrix array.
+     * @param TTMatrix $ctm Transformation matrix array.
      */
     public function getTransformation(array $ctm): string
     {
@@ -336,10 +338,10 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
     /**
      * Get the product of two Tranformation Matrix.
      *
-     * @param array<float> $tma First  Tranformation Matrix.
-     * @param array<float> $tmb Second Tranformation Matrix.
+     * @param TTMatrix $tma First  Tranformation Matrix.
+     * @param TTMatrix $tmb Second Tranformation Matrix.
      *
-     * @return array<float> CTM Transformation Matrix.
+     * @return TTMatrix CTM Transformation Matrix.
      */
     public function getCtmProduct(array $tma, array $tmb): array
     {

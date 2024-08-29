@@ -30,6 +30,15 @@ use Com\Tecnick\Pdf\Encrypt\Encrypt;
  * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  *
+ * @phpstan-type TTMatrix array{
+ *          float,
+ *          float,
+ *          float,
+ *          float,
+ *          float,
+ *          float,
+ *       }
+ *
  * @phpstan-type StyleData array{
  *          'lineWidth': float,
  *          'lineCap': string,
@@ -81,6 +90,13 @@ abstract class Base
      * @var float
      */
     public const MPI = 3.14159265358979323846264338327950288419716939937510;
+
+    /**
+     * Identity matrix for transformations.
+     *
+     * @var TTMatrix
+     */
+    public const IDMATRIX = [1.0, 0.0, 0.0, 1.0, 0.0, 0.0];
 
     /**
      * Current PDF object number
