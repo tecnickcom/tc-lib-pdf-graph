@@ -344,15 +344,19 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
      * Returns the angle in radiants between two vectors with the same origin point.
      * Angles are counted counter-clock wise.
      *
-     * @param int $posx1 X coordinate of first vector point.
-     * @param int $posy1 Y coordinate of first vector point.
-     * @param int $posx2 X coordinate of second vector point.
-     * @param int $posy2 Y coordinate of second vector point.
+     * @param float $posx1 X coordinate of first vector point.
+     * @param float $posy1 Y coordinate of first vector point.
+     * @param float $posx2 X coordinate of second vector point.
+     * @param float $posy2 Y coordinate of second vector point.
      *
      * @return float Angle in radiants
      */
-    public function getVectorsAngle(int $posx1, int $posy1, int $posx2, int $posy2): float
-    {
+    public function getVectorsAngle(
+        float $posx1,
+        float $posy1,
+        float $posx2,
+        float $posy2,
+    ): float {
         $dprod = (($posx1 * $posx2) + ($posy1 * $posy2));
         $dist1 = sqrt(($posx1 * $posx1) + ($posy1 * $posy1));
         $dist2 = sqrt(($posx2 * $posx2) + ($posy2 * $posy2));
