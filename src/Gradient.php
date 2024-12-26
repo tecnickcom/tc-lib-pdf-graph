@@ -846,7 +846,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      * (Check the "Entries in a Graphics State Parameter Dictionary" on PDF 32000-1:2008).
      *
      * @param bool $stroking    If true apply overprint for stroking operations.
-     * @param bool $nonstroking If true apply overprint for painting operations other than stroking.
+     * @param bool|null $nonstroking If true apply overprint for painting operations other than stroking.
      * @param int  $mode        Overprint mode:
      *                          0 = each source
      *                          colour
@@ -873,7 +873,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      */
     public function getOverprint(
         bool $stroking = true,
-        bool $nonstroking = null,
+        ?bool $nonstroking = null,
         int $mode = 0
     ): string {
         if ($nonstroking === null) {
