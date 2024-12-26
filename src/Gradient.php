@@ -32,7 +32,7 @@ use Com\Tecnick\Pdf\Graph\Exception as GraphException;
  * @phpstan-import-type GradientData from \Com\Tecnick\Pdf\Graph\Base
  * @phpstan-import-type StyleDataOpt from \Com\Tecnick\Pdf\Graph\Base
  *
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings("PHPMD.ExcessiveClassComplexity")
  */
 abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
 {
@@ -406,8 +406,8 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      *
      * @return string PDF command
      *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
+     * @SuppressWarnings("PHPMD.ExcessiveMethodLength")
      */
     public function getCoonsPatchMeshWithCoords(
         float $posx,
@@ -608,9 +608,9 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      *
      * @return string PDF command
      *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
+     * @SuppressWarnings("PHPMD.ExcessiveMethodLength")
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity")
      */
     public function getCoonsPatchMesh(
         float $posx,
@@ -688,7 +688,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      *
      * @return string PDF command
      *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity")
      */
     public function getColorRegistrationBar(
         float $posx,

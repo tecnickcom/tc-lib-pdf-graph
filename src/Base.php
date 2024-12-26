@@ -79,7 +79,7 @@ use Com\Tecnick\Pdf\Encrypt\Encrypt;
  *          'type': int,
  *      }
  *
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings("PHPMD.ExcessiveClassComplexity")
  */
 abstract class Base
 {
@@ -136,7 +136,7 @@ abstract class Base
      * @var array<int, array{
      *          'n': int,
      *          'name': string,
-     *          'parms': array<string, mixed>,
+     *          'parms': array<string, int|float|bool|string>,
      *      }>
      */
     protected array $extgstates = [];
@@ -283,7 +283,7 @@ abstract class Base
                     $val = 'false';
                 }
 
-                $out .= ' /' . $key . ' ' . $val;
+                $out .= ' /' .  $key . ' ' . $val;
             }
 
             $out .= ' >>' . "\n"
@@ -435,7 +435,7 @@ abstract class Base
      *
      * @return string PDF command
      *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity")
      */
     protected function getOutGradientCols(array $grad, string $type): string
     {

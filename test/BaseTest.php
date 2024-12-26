@@ -70,7 +70,7 @@ class BaseTest extends TestUtil
     }
 
     /**
-     * @SuppressWarnings(PHPMD.LongVariable)
+     * @SuppressWarnings("PHPMD.LongVariable")
      */
     public function testGetOutExtGStateResourcesEmpty(): void
     {

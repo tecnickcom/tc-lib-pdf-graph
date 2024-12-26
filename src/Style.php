@@ -31,7 +31,7 @@ use Com\Tecnick\Pdf\Graph\Exception as GraphException;
  *
  * @phpstan-import-type StyleDataOpt from \Com\Tecnick\Pdf\Graph\Base
  *
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings("PHPMD.ExcessiveClassComplexity")
  */
 abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
 {
@@ -271,14 +271,16 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      * Returns the last set value of the specified property.
      *
      * @param string $property Property to search.
-     * @param mixed  $default  Default value to return in case the property is not found.
+     * @param int|float|bool|string|null  $default  Default value to return in case the property is not found.
      *
-     * @return mixed Property value or $default in case the property is not found.
+     * @return int|float|bool|string|null Property value or $default in case the property is not found.
      */
-    public function getLastStyleProperty(string $property, mixed $default = null): mixed
-    {
+    public function getLastStyleProperty(
+        string $property,
+        int|float|bool|string|null $default = null
+    ): int|float|bool|string|null {
         for ($idx = $this->styleid; $idx >= 0; --$idx) {
-            if (isset($this->style[$idx][$property])) {
+            if (isset($this->style[$idx][$property]) && !is_array($this->style[$idx][$property])) {
                 return $this->style[$idx][$property];
             }
         }
@@ -338,7 +340,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      *
      * @param StyleDataOpt $style Style to represent.
      *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity")
      */
     protected function getLineModeCmd(array $style = []): string
     {
@@ -425,7 +427,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function isFillingMode(string $mode): bool
     {
-        return (isset(self::PPOPMAP[$mode]) && self::PPOPMAP[$mode] !== ''
+        return (isset(self::PPOPMAP[$mode])
             && (isset(self::MODEFILLING[self::PPOPMAP[$mode]])
             || $this->isClippingMode($mode))
         );
@@ -438,7 +440,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function isStrokingMode(string $mode): bool
     {
-        return (isset(self::PPOPMAP[$mode]) && self::PPOPMAP[$mode] !== ''
+        return (isset(self::PPOPMAP[$mode])
             && isset(self::MODESTROKING[self::PPOPMAP[$mode]])
         );
     }
@@ -450,7 +452,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function isClosingMode(string $mode): bool
     {
-        return (isset(self::PPOPMAP[$mode]) && self::PPOPMAP[$mode] !== ''
+        return (isset(self::PPOPMAP[$mode])
             && (isset(self::MODECLOSING[self::PPOPMAP[$mode]])
             || $this->isClippingMode($mode))
         );
@@ -463,7 +465,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function isClippingMode(string $mode): bool
     {
-        return (isset(self::PPOPMAP[$mode]) && self::PPOPMAP[$mode] !== ''
+        return (isset(self::PPOPMAP[$mode])
             && isset(self::MODECLIPPING[self::PPOPMAP[$mode]])
         );
     }
@@ -477,7 +479,6 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     {
         if (
             isset(self::PPOPMAP[$mode])
-            && (self::PPOPMAP[$mode] !== '')
             && isset(self::MODETONOCLOSE[self::PPOPMAP[$mode]])
         ) {
             return self::MODETONOCLOSE[self::PPOPMAP[$mode]];
@@ -495,7 +496,6 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     {
         if (
             isset(self::PPOPMAP[$mode])
-            && (self::PPOPMAP[$mode] !== '')
             && isset(self::MODETONOFILL[self::PPOPMAP[$mode]])
         ) {
             return self::MODETONOFILL[self::PPOPMAP[$mode]];
@@ -513,7 +513,6 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     {
         if (
             isset(self::PPOPMAP[$mode])
-            && (self::PPOPMAP[$mode] !== '')
             && isset(self::MODETONOSTROKE[self::PPOPMAP[$mode]])
         ) {
             return self::MODETONOSTROKE[self::PPOPMAP[$mode]];
@@ -525,7 +524,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     /**
      * Add transparency parameters to the current extgstate.
      *
-     * @param array<string, mixed> $parms parameters.
+     * @param array<string, int|float|bool|string> $parms parameters.
      *
      * @return string PDF command.
      */

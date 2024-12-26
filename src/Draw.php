@@ -31,7 +31,7 @@ use Com\Tecnick\Pdf\Graph\Exception as GraphException;
  *
  * @phpstan-import-type StyleDataOpt from \Com\Tecnick\Pdf\Graph\Base
  *
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings("PHPMD.ExcessiveClassComplexity")
  */
 class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
 {
@@ -76,7 +76,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      *
      * @return string PDF command
      *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function getCurve(
         float $posx0,
@@ -142,7 +142,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      *
      * @return string PDF command
      *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function getEllipse(
         float $posx,
@@ -304,8 +304,8 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      *
      * @return string PDF command
      *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity")
+     * @SuppressWarnings("PHPMD.NPathComplexity")
      */
     public function getPolygon(array $points, string $mode = 'S', array $styles = []): string
     {
@@ -423,7 +423,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      *
      * @return string PDF command
      *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function getStarPolygon(
         float $posx,
@@ -516,8 +516,8 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      *
      * @return string PDF command
      *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity")
+     * @SuppressWarnings("PHPMD.NPathComplexity")
      */
     public function getRoundedRect(
         float $posx,
@@ -536,7 +536,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         }
 
         $out = $this->getStyleCmd($style);
-        if ($corner[3] !== '' && $corner[3] !== '0') {
+        if ($corner[3] !== '0') {
             $out .= $this->getRawPoint(($posx + $hrad), $posy);
         } else {
             $out .= $this->getRawPoint($posx, $posy);
@@ -549,7 +549,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         $harc = ($hrad * $arc);
         $varc = ($vrad * $arc);
 
-        if ($corner[0] !== '' && $corner[0] !== '0') {
+        if ($corner[0] !== '0') {
             $out .= $this->getRawCurve(
                 ($posxc + $harc),
                 ($posyc - $vrad),
@@ -566,7 +566,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         $posyc = ($posy + $height - $vrad);
         $out .= $this->getRawLine(($posx + $width), $posyc);
 
-        if ($corner[1] !== '' && $corner[1] !== '0') {
+        if ($corner[1] !== '0') {
             $out .= $this->getRawCurve(
                 ($posxc + $hrad),
                 ($posyc + $varc),
@@ -583,7 +583,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         $posyc = ($posy + $height - $vrad);
         $out .= $this->getRawLine($posxc, ($posy + $height));
 
-        if ($corner[2] !== '' && $corner[2] !== '0') {
+        if ($corner[2] !== '0') {
             $out .= $this->getRawCurve(
                 ($posxc - $harc),
                 ($posyc + $vrad),
@@ -600,7 +600,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         $posyc = ($posy + $vrad);
         $out .= $this->getRawLine($posx, $posyc);
 
-        if ($corner[3] !== '' && $corner[3] !== '0') {
+        if ($corner[3] !== '0') {
             $out .= $this->getRawCurve(
                 ($posxc - $hrad),
                 ($posyc - $varc),
@@ -659,7 +659,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         if ($headmode > 0) {
             // calculate the stopping point for the arrow shaft
             $linewidth = 0;
-            $linewidth = $style['lineWidth'] ?? $this->getLastStyleProperty('lineWidth', $linewidth);
+            $linewidth = $style['lineWidth'] ?? (float) $this->getLastStyleProperty('lineWidth', $linewidth);
 
             $sx1 = ($posx1 + (($armsize - $linewidth) * cos($dir_angle)));
             $sy1 = ($posy1 + (($armsize - $linewidth) * sin($dir_angle)));
