@@ -409,14 +409,9 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function getPathPaintOp(string $mode, string $default = 'S'): string
     {
-        if (! isset(self::PPOPMAP[$mode])) {
-            $mode = $default;
+        if (empty($mode) || !isset(self::PPOPMAP[$mode])) {
+            return isset(self::PPOPMAP[$default]) ? self::PPOPMAP[$default] . "\n" : '';
         }
-
-        if (! isset(self::PPOPMAP[$mode])) {
-            return '';
-        }
-
         return self::PPOPMAP[$mode] . "\n";
     }
 
