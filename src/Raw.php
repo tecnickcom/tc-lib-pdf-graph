@@ -69,17 +69,23 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
      * Append a rectangle to the current path as a complete subpath,
      * with lower-left corner in the specified point and dimensions width and height in user units.
      *
-     * @param float $posx   Abscissa of upper-left corner.
-     * @param float $posy   Ordinate of upper-left corner.
-     * @param float $width  Width.
-     * @param float $height Height.
+     * @param float  $posx   Abscissa of upper-left corner.
+     * @param float  $posy   Ordinate of upper-left corner.
+     * @param float  $width  Width.
+     * @param float  $height Height.
+     * @param string $mode   Mode of rendering. @see getPathPaintOp()
      *
      * @return string PDF command
      */
-    public function getRawRect(float $posx, float $posy, float $width, float $height): string
-    {
+    public function getRawRect(
+        float $posx,
+        float $posy,
+        float $width,
+        float $height,
+        string $mode = ''
+    ): string {
         return sprintf(
-            '%F %F %F %F re' . "\n",
+            '%F %F %F %F re' . "\n" . $this->getPathPaintOp($mode, ''),
             ($posx * $this->kunit),
             (($this->pageh - $posy) * $this->kunit),
             ($width * $this->kunit),
