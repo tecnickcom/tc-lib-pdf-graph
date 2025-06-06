@@ -102,8 +102,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         array $style = []
     ): string {
         return $this->getStyleCmd($style)
-            . $this->getRawRect($posx, $posy, $width, $height)
-            . $this->getPathPaintOp($mode);
+            . $this->getRawRect($posx, $posy, $width, $height, $mode);
     }
 
     /**
@@ -214,16 +213,12 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      * @param float $posy   Ordinate of the top left corner of the rectangle.
      * @param float $width  Width of the rectangle.
      * @param float $height Height of the rectangle.
+     * @param bool  $eoclip If true, set clipping path using even-odd rule.
      */
-    public function getClippingRect(float $posx, float $posy, float $width, float $height): string
+    public function getClippingRect(float $posx, float $posy, float $width, float $height, bool $eoclip = false): string
     {
-        return sprintf(
-            '%F %F %F %F re W n' . "\n",
-            ($posx * $this->kunit),
-            (($this->pageh - $posy) * $this->kunit),
-            ($width * $this->kunit),
-            (-$height * $this->kunit)
-        );
+        $mode = $eoclip ? 'CEO' : 'CNZ';
+        return $this->getRawRect($posx, $posy, $width, $height, $mode);
     }
 
     /**
