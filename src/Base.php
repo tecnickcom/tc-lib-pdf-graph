@@ -605,6 +605,7 @@ abstract class Base
             if ($gcol !== '') {
                 $out .= $gcol;
                 $this->gradients[$idx]['id'] = ($this->pon - 1);
+                // @phpstan-ignore assign.propertyType
                 $this->gradients[$idx]['pattern'] = $this->pon;
             }
 
@@ -613,7 +614,9 @@ abstract class Base
 
             if ($gopa !== '') {
                 $out .= $gopa;
+                // @phpstan-ignore assign.propertyType
                 $this->gradients[$idgs]['id'] = ($this->pon - 1);
+                // @phpstan-ignore assign.propertyType
                 $this->gradients[$idgs]['pattern'] = $this->pon;
             }
 
