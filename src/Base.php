@@ -666,7 +666,7 @@ abstract class Base
 
                 // ExtGState
                 $objext = ++$this->pon;
-                $out .= ++$objext . ' 0 obj' . "\n"
+                $out .= $objext . ' 0 obj' . "\n"
                     . '<<'
                     . ' /Type /ExtGState'
                     . ' /SMask ' . $objsm . ' 0 R'

@@ -164,7 +164,7 @@ class BaseTest extends TestUtil
 
         $res = $draw->getOutExtGStateResources();
         $this->assertEquals(
-            ' /ExtGState << /GS1 1 0 R /GS2 2 0 R /TGS1 20 0 R >>' . "\n",
+            ' /ExtGState << /GS1 1 0 R /GS2 2 0 R /TGS1 19 0 R >>' . "\n",
             $res
         );
 
