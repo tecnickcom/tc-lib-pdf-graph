@@ -210,7 +210,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     public function add(array $style = [], bool $inheritlast = false): string
     {
         if ($inheritlast) {
-            $style = array_merge($this->style[$this->styleid], $style);
+            $style = \array_merge($this->style[$this->styleid], $style);
         }
 
         $this->style[++$this->styleid] = $style;
@@ -247,14 +247,14 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function restoreStyleStatus(): void
     {
-        $styleid = array_pop($this->stylemark);
+        $styleid = \array_pop($this->stylemark);
         if ($styleid === null) {
             $styleid = 0;
         }
 
         $this->styleid = $styleid;
 
-        $this->style = array_slice($this->style, 0, ($this->styleid + 1), true);
+        $this->style = \array_slice($this->style, 0, ($this->styleid + 1), true);
     }
 
     /**
@@ -280,7 +280,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
         int|float|bool|string|null $default = null
     ): int|float|bool|string|null {
         for ($idx = $this->styleid; $idx >= 0; --$idx) {
-            if (isset($this->style[$idx][$property]) && !is_array($this->style[$idx][$property])) {
+            if (isset($this->style[$idx][$property]) && !\is_array($this->style[$idx][$property])) {
                 return $this->style[$idx][$property];
             }
         }
@@ -319,7 +319,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     {
         $out = '';
         if (isset($style['lineWidth'])) {
-            $out .= sprintf('%F w' . "\n", ($style['lineWidth'] * $this->kunit));
+            $out .= \sprintf('%F w' . "\n", ($style['lineWidth'] * $this->kunit));
         }
 
         $out .= $this->getLineModeCmd($style);
@@ -355,20 +355,20 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
         }
 
         if (isset($style['miterLimit'])) {
-            $out .= sprintf('%F M' . "\n", ($style['miterLimit'] * $this->kunit));
+            $out .= \sprintf('%F M' . "\n", ($style['miterLimit'] * $this->kunit));
         }
 
         if (isset($style['dashArray'])) {
             $dash = [];
             foreach ($style['dashArray'] as $val) {
-                $dash[] = sprintf('%F', ((float) $val * $this->kunit));
+                $dash[] = \sprintf('%F', ((float) $val * $this->kunit));
             }
 
             if (! isset($style['dashPhase'])) {
                 $style['dashPhase'] = 0;
             }
 
-            return $out .= sprintf('[%s] %F d' . "\n", implode(' ', $dash), $style['dashPhase']);
+            return $out .= \sprintf('[%s] %F d' . "\n", \implode(' ', $dash), $style['dashPhase']);
         }
 
         return $out;
@@ -529,7 +529,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
             return '';
         }
 
-        $gsx = (count($this->extgstates) + 1);
+        $gsx = (\count($this->extgstates) + 1);
         // check if this ExtGState already exist
         foreach ($this->extgstates as $idx => $ext) {
             if ($ext['parms'] == $parms) {

@@ -99,7 +99,7 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
     public function getTransformation(array $ctm): string
     {
         $this->ctm[$this->ctmid][] = $ctm;
-        return sprintf('%F %F %F %F %F %F cm' . "\n", $ctm[0], $ctm[1], $ctm[2], $ctm[3], $ctm[4], $ctm[5]);
+        return \sprintf('%F %F %F %F %F %F cm' . "\n", $ctm[0], $ctm[1], $ctm[2], $ctm[3], $ctm[4], $ctm[5]);
     }
 
     /**
@@ -180,8 +180,8 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
         $posy = (($this->pageh - $posy) * $this->kunit);
         $posx *= $this->kunit;
         $ctm = [];
-        $ctm[0] = cos($this->degToRad($angle));
-        $ctm[1] = sin($this->degToRad($angle));
+        $ctm[0] = \cos($this->degToRad($angle));
+        $ctm[1] = \sin($this->degToRad($angle));
         $ctm[2] = -$ctm[1];
         $ctm[3] = $ctm[0];
         $ctm[4] = ($posx + ($ctm[1] * $posy) - ($ctm[0] * $posx));
@@ -299,8 +299,8 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
         $posx *= $this->kunit;
         $ctm = [];
         $ctm[0] = 1;
-        $ctm[1] = tan($this->degToRad($angy));
-        $ctm[2] = tan($this->degToRad($angx));
+        $ctm[1] = \tan($this->degToRad($angy));
+        $ctm[2] = \tan($this->degToRad($angx));
         $ctm[3] = 1;
         $ctm[4] = (-$ctm[2] * $posy);
         $ctm[5] = (-$ctm[1] * $posx);

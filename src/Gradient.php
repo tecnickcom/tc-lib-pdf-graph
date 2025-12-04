@@ -285,7 +285,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             throw new GraphException('Invalid color');
         }
 
-        $ngr = (1 + count($this->gradients));
+        $ngr = (1 + \count($this->gradients));
         $this->gradients[$ngr] = $this->getGradientStops(
             [
                 'antialias' => $antialias,
@@ -321,7 +321,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      */
     public function getLastGradientID(): ?int
     {
-        return array_key_last($this->gradients);
+        return \array_key_last($this->gradients);
     }
 
     /**
@@ -342,7 +342,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      */
     protected function getGradientStops(array $grad, array $stops): array
     {
-        $num_stops = count($stops);
+        $num_stops = \count($stops);
         $last_stop_id = ($num_stops - 1);
 
         foreach ($stops as $key => $stop) {
@@ -621,7 +621,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             return '';
         }
 
-        $ngr = (1 + count($this->gradients));
+        $ngr = (1 + \count($this->gradients));
         $this->gradients[$ngr] = [
             'antialias' => $antialias,
             'colors' => [],
@@ -638,26 +638,26 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         $bpcd = 65535; // 16 bits per coordinate
 
         foreach ($patch_array as $par) {
-            $this->gradients[$ngr]['stream'] .= chr($par['f']); // start with the edge flag as 8 bit
+            $this->gradients[$ngr]['stream'] .= \chr($par['f']); // start with the edge flag as 8 bit
             foreach ($par['points'] as $point) {
                 // each point as 16 bit
-                $point = floor(
-                    max(
+                $point = \floor(
+                    \max(
                         0,
-                        min(
+                        \min(
                             $bpcd,
                             ((($point - $coords_min) / ($coords_max - $coords_min)) * $bpcd)
                         )
                     )
                 );
-                $this->gradients[$ngr]['stream'] .= chr((int) floor($point / 256)) . chr((int) floor($point % 256));
+                $this->gradients[$ngr]['stream'] .= \chr((int) \floor($point / 256)) . \chr((int) \floor($point % 256));
             }
 
             foreach ($par['colors'] as $color) {
                 // each color component as 8 bit
-                $this->gradients[$ngr]['stream'] .= chr((int) floor($color['red'] * 255))
-                . chr((int) floor($color['green'] * 255))
-                . chr((int) floor($color['blue'] * 255));
+                $this->gradients[$ngr]['stream'] .= \chr((int) \floor($color['red'] * 255))
+                . \chr((int) \floor($color['green'] * 255))
+                . \chr((int) \floor($color['blue'] * 255));
             }
         }
 
@@ -710,7 +710,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             ['cmyk(0%,0%,0,100%)', 'cmyk(0%,0%,0,0%)'],
         ]
     ): string {
-        $numbars = count($colors);
+        $numbars = \count($colors);
         if ($numbars <= 0) {
             return '';
         }
@@ -785,7 +785,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         string $type = 'TBLR',
         array $style = []
     ): string {
-        $crops = array_unique(str_split(strtoupper($type), 1));
+        $crops = \array_unique(\str_split(\strtoupper($type), 1));
         $space_ratio = 4;
         $dhw = ($width / $space_ratio);  // horizontal space to leave before the intersection point
         $dvh = ($height / $space_ratio); // vertical space to leave before the intersection point
@@ -879,7 +879,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             [
                 'OP' => $stroking,
                 'op' => $nonstroking,
-                'OPM' => max(0, min(1, $mode)),
+                'OPM' => \max(0, \min(1, $mode)),
             ]
         );
     }
@@ -914,7 +914,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
 
         if ($bmv[0] == '/') {
             // remove trailing slash
-            $bmv = substr($bmv, 1);
+            $bmv = \substr($bmv, 1);
         }
 
         if (! isset(self::BLENDMODE[$bmv])) {
