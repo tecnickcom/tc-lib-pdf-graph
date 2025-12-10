@@ -101,10 +101,30 @@ class TransformTest extends TestUtil
             new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
             false
         );
-        $draw->setPageHeight(100);
+        $prev = $draw->setPageHeight(100);
+        $this->assertEquals(0, (int)$prev);
         $this->assertEquals('q' . "\n", $draw->getStartTransform());
         $this->assertEquals(
             '3.000000 0.000000 0.000000 5.000000 -14.000000 -356.000000 cm' . "\n",
+            $draw->getScaling(3, 5, 7, 11)
+        );
+    }
+
+    public function testSetPageWidth(): void
+    {
+        $draw = new \Com\Tecnick\Pdf\Graph\Draw(
+            1,
+            0,
+            0,
+            new \Com\Tecnick\Color\Pdf(),
+            new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
+            false
+        );
+        $prev = $draw->setPageWidth(100);
+        $this->assertEquals(0, (int)$prev);
+        $this->assertEquals('q' . "\n", $draw->getStartTransform());
+        $this->assertEquals(
+            '3.000000 0.000000 0.000000 5.000000 -14.000000 44.000000 cm' . "\n",
             $draw->getScaling(3, 5, 7, 11)
         );
     }

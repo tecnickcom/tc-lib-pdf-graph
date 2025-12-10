@@ -227,25 +227,31 @@ abstract class Base
     }
 
     /**
-     * Set page height
+     * Set page height and returns previous value.
      *
-     * @param float $pageh Page height
+     * @param float $pageh Page height.
+     *
+     * @return float previous page height value.
      */
-    public function setPageHeight(float $pageh): static
+    public function setPageHeight(float $pageh): float
     {
+        $ret = $this->pageh;
         $this->pageh = $pageh;
-        return $this;
+        return $ret;
     }
 
     /**
-     * Set page width
+     * Set page width and returns previous value.
      *
-     * @param float $pagew Page width
+     * @param float $pagew Page width.
+     *
+     * @return float previous page width value.
      */
-    public function setPageWidth(float $pagew): static
+    public function setPageWidth(float $pagew): float
     {
+        $ret = $this->pagew;
         $this->pagew = $pagew;
-        return $this;
+        return $ret;
     }
 
     /**
