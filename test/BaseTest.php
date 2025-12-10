@@ -109,6 +109,9 @@ class BaseTest extends TestUtil
             $res
         );
 
+        $nres = $draw->getOutGradientResourcesByKeys([]);
+        $this->assertEmpty($nres);
+
         $resx = $draw->getOutGradientResourcesByKeys([1]);
         $this->assertEquals(
             ' /Pattern << /p1 13 0 R >>' . "\n"
@@ -167,6 +170,9 @@ class BaseTest extends TestUtil
             ' /ExtGState << /GS1 1 0 R /GS2 2 0 R /TGS1 19 0 R >>' . "\n",
             $res
         );
+
+        $nres = $draw->getOutExtGStateResourcesByKeys([]);
+        $this->assertEmpty($nres);
 
         $resx = $draw->getOutExtGStateResourcesByKeys([1,2]);
         $this->assertEquals(
