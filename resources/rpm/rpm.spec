@@ -19,9 +19,9 @@ BuildArch: noarch
 Requires:  php(language) >= 8.1.0
 Requires:  php-zlib
 Requires:  php-composer(%{c_vendor}/tc-lib-color) < 3.0.0
-Requires:  php-composer(%{c_vendor}/tc-lib-color) >= 2.3.2
+Requires:  php-composer(%{c_vendor}/tc-lib-color) >= 2.3.3
 Requires:  php-composer(%{c_vendor}/tc-lib-pdf-encrypt) < 3.0.0
-Requires:  php-composer(%{c_vendor}/tc-lib-pdf-encrypt) >= 2.1.26
+Requires:  php-composer(%{c_vendor}/tc-lib-pdf-encrypt) >= 2.1.27
 
 Provides:  php-composer(%{c_vendor}/%{gh_project}) = %{version}
 Provides:  php-%{gh_project} = %{version}
@@ -47,5 +47,5 @@ rm -rf $RPM_BUILD_ROOT
 #%config(noreplace) %{_configpath}*
 
 %changelog
-* Mon Dec 14 2024 Nicola Asuni <info@tecnick.com> 1.0.0-1
+* Mon Dec 14 2026 Nicola Asuni <info@tecnick.com> 1.0.0-1
 - Initial Commit
