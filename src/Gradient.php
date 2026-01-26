@@ -655,9 +655,9 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
 
             foreach ($par['colors'] as $color) {
                 // each color component as 8 bit
-                $this->gradients[$ngr]['stream'] .= \chr((int) \floor($color['red'] * 255))
-                . \chr((int) \floor($color['green'] * 255))
-                . \chr((int) \floor($color['blue'] * 255));
+                $this->gradients[$ngr]['stream'] .= \chr(((int) \floor($color['red'] * 255)) % 256)
+                . \chr(((int) \floor($color['green'] * 255)) % 256)
+                . \chr(((int) \floor($color['blue'] * 255)) % 256);
             }
         }
 
