@@ -258,22 +258,22 @@ class GradientTest extends TestUtil
                 ],
                 'colors' => [
                     0 => [
-                        'red' => 255,
-                        'green' => 255,
+                        'red' => 1,
+                        'green' => 1,
                         'blue' => 0,
                     ],
                     1 => [
                         'red' => 0,
                         'green' => 0,
-                        'blue' => 255,
+                        'blue' => 1,
                     ],
                     2 => [
                         'red' => 0,
-                        'green' => 255,
+                        'green' => 1,
                         'blue' => 0,
                     ],
                     3 => [
-                        'red' => 255,
+                        'red' => 1,
                         'green' => 0,
                         'blue' => 0,
                     ],
@@ -306,9 +306,9 @@ class GradientTest extends TestUtil
                         'blue' => 0,
                     ],
                     1 => [
-                        'red' => 255,
+                        'red' => 1,
                         'green' => 0,
-                        'blue' => 255,
+                        'blue' => 1,
                     ],
                 ],
             ],
@@ -335,8 +335,8 @@ class GradientTest extends TestUtil
                 'colors' => [
                     0 => [
                         'red' => 0,
-                        'green' => 255,
-                        'blue' => 255,
+                        'green' => 1,
+                        'blue' => 1,
                     ],
                     1 => [
                         'red' => 0,
@@ -374,7 +374,7 @@ class GradientTest extends TestUtil
                     1 => [
                         'red' => 0,
                         'green' => 0,
-                        'blue' => 255,
+                        'blue' => 1,
                     ],
                 ],
             ],
