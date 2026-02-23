@@ -638,7 +638,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         $bpcd = 65535; // 16 bits per coordinate
 
         foreach ($patch_array as $par) {
-            $this->gradients[$ngr]['stream'] .= \chr($par['f']); // start with the edge flag as 8 bit
+            $this->gradients[$ngr]['stream'] .= \chr($par['f'] & 0xFF); // start with the edge flag as 8 bit
             foreach ($par['points'] as $point) {
                 // each point as 16 bit
                 $point = \floor(
@@ -650,14 +650,14 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
                         )
                     )
                 );
-                $this->gradients[$ngr]['stream'] .= \chr((int) \floor($point / 256)) . \chr((int) \floor($point % 256));
+                $this->gradients[$ngr]['stream'] .= \chr((int) \floor($point / 256) & 0xFF) . \chr((int) \floor($point % 256) & 0xFF);
             }
 
             foreach ($par['colors'] as $color) {
                 // each color component as 8 bit
-                $this->gradients[$ngr]['stream'] .= \chr((int) \floor($color['red'] * 255))
-                . \chr((int) \floor($color['green'] * 255))
-                . \chr((int) \floor($color['blue'] * 255));
+                $this->gradients[$ngr]['stream'] .= \chr((int) \floor($color['red'] * 255) & 0xFF)
+                . \chr((int) \floor($color['green'] * 255) & 0xFF)
+                . \chr((int) \floor($color['blue'] * 255) & 0xFF);
             }
         }
 
