@@ -212,4 +212,29 @@ class BaseTest extends TestUtil
         $draw->getOutGradientShaders($draw->getObjectNumber());
         $this->assertEquals(4, $draw->getObjectNumber());
     }
+
+    public function testGetOutGradientShadersInvalidColor(): void
+    {
+        $draw = $this->getTestObject();
+        $stops = [
+            [
+                'color' => 'red',
+                'exponent' => 1.0,
+                'opacity' => 1.0,
+            ],
+            [
+                'color' => 'not-a-valid-color',
+                'exponent' => 1.0,
+                'opacity' => 1.0,
+            ],
+            [
+                'color' => 'blue',
+                'exponent' => 1.0,
+                'opacity' => 1.0,
+            ],
+        ];
+        $draw->getGradient(2, [0, 0, 1, 0], $stops, '', false);
+        $res = $draw->getOutGradientShaders($draw->getObjectNumber());
+        $this->assertNotEmpty($res);
+    }
 }

@@ -1074,4 +1074,26 @@ class DrawTest extends TestUtil
             $res
         );
     }
+
+    public function testGetPolygonClippingMode(): void
+    {
+        $draw = $this->getTestObject();
+        $points = [3.0, 5.0, 7.0, 11.0, 13.0, 17.0];
+        $res = $draw->getPolygon($points, 'CNZ');
+        $this->assertEquals(
+            '2.250000 71.250000 m' . "\n"
+            . '5.250000 66.750000 l' . "\n"
+            . '9.750000 62.250000 l' . "\n"
+            . '2.250000 71.250000 l' . "\n"
+            . 'W n' . "\n",
+            $res
+        );
+    }
+
+    public function testGetRegistrationMarkInvalidColor(): void
+    {
+        $this->bcExpectException('\\' . \Com\Tecnick\Pdf\Graph\Exception::class);
+        $draw = $this->getTestObject();
+        $draw->getRegistrationMark(3, 5, 7, false, 'not-a-valid-color');
+    }
 }

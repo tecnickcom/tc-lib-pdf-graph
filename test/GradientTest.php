@@ -651,4 +651,73 @@ class GradientTest extends TestUtil
             $res
         );
     }
+
+    public function testGetGradientInvalidColor(): void
+    {
+        $this->bcExpectException('\\' . \Com\Tecnick\Pdf\Graph\Exception::class);
+        $draw = $this->getTestObject();
+        $stops = [
+            [
+                'color' => 'not-a-valid-color',
+                'exponent' => 1.0,
+                'opacity' => 1.0,
+            ],
+        ];
+        $draw->getGradient(2, [0, 0, 1, 0], $stops, '', false);
+    }
+
+    public function testGetCoonsPatchMeshWithCoordsPdfa(): void
+    {
+        $draw = new \Com\Tecnick\Pdf\Graph\Draw(
+            0.75,
+            80,
+            100,
+            new \Com\Tecnick\Color\Pdf(),
+            new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
+            true
+        );
+        $this->assertEquals('', $draw->getCoonsPatchMeshWithCoords(3, 5, 7, 11));
+    }
+
+    public function testGetCoonsPatchMeshWithCoordsInvalidLowerLeft(): void
+    {
+        $this->bcExpectException('\\' . \Com\Tecnick\Pdf\Graph\Exception::class);
+        $draw = $this->getTestObject();
+        $draw->getCoonsPatchMeshWithCoords(3, 5, 7, 11, 'not-a-valid-color');
+    }
+
+    public function testGetCoonsPatchMeshWithCoordsInvalidLowerRight(): void
+    {
+        $this->bcExpectException('\\' . \Com\Tecnick\Pdf\Graph\Exception::class);
+        $draw = $this->getTestObject();
+        $draw->getCoonsPatchMeshWithCoords(3, 5, 7, 11, 'yellow', 'not-a-valid-color');
+    }
+
+    public function testGetCoonsPatchMeshWithCoordsInvalidUpperRight(): void
+    {
+        $this->bcExpectException('\\' . \Com\Tecnick\Pdf\Graph\Exception::class);
+        $draw = $this->getTestObject();
+        $draw->getCoonsPatchMeshWithCoords(3, 5, 7, 11, 'yellow', 'blue', 'not-a-valid-color');
+    }
+
+    public function testGetCoonsPatchMeshWithCoordsInvalidUpperLeft(): void
+    {
+        $this->bcExpectException('\\' . \Com\Tecnick\Pdf\Graph\Exception::class);
+        $draw = $this->getTestObject();
+        $draw->getCoonsPatchMeshWithCoords(3, 5, 7, 11, 'yellow', 'blue', 'green', 'not-a-valid-color');
+    }
+
+    public function testGetCropMarkInvalidType(): void
+    {
+        $draw = $this->getTestObject();
+        $res = $draw->getCropMark(3, 5, 7, 11, 'TX');
+        $this->assertEquals(
+            'q' . "\n"
+            . '2.250000 79.500000 m' . "\n"
+            . '2.250000 73.312500 l' . "\n"
+            . 'S' . "\n"
+            . 'Q' . "\n",
+            $res
+        );
+    }
 }

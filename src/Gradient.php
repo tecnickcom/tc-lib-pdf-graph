@@ -650,7 +650,8 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
                         )
                     )
                 );
-                $this->gradients[$ngr]['stream'] .= \chr((int) \floor($point / 256) & 0xFF) . \chr((int) \floor($point % 256) & 0xFF);
+                $this->gradients[$ngr]['stream'] .= \chr((int) \floor($point / 256) & 0xFF)
+                    . \chr((int) \floor($point % 256) & 0xFF);
             }
 
             foreach ($par['colors'] as $color) {

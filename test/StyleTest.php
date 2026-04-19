@@ -415,4 +415,24 @@ class StyleTest extends TestUtil
             )
         );
     }
+
+    public function testRestoreStyleStatusNull(): void
+    {
+        $draw = $this->getTestObject();
+        // stylemark starts as [0]; first restore pops that value
+        $draw->restoreStyleStatus();
+        // stylemark is now empty; second restore pops null and falls back to 0
+        $draw->restoreStyleStatus();
+        $this->assertEquals('butt', $draw->getCurrentStyleItem('lineCap'));
+    }
+
+    public function testGetLineModeWithDashArrayNoDashPhase(): void
+    {
+        $draw = $this->getTestObject();
+        $style = [
+            'dashArray' => [3, 5],
+        ];
+        $res = $draw->getStyleCmd($style);
+        $this->assertEquals('[3.000000 5.000000] 0.000000 d' . "\n", $res);
+    }
 }
