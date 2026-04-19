@@ -1,110 +1,115 @@
 # tc-lib-pdf-graph
-*PHP library containing PDF graphic and geometric methods*
+
+> Geometric drawing and transformation primitives for PDF content streams.
 
 [![Latest Stable Version](https://poser.pugx.org/tecnickcom/tc-lib-pdf-graph/version)](https://packagist.org/packages/tecnickcom/tc-lib-pdf-graph)
-![Build](https://github.com/tecnickcom/tc-lib-pdf-graph/actions/workflows/check.yml/badge.svg)
+[![Build](https://github.com/tecnickcom/tc-lib-pdf-graph/actions/workflows/check.yml/badge.svg)](https://github.com/tecnickcom/tc-lib-pdf-graph/actions/workflows/check.yml)
 [![Coverage](https://codecov.io/gh/tecnickcom/tc-lib-pdf-graph/graph/badge.svg?token=LqxfwhPB8G)](https://codecov.io/gh/tecnickcom/tc-lib-pdf-graph)
 [![License](https://poser.pugx.org/tecnickcom/tc-lib-pdf-graph/license)](https://packagist.org/packages/tecnickcom/tc-lib-pdf-graph)
 [![Downloads](https://poser.pugx.org/tecnickcom/tc-lib-pdf-graph/downloads)](https://packagist.org/packages/tecnickcom/tc-lib-pdf-graph)
 
 [![Donate via PayPal](https://img.shields.io/badge/donate-paypal-87ceeb.svg)](https://www.paypal.com/donate/?hosted_button_id=NZUEC5XS8MFBJ)
-*Please consider supporting this project by making a donation via [PayPal](https://www.paypal.com/donate/?hosted_button_id=NZUEC5XS8MFBJ)*
 
-* **category**    Library
-* **package**     \Com\Tecnick\Pdf\Graph
-* **author**      Nicola Asuni <info@tecnick.com>
-* **copyright**   2011-2026 Nicola Asuni - Tecnick.com LTD
-* **license**     https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
-* **link**        https://github.com/tecnickcom/tc-lib-pdf-graph
-* **SRC DOC**     https://tcpdf.org/docs/srcdoc/tc-lib-pdf-graph
+If this library helps your rendering stack, please consider [supporting development via PayPal](https://www.paypal.com/donate/?hosted_button_id=NZUEC5XS8MFBJ).
 
-## Description
+---
 
-PHP library containing PDF graphic and geometric methods.
+## Overview
 
-The initial source code has been derived from [TCPDF](<http://www.tcpdf.org>).
+`tc-lib-pdf-graph` implements low-level drawing operations used to build PDF graphic content.
 
+| | |
+|---|---|
+| **Namespace** | `\Com\Tecnick\Pdf\Graph` |
+| **Author** | Nicola Asuni <info@tecnick.com> |
+| **License** | [GNU LGPL v3](https://www.gnu.org/copyleft/lesser.html) - see [LICENSE](LICENSE) |
+| **API docs** | <https://tcpdf.org/docs/srcdoc/tc-lib-pdf-graph> |
+| **Packagist** | <https://packagist.org/packages/tecnickcom/tc-lib-pdf-graph> |
 
-## Getting started
+---
 
-First, you need to install all development dependencies using [Composer](https://getcomposer.org/):
+## Features
 
-```bash
-$ curl -sS https://getcomposer.org/installer | php
-$ mv composer.phar /usr/local/bin/composer
-```
+### Drawing Primitives
+- Paths, lines, curves, and clipping operations
+- Style handling for stroke/fill combinations
+- Gradient and shading support
 
-This project include a Makefile that allows you to test and build the project with simple commands.
-To see all available options:
+### Transformations
+- Matrix-based geometric transforms
+- Coordinate conversion helpers
+- PDF/A-aware behavior controls
 
-```bash
-make help
-```
+---
 
-To install all the development dependencies:
+## Requirements
 
-```bash
-make deps
-```
+- PHP 8.1 or later
+- Extension: `zlib`
+- Composer
 
-## Running all tests
-
-Before committing the code, please check if it passes all tests using
-
-```bash
-make qa
-```
-
-All artifacts are generated in the target directory.
-
-
-## Example
-
-Examples are located in the `example` directory.
-
-Start a development server (requires PHP 8.0+) using the command:
-
-```
-make server
-```
-
-and point your browser to <http://localhost:8000/index.php>
-
+---
 
 ## Installation
 
-Create a composer.json in your projects root-directory:
-
-```json
-{
-    "require": {
-        "tecnickcom/tc-lib-pdf-graph": "^2.0"
-    }
-}
+```bash
+composer require tecnickcom/tc-lib-pdf-graph
 ```
 
-Or add to an existing project with: 
+---
+
+## Quick Start
+
+```php
+<?php
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+$draw = new \Com\Tecnick\Pdf\Graph\Draw(
+    1.0,
+    210,
+    297,
+    new \Com\Tecnick\Color\Pdf(),
+    new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
+    false
+);
+
+echo $draw->getClippingRect(10, 10, 50, 20);
+```
+
+---
+
+## Development
 
 ```bash
-composer require tecnickcom/tc-lib-pdf-graph ^2.0
+make deps
+make help
+make qa
 ```
 
+---
 
 ## Packaging
 
-This library is mainly intended to be used and included in other PHP projects using Composer.
-However, since some production environments dictates the installation of any application as RPM or DEB packages,
-this library includes make targets for building these packages (`make rpm` and `make deb`).
-The packages are generated under the `target` directory.
-
-When this library is installed using an RPM or DEB package, you can use it your code by including the autoloader:
-```
-require_once ('/usr/share/php/Com/Tecnick/Pdf/Page/autoload.php');
+```bash
+make rpm
+make deb
 ```
 
+For system packages, bootstrap with:
 
+```php
+require_once '/usr/share/php/Com/Tecnick/Pdf/Graph/autoload.php';
+```
 
+---
 
-## Developer(s) Contact
+## Contributing
 
-*2026 Nicola Asuni <info@tecnick.com>
+Contributions are welcome. Please review [CONTRIBUTING.md](CONTRIBUTING.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), and [SECURITY.md](SECURITY.md).
+
+---
+
+## Contact
+
+Nicola Asuni - <info@tecnick.com>
