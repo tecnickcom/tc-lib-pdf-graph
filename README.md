@@ -18,6 +18,8 @@ If this library helps your rendering stack, please consider [supporting developm
 
 `tc-lib-pdf-graph` implements low-level drawing operations used to build PDF graphic content.
 
+It exposes the primitives needed to compose paths and painting operations while keeping the API close to PDF graphics operators. This makes it suitable as a foundation layer for charting, vector drawing, and custom layout engines.
+
 | | |
 |---|---|
 | **Namespace** | `\Com\Tecnick\Pdf\Graph` |

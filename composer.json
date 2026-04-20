@@ -1,11 +1,11 @@
 {
-  "name": "tecnickcom/tc-lib-pdf-graph-graph",
+  "name": "tecnickcom/tc-lib-pdf-graph",
   "description": "PHP library containing PDF graphic and geometric methods",
   "type": "library",
-  "homepage": "http://www.tecnick.com",
+  "homepage": "https://tcpdf.org",
   "license": "LGPL-3.0-or-later",
   "keywords": [
-    "tc-lib-pdf-graph-graph",
+    "tc-lib-pdf-graph",
     "PDF",
     "graphic",
     "geometry",
