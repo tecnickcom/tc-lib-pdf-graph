@@ -72,7 +72,7 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
     {
         $this->saveStyleStatus();
         $this->ctm[++$this->ctmid] = [];
-        return 'q' . "\n";
+        return Base::GSAVE;
     }
 
     /**
@@ -88,7 +88,7 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
         unset($this->ctm[$this->ctmid]);
         --$this->ctmid;
         $this->restoreStyleStatus();
-        return 'Q' . "\n";
+        return Base::GRESTORE;
     }
 
     /**
@@ -202,7 +202,7 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
     }
 
     /**
-     * Verical Mirroring.
+     * Vertical Mirroring.
      *
      * @param float $posy Ordinate of the mirroring line.
      *
@@ -292,7 +292,7 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
     public function getSkewing(float $angx, float $angy, float $posx, float $posy): string
     {
         if (($angx <= -90) || ($angx >= 90) || ($angy <= -90) || ($angy >= 90)) {
-            throw new GraphException('Angle values must be beweeen -90 and +90 degrees.');
+            throw new GraphException('Angle values must be between -90 and +90 degrees.');
         }
 
         $posy = (($this->pageh - $posy) * $this->kunit);

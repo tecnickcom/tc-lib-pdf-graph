@@ -720,4 +720,40 @@ class GradientTest extends TestUtil
             $res
         );
     }
+
+    public function testGetCoonsPatchMeshInvalidCoordsLess(): void
+    {
+        $this->bcExpectException('\\' . \Com\Tecnick\Pdf\Graph\Exception::class);
+        $draw = $this->getTestObject();
+        // coords_max < coords_min must throw
+        $draw->getCoonsPatchMesh(3, 5, 7, 11, [], 1.0, 0.5);
+    }
+
+    public function testGetCoonsPatchMeshInvalidCoordsEqual(): void
+    {
+        $this->bcExpectException('\\' . \Com\Tecnick\Pdf\Graph\Exception::class);
+        $draw = $this->getTestObject();
+        // coords_max == coords_min would cause division by zero
+        $draw->getCoonsPatchMesh(3, 5, 7, 11, [], 1.0, 1.0);
+    }
+
+    public function testGetGradientStopsDefaultsAndAutoOffset(): void
+    {
+        $draw = $this->getTestObject();
+        // middle stop has no explicit offset, exponent, or opacity
+        $stops = [
+            ['color' => 'red',  'offset' => 0.0],
+            ['color' => 'green'],
+            ['color' => 'blue', 'offset' => 1.0],
+        ];
+        $draw->getGradient(2, [0, 0, 1, 0], $stops, '', false);
+        $gradients = $draw->getGradientsArray();
+        $this->assertCount(1, $gradients);
+        $mid = $gradients[1]['colors'][1];
+        // auto-offset for the middle stop should be 0.5
+        $this->bcAssertEqualsWithDelta(0.5, $mid['offset'] ?? -1.0, 0.01);
+        // default exponent and opacity should be applied
+        $this->assertEquals(1, $mid['exponent'] ?? null);
+        $this->assertEquals(1, $mid['opacity'] ?? null);
+    }
 }

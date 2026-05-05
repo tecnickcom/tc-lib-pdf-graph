@@ -621,6 +621,10 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             return '';
         }
 
+        if ($coords_max <= $coords_min) {
+            throw new GraphException('coords_max must be greater than coords_min');
+        }
+
         $ngr = (1 + \count($this->gradients));
         $this->gradients[$ngr] = [
             'antialias' => $antialias,

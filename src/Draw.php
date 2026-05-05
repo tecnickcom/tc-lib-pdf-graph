@@ -263,6 +263,10 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         array $style = [],
     ): string {
         $nco = \count($points); // number of coordinates
+        if ($nco < 4) {
+            return ''; // need at least 2 points (4 coordinates)
+        }
+
         $out = $this->getStyleCmd($style)
             . $this->getRawPoint($points[0], $points[1]);
         for ($idx = 2; $idx < $nco; $idx += 2) {
@@ -285,10 +289,6 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         $out = '';
         if (! empty($styles['all'])) {
             $out .= $this->getStyleCmd($styles['all']);
-        }
-
-        if (empty($styles[0])) {
-            $styles[0] = [];
         }
 
         return $out;

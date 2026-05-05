@@ -172,4 +172,32 @@ class RawTest extends TestUtil
         $res = $draw->getVectorsAngle(1, 0, -1, 0);
         $this->bcAssertEqualsWithDelta(M_PI, $res);
     }
+
+    public function testGetRawEllipticalArcBboxPopulated(): void
+    {
+        $draw = $this->getTestObject();
+        $bbox = [];
+        // full circle: bbox should be fully populated (no sentinel values remaining)
+        $draw->getRawEllipticalArc(3, 5, 7, 11, 0, 0, 360, false, 2, true, true, false, $bbox);
+        $this->assertCount(4, $bbox);
+        $this->assertLessThan(PHP_INT_MAX, $bbox[0]); // min-x was updated
+        $this->assertLessThan(PHP_INT_MAX, $bbox[1]); // min-y was updated
+        $this->assertGreaterThan(PHP_INT_MIN, $bbox[2]); // max-x was updated
+        $this->assertGreaterThan(PHP_INT_MIN, $bbox[3]); // max-y was updated
+    }
+
+    public function testGetRawEllipticalArcBboxNegativeMaxValues(): void
+    {
+        $draw = $this->getTestObject();
+        // Arc from 45° to 90° with centre at (0, 0) and vertical radius 5.
+        // In this range every cy control point is negative (cy = -rdv * sin(ang)).
+        // The PHP_INT_MIN initialisation ensures the max values are updated correctly
+        // even when all sampled points are negative.
+        $bbox = [];
+        $draw->getRawEllipticalArc(0, 0, 7, 5, 0, 45, 90, false, 2, true, true, false, $bbox);
+        $this->assertCount(4, $bbox);
+        $this->assertGreaterThan(PHP_INT_MIN, $bbox[2]); // max-x was updated from sentinel
+        $this->assertGreaterThan(PHP_INT_MIN, $bbox[3]); // max-y was updated from sentinel
+        $this->assertLessThan(0, $bbox[3]);              // all cy values in this arc are < 0
+    }
 }

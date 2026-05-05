@@ -261,7 +261,7 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
             return '';
         }
 
-        $bbox = [PHP_INT_MAX, PHP_INT_MAX, 0, 0];
+        $bbox = [PHP_INT_MAX, PHP_INT_MAX, PHP_INT_MIN, PHP_INT_MIN];
         if ($pie) {
             $out .= $this->getRawPoint($posxc, $posyc); // center of the arc
         }

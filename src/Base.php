@@ -99,6 +99,20 @@ abstract class Base
     public const IDMATRIX = [1.0, 0.0, 0.0, 1.0, 0.0, 0.0];
 
     /**
+     * PDF graphics state save operator.
+     *
+     * @var string
+     */
+    protected const GSAVE = 'q' . "\n";
+
+    /**
+     * PDF graphics state restore operator.
+     *
+     * @var string
+     */
+    protected const GRESTORE = 'Q' . "\n";
+
+    /**
      * Current PDF object number
      */
     protected int $pon = 0;
@@ -122,6 +136,8 @@ abstract class Base
      * Stack index.
      */
     protected int $styleid = -1;
+
+
 
     /**
      * Stack containing style data.

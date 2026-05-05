@@ -1096,4 +1096,13 @@ class DrawTest extends TestUtil
         $draw = $this->getTestObject();
         $draw->getRegistrationMark(3, 5, 7, false, 'not-a-valid-color');
     }
+
+    public function testGetBasicPolygonTooFewPoints(): void
+    {
+        $draw = $this->getTestObject();
+        // empty array: no points at all
+        $this->assertEquals('', $draw->getBasicPolygon([]));
+        // two coordinates = one point, not enough to draw anything
+        $this->assertEquals('', $draw->getBasicPolygon([3, 5]));
+    }
 }
