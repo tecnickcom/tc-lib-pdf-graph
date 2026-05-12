@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Gradient.php
  *
@@ -99,10 +101,9 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         float $width,
         float $height,
         string $mode = 'S',
-        array $style = []
+        array $style = [],
     ): string {
-        return $this->getStyleCmd($style)
-            . $this->getRawRect($posx, $posy, $width, $height, $mode);
+        return $this->getStyleCmd($style) . $this->getRawRect($posx, $posy, $width, $height, $mode);
     }
 
     /**
@@ -117,6 +118,8 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      * @param array<float> $coords     Gradient vector (x1, y1, x2, y2).
      *
      * @return string PDF command
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getLinearGradient(
         float $posx,
@@ -125,32 +128,34 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         float $height,
         string $colorstart,
         string $colorend,
-        array $coords = [0, 0, 1, 0]
+        array $coords = [0, 0, 1, 0],
     ): string {
-        return $this->getStartTransform()
-        . $this->getClippingRect($posx, $posy, $width, $height)
-        . $this->getGradientTransform($posx, $posy, $width, $height)
-        . $this->getGradient(
-            2,
-            $coords,
-            [
+        return (
+            $this->getStartTransform()
+            . $this->getClippingRect($posx, $posy, $width, $height)
+            . $this->getGradientTransform($posx, $posy, $width, $height)
+            . $this->getGradient(
+                2,
+                $coords,
                 [
-                    'color' => $colorstart,
-                    'exponent' => 1.0,
-                    'offset' => 0.0,
-                    'opacity' => 1.0,
+                    [
+                        'color' => $colorstart,
+                        'exponent' => 1.0,
+                        'offset' => 0.0,
+                        'opacity' => 1.0,
+                    ],
+                    [
+                        'color' => $colorend,
+                        'exponent' => 1.0,
+                        'offset' => 1.0,
+                        'opacity' => 1.0,
+                    ],
                 ],
-                [
-                    'color' => $colorend,
-                    'exponent' => 1.0,
-                    'offset' => 1.0,
-                    'opacity' => 1.0,
-                ],
-            ],
-            '',
-            false
-        )
-        . $this->getStopTransform();
+                '',
+                false,
+            )
+            . $this->getStopTransform()
+        );
     }
 
     /**
@@ -170,6 +175,8 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      *                                 of the circle.
      *
      * @return string PDF command
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getRadialGradient(
         float $posx,
@@ -178,32 +185,34 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         float $height,
         string $colorstart,
         string $colorend,
-        array $coords = [0.5, 0.5, 0.5, 0.5, 1]
+        array $coords = [0.5, 0.5, 0.5, 0.5, 1],
     ): string {
-        return $this->getStartTransform()
-        . $this->getClippingRect($posx, $posy, $width, $height)
-        . $this->getGradientTransform($posx, $posy, $width, $height)
-        . $this->getGradient(
-            3,
-            $coords,
-            [
+        return (
+            $this->getStartTransform()
+            . $this->getClippingRect($posx, $posy, $width, $height)
+            . $this->getGradientTransform($posx, $posy, $width, $height)
+            . $this->getGradient(
+                3,
+                $coords,
                 [
-                    'color' => $colorstart,
-                    'exponent' => 1.0,
-                    'offset' => 0.0,
-                    'opacity' => 1.0,
+                    [
+                        'color' => $colorstart,
+                        'exponent' => 1.0,
+                        'offset' => 0.0,
+                        'opacity' => 1.0,
+                    ],
+                    [
+                        'color' => $colorend,
+                        'exponent' => 1.0,
+                        'offset' => 1.0,
+                        'opacity' => 1.0,
+                    ],
                 ],
-                [
-                    'color' => $colorend,
-                    'exponent' => 1.0,
-                    'offset' => 1.0,
-                    'opacity' => 1.0,
-                ],
-            ],
-            '',
-            false
-        )
-        . $this->getStopTransform();
+                '',
+                false,
+            )
+            . $this->getStopTransform()
+        );
     }
 
     /**
@@ -232,12 +241,12 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
     public function getGradientTransform(float $posx, float $posy, float $width, float $height): string
     {
         $ctm = [
-            ($width * $this->kunit),
+            $width * $this->kunit,
             0,
             0,
-            ($height * $this->kunit),
-            ($posx * $this->kunit),
-            (($this->pageh - ($posy + $height)) * $this->kunit),
+            $height * $this->kunit,
+            $posx * $this->kunit,
+            ($this->pageh - ($posy + $height)) * $this->kunit,
         ];
         return $this->getTransformation($ctm);
     }
@@ -268,39 +277,44 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      *                                     shading function to prevent aliasing artifacts.
      *
      * @return string PDF command
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getGradient(
         int $type,
         array $coords,
         array $stops,
         string $bgcolor,
-        bool $antialias = false
+        bool $antialias = false,
     ): string {
         if ($this->pdfa) {
             return '';
         }
 
+        if (!isset($stops[0]['color'])) {
+            throw new GraphException('Invalid gradient stops');
+        }
+
         $model = $this->pdfColor->getColorObject($stops[0]['color']);
-        if (! $model instanceof \Com\Tecnick\Color\Model) {
+        if (!$model instanceof \Com\Tecnick\Color\Model) {
             throw new GraphException('Invalid color');
         }
 
-        $ngr = (1 + \count($this->gradients));
-        $this->gradients[$ngr] = $this->getGradientStops(
-            [
-                'antialias' => $antialias,
-                'background' => $this->pdfColor->getColorObject($bgcolor),
-                'colors' => [],
-                'colspace' => self::COLSPACE[$model->getType()],
-                'coords' => $coords,
-                'id' => 0,
-                'pattern' => 0,
-                'stream' => '',
-                'transparency' => false,
-                'type' => $type,
-            ],
-            $stops
-        );
+        $colspace = self::COLSPACE[$model->getType()] ?? 'DeviceRGB';
+
+        $ngr = 1 + \count($this->gradients);
+        $this->gradients[$ngr] = $this->getGradientStops([
+            'antialias' => $antialias,
+            'background' => $this->pdfColor->getColorObject($bgcolor),
+            'colors' => [],
+            'colspace' => $colspace,
+            'coords' => $coords,
+            'id' => 0,
+            'pattern' => 0,
+            'stream' => '',
+            'transparency' => false,
+            'type' => $type,
+        ], $stops);
 
         $out = '';
         if ($this->gradients[$ngr]['transparency']) {
@@ -343,37 +357,40 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
     protected function getGradientStops(array $grad, array $stops): array
     {
         $num_stops = \count($stops);
-        $last_stop_id = ($num_stops - 1);
+        $last_stop_id = $num_stops - 1;
 
         foreach ($stops as $key => $stop) {
-            $grad['colors'][$key] = [];
-            $grad['colors'][$key]['color'] = $stop['color'];
-            $grad['colors'][$key]['exponent'] = 1;
-            if (isset($stop['exponent'])) {
+            $grad['colors'][$key] = ['color' => $stop['color']];
+            $grad['colors'][$key]['exponent'] = 1.0;
+            if (array_key_exists('exponent', $stop)) {
                 // exponent for the interpolation function
                 $grad['colors'][$key]['exponent'] = $stop['exponent'];
             }
 
-            $grad['colors'][$key]['opacity'] = 1;
-            if (isset($stop['opacity'])) {
+            $grad['colors'][$key]['opacity'] = 1.0;
+            if (array_key_exists('opacity', $stop)) {
                 $grad['colors'][$key]['opacity'] = $stop['opacity'];
-                $grad['transparency'] = ($grad['transparency'] || ($stop['opacity'] < 1));
+                $grad['transparency'] = $grad['transparency'] || $stop['opacity'] < 1.0;
             }
 
             // offset represents a location along the gradient vector
-            if (isset($stop['offset'])) {
-                $grad['colors'][$key]['offset'] = $stop['offset'];
-            } elseif ($key == 0) {
-                $grad['colors'][$key]['offset'] = 0;
-            } elseif ($key == $last_stop_id) {
-                $grad['colors'][$key]['offset'] = 1;
-            } elseif (isset($grad['colors'][($key - 1)]['offset'])) {
-                $offsetstep = ((1.0 - $grad['colors'][($key - 1)]['offset']) / ($num_stops - $key));
-                $grad['colors'][$key]['offset'] = ($grad['colors'][($key - 1)]['offset'] + $offsetstep);
+            $offset = array_key_exists('offset', $stop) ? $stop['offset'] : null;
+            if ($offset === null && $key === 0) {
+                $offset = 0.0;
+            } elseif ($offset === null && $key === $last_stop_id) {
+                $offset = 1.0;
+            } elseif ($offset === null && $key > 0 && array_key_exists('offset', $grad['colors'][$key - 1] ?? [])) {
+                $prevoffset = $grad['colors'][$key - 1]['offset'] ?? 0.0;
+                $offsetstep = (1.0 - $prevoffset) / ($num_stops - $key);
+                $offset = $prevoffset + $offsetstep;
+            }
+
+            if ($offset !== null) {
+                $grad['colors'][$key]['offset'] = $offset;
             }
         }
 
-        return $grad; // @phpstan-ignore-line return.type
+        return $grad;
     }
 
     /**
@@ -403,6 +420,8 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      *
      * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      * @SuppressWarnings("PHPMD.ExcessiveMethodLength")
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getCoonsPatchMeshWithCoords(
         float $posx,
@@ -441,7 +460,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         ],
         float $coords_min = 0.0,
         float $coords_max = 1.0,
-        bool $antialias = false
+        bool $antialias = false,
     ): string {
         if ($this->pdfa) {
             return '';
@@ -483,28 +502,28 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         ];
 
         $colllobj = $this->pdfColor->getColorObject($colll);
-        if (! $colllobj instanceof \Com\Tecnick\Color\Model) {
+        if (!$colllobj instanceof \Com\Tecnick\Color\Model) {
             throw new GraphException('Invalid Lower-Left corner color');
         }
 
         $patch_array[0]['colors'][0] = $colllobj->toRgbArray();
 
         $collrobj = $this->pdfColor->getColorObject($collr);
-        if (! $collrobj instanceof \Com\Tecnick\Color\Model) {
+        if (!$collrobj instanceof \Com\Tecnick\Color\Model) {
             throw new GraphException('Invalid Lower-Right corner color');
         }
 
         $patch_array[0]['colors'][1] = $collrobj->toRgbArray();
 
         $colurobj = $this->pdfColor->getColorObject($colur);
-        if (! $colurobj instanceof \Com\Tecnick\Color\Model) {
+        if (!$colurobj instanceof \Com\Tecnick\Color\Model) {
             throw new GraphException('Invalid Upper-Right corner color');
         }
 
         $patch_array[0]['colors'][2] = $colurobj->toRgbArray();
 
         $colulobj = $this->pdfColor->getColorObject($colul);
-        if (! $colulobj instanceof \Com\Tecnick\Color\Model) {
+        if (!$colulobj instanceof \Com\Tecnick\Color\Model) {
             throw new GraphException('Invalid Upper-Left corner color');
         }
 
@@ -606,6 +625,8 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      * @SuppressWarnings("PHPMD.ExcessiveMethodLength")
      * @SuppressWarnings("PHPMD.CyclomaticComplexity")
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getCoonsPatchMesh(
         float $posx,
@@ -615,7 +636,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         array $patch_array = [],
         float $coords_min = 0.0,
         float $coords_max = 1.0,
-        bool $antialias = false
+        bool $antialias = false,
     ): string {
         if ($this->pdfa) {
             return '';
@@ -625,7 +646,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             throw new GraphException('coords_max must be greater than coords_min');
         }
 
-        $ngr = (1 + \count($this->gradients));
+        $ngr = 1 + \count($this->gradients);
         $this->gradients[$ngr] = [
             'antialias' => $antialias,
             'colors' => [],
@@ -639,38 +660,39 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             'type' => 6, //coons patch mesh
         ];
 
-        $bpcd = 65535; // 16 bits per coordinate
+        $bpcd = 65_535; // 16 bits per coordinate
 
         foreach ($patch_array as $par) {
             $this->gradients[$ngr]['stream'] .= \chr($par['f'] & 0xFF); // start with the edge flag as 8 bit
             foreach ($par['points'] as $point) {
                 // each point as 16 bit
-                $point = \floor(
-                    \max(
-                        0,
-                        \min(
-                            $bpcd,
-                            ((($point - $coords_min) / ($coords_max - $coords_min)) * $bpcd)
-                        )
-                    )
-                );
-                $this->gradients[$ngr]['stream'] .= \chr((int) \floor($point / 256) & 0xFF)
-                    . \chr((int) \floor($point % 256) & 0xFF);
+                $point = \floor(\max(0, \min($bpcd, (($point - $coords_min) / ($coords_max - $coords_min)) * $bpcd)));
+                $this->gradients[$ngr]['stream'] .=
+                    \chr((int) \floor($point / 256) & 0xFF) . \chr((int) \floor($point % 256) & 0xFF);
             }
 
             foreach ($par['colors'] as $color) {
                 // each color component as 8 bit
-                $this->gradients[$ngr]['stream'] .= \chr((int) \floor($color['red'] * 255) & 0xFF)
-                . \chr((int) \floor($color['green'] * 255) & 0xFF)
-                . \chr((int) \floor($color['blue'] * 255) & 0xFF);
+                $red = $color['red'] ?? 0.0;
+                $green = $color['green'] ?? 0.0;
+                $blue = $color['blue'] ?? 0.0;
+                $this->gradients[$ngr]['stream'] .=
+                    \chr((int) \floor($red * 255) & 0xFF)
+                    . \chr((int) \floor($green * 255) & 0xFF)
+                    . \chr((int) \floor($blue * 255) & 0xFF);
             }
         }
 
-        return $this->getStartTransform()
+        return (
+            $this->getStartTransform()
             . $this->getClippingRect($posx, $posy, $width, $height)
             . $this->getGradientTransform($posx, $posy, $width, $height)
-            . '/Sh' . $ngr . ' sh' . "\n"
-            . $this->getStopTransform();
+            . '/Sh'
+            . $ngr
+            . ' sh'
+            . "\n"
+            . $this->getStopTransform()
+        );
     }
 
     /**
@@ -689,6 +711,8 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      * @return string PDF command
      *
      * @SuppressWarnings("PHPMD.CyclomaticComplexity")
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getColorRegistrationBar(
         float $posx,
@@ -698,13 +722,13 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         bool $vertical = false,
         array $colors = [
             // GRAY : black   to white
-            ['g(0%)', 'g(100%)'],
+            ['g(0%)',              'g(100%)'],
             // RGB  : red     to white
-            ['rgb(100%,0%,0%)', 'rgb(100%,100%,100%)'],
+            ['rgb(100%,0%,0%)',    'rgb(100%,100%,100%)'],
             // RGB  : green   to white
-            ['rgb(0%,100%,0%)', 'rgb(100%,100%,100%)'],
+            ['rgb(0%,100%,0%)',    'rgb(100%,100%,100%)'],
             // RGB  : blue    to white
-            ['rgb(0%,0%,100%)', 'rgb(100%,100%,100%)'],
+            ['rgb(0%,0%,100%)',    'rgb(100%,100%,100%)'],
             // CMYK : cyan    to white
             ['cmyk(100%,0%,0,0%)', 'cmyk(0%,0%,0,0%)'],
             // CMYK : magenta to white
@@ -713,7 +737,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             ['cmyk(0%,0%,100,0%)', 'cmyk(0%,0%,0,0%)'],
             // CMYK : black   to white
             ['cmyk(0%,0%,0,100%)', 'cmyk(0%,0%,0,0%)'],
-        ]
+        ],
     ): string {
         $numbars = \count($colors);
         if ($numbars <= 0) {
@@ -721,18 +745,19 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         }
 
         // set bar measures
+        // default (non-vertical)
+        $coords = [0, 0, 1, 0];
+        $wbr = $width;
+        $hbr = $height / $numbars;
+        $xdt = 0.0;
+        $ydt = $hbr;
+
         if ($vertical) {
             $coords = [0, 1, 0, 0]; // coordinates for gradient transition
-            $wbr = ($width / $numbars);  // bar width
-            $hbr = $height;              // bar height
-            $xdt = $wbr;                 // delta x
-            $ydt = 0;                    // delta y
-        } else {
-            $coords = [0, 0, 1, 0];
-            $wbr = $width;
-            $hbr = ($height / $numbars);
-            $xdt = 0;
-            $ydt = $hbr;
+            $wbr = $width / $numbars; // bar width
+            $hbr = $height; // bar height
+            $xdt = $wbr; // delta x
+            $ydt = 0.0; // delta y
         }
 
         $xbr = $posx;
@@ -740,15 +765,12 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
 
         $out = '';
         foreach ($colors as $color) {
-            if (! empty($color) && ! empty($color[0])) {
-                if (! isset($color[1])) {
+            if ($color !== [] && isset($color[0]) && $color[0] !== '') {
+                if (!isset($color[1])) {
                     $color[1] = $color[0];
                 }
 
-                if (($color[0] !== $color[1]) && (! $this->pdfa)) {
-                    // color gradient
-                    $out .= $this->getLinearGradient($xbr, $ybr, $wbr, $hbr, $color[0], $color[1], $coords);
-                } else {
+                if ($color[0] === $color[1] || $this->pdfa) {
                     // colored rectangle
                     $out .= $this->getStartTransform();
 
@@ -757,8 +779,10 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
                         $out .= $colobj->getPdfColor();
                     }
 
-                    $out .= $this->getBasicRect($xbr, $ybr, $wbr, $hbr, 'F')
-                        . $this->getStopTransform();
+                    $out .= $this->getBasicRect($xbr, $ybr, $wbr, $hbr, 'F') . $this->getStopTransform();
+                } else {
+                    // color gradient
+                    $out .= $this->getLinearGradient($xbr, $ybr, $wbr, $hbr, $color[0], $color[1], $coords);
                 }
             }
 
@@ -788,57 +812,62 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         float $width,
         float $height,
         string $type = 'TBLR',
-        array $style = []
+        array $style = [],
     ): string {
         $crops = \array_unique(\str_split(\strtoupper($type), 1));
         $space_ratio = 4;
-        $dhw = ($width / $space_ratio);  // horizontal space to leave before the intersection point
-        $dvh = ($height / $space_ratio); // vertical space to leave before the intersection point
+        $dhw = $width / $space_ratio; // horizontal space to leave before the intersection point
+        $dvh = $height / $space_ratio; // vertical space to leave before the intersection point
 
         $out = '';
         foreach ($crops as $crop) {
+            $draw = true;
+            $posx1 = $posx;
+            $posy1 = $posy;
+            $posx2 = $posx;
+            $posy2 = $posy;
             switch ($crop) {
                 case 'T':
                     $posx1 = $posx;
-                    $posy1 = ($posy - $height);
+                    $posy1 = $posy - $height;
                     $posx2 = $posx;
-                    $posy2 = ($posy - $dvh);
+                    $posy2 = $posy - $dvh;
                     break;
                 case 'B':
                     $posx1 = $posx;
-                    $posy1 = ($posy + $dvh);
+                    $posy1 = $posy + $dvh;
                     $posx2 = $posx;
-                    $posy2 = ($posy + $height);
+                    $posy2 = $posy + $height;
                     break;
                 case 'L':
-                    $posx1 = ($posx - $width);
+                    $posx1 = $posx - $width;
                     $posy1 = $posy;
-                    $posx2 = ($posx - $dhw);
+                    $posx2 = $posx - $dhw;
                     $posy2 = $posy;
                     break;
                 case 'R':
-                    $posx1 = ($posx + $dhw);
+                    $posx1 = $posx + $dhw;
                     $posy1 = $posy;
-                    $posx2 = ($posx + $width);
+                    $posx2 = $posx + $width;
                     $posy2 = $posy;
                     break;
                 default:
-                    continue 2;
+                    $draw = false;
+                    break;
             }
 
-            $out .= $this->getRawPoint($posx1, $posy1)
-                . $this->getRawLine($posx2, $posy2)
-                . $this->getPathPaintOp('S');
+            if (!$draw) {
+                continue;
+            }
+
+            $out .= $this->getRawPoint($posx1, $posy1) . $this->getRawLine($posx2, $posy2) . $this->getPathPaintOp('S');
         }
 
         if ($out === '') {
             return '';
         }
 
-        return $this->getStartTransform()
-            . $this->getStyleCmd($style)
-            . $out
-            . $this->getStopTransform();
+        return $this->getStartTransform() . $this->getStyleCmd($style) . $out . $this->getStopTransform();
     }
 
     /**
@@ -871,22 +900,17 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      *
      * @return string PDF command
      */
-    public function getOverprint(
-        bool $stroking = true,
-        ?bool $nonstroking = null,
-        int $mode = 0
-    ): string {
+    public function getOverprint(bool $stroking = true, ?bool $nonstroking = null, int $mode = 0): string
+    {
         if ($nonstroking === null) {
             $nonstroking = $stroking;
         }
 
-        return $this->getExtGState(
-            [
-                'OP' => $stroking,
-                'op' => $nonstroking,
-                'OPM' => \max(0, \min(1, $mode)),
-            ]
-        );
+        return $this->getExtGState([
+            'OP' => $stroking,
+            'op' => $nonstroking,
+            'OPM' => \max(0, \min(1, $mode)),
+        ]);
     }
 
     /**
@@ -911,28 +935,30 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         float $stroking = 1,
         string $bmv = 'Normal',
         float|string $nonstroking = '',
-        bool $ais = false
+        bool $ais = false,
     ): string {
-        if ($nonstroking == '') {
+        if ($nonstroking === '') {
             $nonstroking = $stroking;
         }
 
-        if ($bmv[0] == '/') {
+        if ($bmv[0] === '/') {
             // remove trailing slash
             $bmv = \substr($bmv, 1);
         }
 
-        if (! isset(self::BLENDMODE[$bmv])) {
+        if (!array_key_exists($bmv, self::BLENDMODE)) {
             $bmv = 'Normal';
         }
 
-        return $this->getExtGState(
-            [
-                'CA' => $stroking,
-                'ca' => (float) $nonstroking,
-                'BM' => '/' . $bmv,
-                'AIS' => $ais,
-            ]
-        );
+        if (\is_string($nonstroking)) {
+            $nonstroking = \is_numeric($nonstroking) ? (float) $nonstroking : $stroking;
+        }
+
+        return $this->getExtGState([
+            'CA' => $stroking,
+            'ca' => $nonstroking,
+            'BM' => '/' . $bmv,
+            'AIS' => $ais,
+        ]);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Transform.php
  *
@@ -81,7 +83,7 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
      */
     public function getStopTransform(): string
     {
-        if (! isset($this->ctm[$this->ctmid])) {
+        if (($this->ctm[$this->ctmid] ?? null) === null) {
             return '';
         }
 
@@ -111,16 +113,18 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
      * @param float $posy Ordinate of the scaling center.
      *
      * @return string Transformation string
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getScaling(float $skx, float $sky, float $posx, float $posy): string
     {
-        if (($skx == 0) || ($sky == 0)) {
+        if ($skx === 0.0 || $sky === 0.0) {
             throw new GraphException('Scaling factors must be different than zero');
         }
 
-        $posy = (($this->pageh - $posy) * $this->kunit);
+        $posy = ($this->pageh - $posy) * $this->kunit;
         $posx *= $this->kunit;
-        $ctm = [$skx, 0, 0, $sky, ($posx * (1 - $skx)), ($posy * (1 - $sky))];
+        $ctm = [$skx, 0, 0, $sky, $posx * (1 - $skx), $posy * (1 - $sky)];
         return $this->getTransformation($ctm);
     }
 
@@ -132,6 +136,8 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
      * @param float $posy Ordinate of the scaling center.
      *
      * @return string Transformation string
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getHorizScaling(float $skx, float $posx, float $posy): string
     {
@@ -146,6 +152,8 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
      * @param float $posy Ordinate of the scaling center.
      *
      * @return string Transformation string
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getVertScaling(float $sky, float $posx, float $posy): string
     {
@@ -160,6 +168,8 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
      * @param float $posy Ordinate of the scaling center.
      *
      * @return string Transformation string
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getPropScaling(float $skf, float $posx, float $posy): string
     {
@@ -177,15 +187,15 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
      */
     public function getRotation(float $angle, float $posx, float $posy): string
     {
-        $posy = (($this->pageh - $posy) * $this->kunit);
+        $posy = ($this->pageh - $posy) * $this->kunit;
         $posx *= $this->kunit;
         $ctm = [];
         $ctm[0] = \cos($this->degToRad($angle));
         $ctm[1] = \sin($this->degToRad($angle));
         $ctm[2] = -$ctm[1];
         $ctm[3] = $ctm[0];
-        $ctm[4] = ($posx + ($ctm[1] * $posy) - ($ctm[0] * $posx));
-        $ctm[5] = ($posy - ($ctm[0] * $posy) - ($ctm[1] * $posx));
+        $ctm[4] = $posx + ($ctm[1] * $posy) - ($ctm[0] * $posx);
+        $ctm[5] = $posy - ($ctm[0] * $posy) - ($ctm[1] * $posx);
         return $this->getTransformation($ctm);
     }
 
@@ -195,6 +205,8 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
      * @param float $posx Abscissa of the mirroring line.
      *
      * @return string Transformation string
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getHorizMirroring(float $posx): string
     {
@@ -207,6 +219,8 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
      * @param float $posy Ordinate of the mirroring line.
      *
      * @return string Transformation string
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getVertMirroring(float $posy): string
     {
@@ -220,6 +234,8 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
      * @param float $posy Ordinate of the mirroring point.
      *
      * @return string Transformation string
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getPointMirroring(float $posx, float $posy): string
     {
@@ -234,10 +250,12 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
      * @param float $posy Ordinate of the mirroring point.
      *
      * @return string Transformation string
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getReflection(float $ang, float $posx, float $posy): string
     {
-        return $this->getScaling(-1, 1, $posx, $posy) . $this->getRotation((-2 * ($ang - 90)), $posx, $posy);
+        return $this->getScaling(-1, 1, $posx, $posy) . $this->getRotation(-2 * ($ang - 90), $posx, $posy);
     }
 
     /**
@@ -251,7 +269,7 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
     public function getTranslation(float $trx, float $try): string
     {
         //calculate elements of transformation matrix
-        $ctm = [1, 0, 0, 1, ($trx * $this->kunit), (-$try * $this->kunit)];
+        $ctm = [1, 0, 0, 1, $trx * $this->kunit, -$try * $this->kunit];
         return $this->getTransformation($ctm);
     }
 
@@ -288,22 +306,24 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
      * @param float $posy Ordinate of the skewing center.
      *
      * @return string Transformation string
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getSkewing(float $angx, float $angy, float $posx, float $posy): string
     {
-        if (($angx <= -90) || ($angx >= 90) || ($angy <= -90) || ($angy >= 90)) {
+        if ($angx <= -90 || $angx >= 90 || $angy <= -90 || $angy >= 90) {
             throw new GraphException('Angle values must be between -90 and +90 degrees.');
         }
 
-        $posy = (($this->pageh - $posy) * $this->kunit);
+        $posy = ($this->pageh - $posy) * $this->kunit;
         $posx *= $this->kunit;
         $ctm = [];
         $ctm[0] = 1;
         $ctm[1] = \tan($this->degToRad($angy));
         $ctm[2] = \tan($this->degToRad($angx));
         $ctm[3] = 1;
-        $ctm[4] = (-$ctm[2] * $posy);
-        $ctm[5] = (-$ctm[1] * $posx);
+        $ctm[4] = -$ctm[2] * $posy;
+        $ctm[5] = -$ctm[1] * $posx;
         return $this->getTransformation($ctm);
     }
 
@@ -315,6 +335,8 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
      * @param float $posy Ordinate of the skewing center.
      *
      * @return string Transformation string
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getHorizSkewing(float $angx, float $posx, float $posy): string
     {
@@ -329,6 +351,8 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
      * @param float $posy Ordinate of the skewing center.
      *
      * @return string Transformation string
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getVertSkewing(float $angy, float $posx, float $posy): string
     {
@@ -346,12 +370,12 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
     public function getCtmProduct(array $tma, array $tmb): array
     {
         return [
-            (($tma[0] * $tmb[0]) + ($tma[2] * $tmb[1])),
-            (($tma[1] * $tmb[0]) + ($tma[3] * $tmb[1])),
-            (($tma[0] * $tmb[2]) + ($tma[2] * $tmb[3])),
-            (($tma[1] * $tmb[2]) + ($tma[3] * $tmb[3])),
-            (($tma[0] * $tmb[4]) + ($tma[2] * $tmb[5]) + $tma[4]),
-            (($tma[1] * $tmb[4]) + ($tma[3] * $tmb[5]) + $tma[5]),
+            ($tma[0] * $tmb[0]) + ($tma[2] * $tmb[1]),
+            ($tma[1] * $tmb[0]) + ($tma[3] * $tmb[1]),
+            ($tma[0] * $tmb[2]) + ($tma[2] * $tmb[3]),
+            ($tma[1] * $tmb[2]) + ($tma[3] * $tmb[3]),
+            ($tma[0] * $tmb[4]) + ($tma[2] * $tmb[5]) + $tma[4],
+            ($tma[1] * $tmb[4]) + ($tma[3] * $tmb[5]) + $tma[5],
         ];
     }
 
@@ -365,6 +389,6 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
      */
     public function degToRad(float $deg): float
     {
-        return ($deg * self::MPI / 180);
+        return ($deg * self::MPI) / 180;
     }
 }

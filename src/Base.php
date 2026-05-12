@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Base.php
  *
@@ -89,7 +91,7 @@ abstract class Base
      *
      * @var float
      */
-    public const MPI = 3.14159265358979323846264338327950288419716939937510;
+    public const MPI = 3.141_592_653_589_793_238_462_643_383_279_502_884_197_169_399_375_10;
 
     /**
      * Identity matrix for transformations.
@@ -136,8 +138,6 @@ abstract class Base
      * Stack index.
      */
     protected int $styleid = -1;
-
-
 
     /**
      * Stack containing style data.
@@ -187,7 +187,7 @@ abstract class Base
          */
         protected Encrypt $encrypt,
         protected bool $pdfa = false,
-        protected bool $compress = true
+        protected bool $compress = true,
     ) {
         $this->setKUnit($kunit);
         $this->setPageWidth($pagew);
@@ -212,26 +212,24 @@ abstract class Base
      */
     public function getDefaultStyle(array $style = []): array
     {
-        $def = [
+        return [
             // line thickness in user units
-            'lineWidth' => (1.0 / $this->kunit),
+            'lineWidth' => $style['lineWidth'] ?? (1.0 / $this->kunit),
             // shape of the endpoints for any open path that is stroked
-            'lineCap' => 'butt',
+            'lineCap' => $style['lineCap'] ?? 'butt',
             // shape of joints between connected segments of a stroked path
-            'lineJoin' => 'miter',
+            'lineJoin' => $style['lineJoin'] ?? 'miter',
             // maximum length of mitered line joins for stroked paths
-            'miterLimit' => (10.0 / $this->kunit),
+            'miterLimit' => $style['miterLimit'] ?? (10.0 / $this->kunit),
             // lengths of alternating dashes and gaps
-            'dashArray' => [],
+            'dashArray' => $style['dashArray'] ?? [],
             // distance  at which to start the dash
-            'dashPhase' => 0,
+            'dashPhase' => $style['dashPhase'] ?? 0.0,
             // line (drawing) color
-            'lineColor' => 'black',
+            'lineColor' => $style['lineColor'] ?? 'black',
             // background (filling) color
-            'fillColor' => 'black',
+            'fillColor' => $style['fillColor'] ?? 'black',
         ];
-
-        return \array_merge($def, $style);
     }
 
     /**
@@ -294,22 +292,19 @@ abstract class Base
         $out = '';
         foreach ($this->extgstates as $idx => $ext) {
             $this->extgstates[$idx]['n'] = ++$this->pon;
-            $out .= $this->pon . ' 0 obj' . "\n"
-                . '<< /Type /ExtGState';
+            $out .= $this->pon . ' 0 obj' . "\n" . '<< /Type /ExtGState';
             foreach ($ext['parms'] as $key => $val) {
-                if (\is_numeric($val)) {
-                    $val = \sprintf('%F', $val);
-                } elseif ($val === true) {
-                    $val = 'true';
-                } elseif ($val === false) {
-                    $val = 'false';
-                }
+                $val = match (true) {
+                    \is_numeric($val) => \sprintf('%F', $val),
+                    $val === true => 'true',
+                    $val === false => 'false',
+                    default => $val,
+                };
 
-                $out .= ' /' .  $key . ' ' . $val;
+                $out .= ' /' . $key . ' ' . $val;
             }
 
-            $out .= ' >>' . "\n"
-            . 'endobj' . "\n";
+            $out .= ' >>' . "\n" . 'endobj' . "\n";
         }
 
         return $out;
@@ -328,7 +323,7 @@ abstract class Base
     /**
      * Get the PDF output string for ExtGState Resource Dictionary.
      *
-     * @param array<int, array{'name': string, 'n': int}> $data extgstates data.
+     * @param array<int, array{'name': string, 'n': int, 'parms'?: array<string, int|float|bool|string>}> $data extgstates data.
      *
      * @return string PDF command
      */
@@ -341,12 +336,7 @@ abstract class Base
         $out = ' /ExtGState <<';
 
         foreach ($data as $key => $ext) {
-            if (! empty($ext['name'])) {
-                $out .= ' /' . $ext['name'];
-            } else {
-                $out .= ' /GS' . $key;
-            }
-
+            $out .= $ext['name'] !== '' ? ' /' . $ext['name'] : ' /GS' . $key;
             $out .= ' ' . $ext['n'] . ' 0 R';
         }
 
@@ -372,15 +362,20 @@ abstract class Base
      */
     public function getOutExtGStateResourcesByKeys(array $keys): string
     {
-        if (empty($keys)) {
+        if ($keys === []) {
             return '';
         }
 
         $data = [];
         foreach ($keys as $key) {
+            $ext = $this->extgstates[$key] ?? null;
+            if (!\is_array($ext)) {
+                continue;
+            }
+
             $data[$key] = [
-                'name' => $this->extgstates[$key]['name'],
-                'n' => $this->extgstates[$key]['n'],
+                'name' => $ext['name'],
+                'n' => $ext['n'],
             ];
         }
 
@@ -390,13 +385,13 @@ abstract class Base
     /**
      * Get the PDF output string for Gradients Resource Dictionary.
      *
-     * @param array<int, array{'id': int, 'pattern': int}> $data gradients data.
+     * @param array<int, array{'id': int, 'pattern': int, 'antialias'?: bool, 'background'?: ?\Com\Tecnick\Color\Model, 'colors'?: array<int, array{'color': string, 'exponent'?: float, 'opacity'?: float, 'offset'?: float}>, 'colspace'?: string, 'coords'?: array<float>, 'stream'?: string, 'transparency'?: bool, 'type'?: int}> $data gradients data.
      *
      * @return string PDF command
      */
     private function getOutGradientResDict(array $data): string
     {
-        if ($this->pdfa || empty($data)) {
+        if ($this->pdfa || $data === []) {
             return '';
         }
 
@@ -410,8 +405,7 @@ abstract class Base
             $grs .= ' /Sh' . $idx . ' ' . $grad['id'] . ' 0 R';
         }
 
-        return ' /Pattern <<' . $grp . ' >>' . "\n"
-            . ' /Shading <<' . $grs . ' >>' . "\n";
+        return ' /Pattern <<' . $grp . ' >>' . "\n" . ' /Shading <<' . $grs . ' >>' . "\n";
     }
 
     /**
@@ -424,7 +418,6 @@ abstract class Base
         return $this->getOutGradientResDict($this->gradients);
     }
 
-
     /**
      * Returns the PDF command to output gradient resources.
      *
@@ -434,15 +427,20 @@ abstract class Base
      */
     public function getOutGradientResourcesByKeys(array $keys): string
     {
-        if (empty($keys)) {
+        if ($keys === []) {
             return '';
         }
 
         $data = [];
         foreach ($keys as $key) {
+            $grad = $this->gradients[$key] ?? null;
+            if (!\is_array($grad)) {
+                continue;
+            }
+
             $data[$key] = [
-                'id' => $this->gradients[$key]['id'],
-                'pattern' => $this->gradients[$key]['pattern'],
+                'id' => $grad['id'],
+                'pattern' => $grad['pattern'],
             ];
         }
 
@@ -457,69 +455,107 @@ abstract class Base
      *
      * @return string PDF command
      *
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
+     *
      * @SuppressWarnings("PHPMD.CyclomaticComplexity")
      */
     protected function getOutGradientCols(array $grad, string $type): string
     {
-        if (($type == 'opacity') && ! $grad['transparency']) {
+        if ($type === 'opacity' && !$grad['transparency']) {
             return '';
         }
 
         $out = '';
-        if (($grad['type'] == 2) || ($grad['type'] == 3)) {
+        if ($grad['type'] === 2 || $grad['type'] === 3) {
             $num_cols = \count($grad['colors']);
-            $lastcols = ($num_cols - 1);
+            $lastcols = $num_cols - 1;
             $funct = []; // color and transparency objects
             $bounds = [];
             $encode = [];
 
             for ($idx = 1; $idx < $num_cols; ++$idx) {
-                $col0 = $grad['colors'][($idx - 1)][$type];
-                $col1 = $grad['colors'][$idx][$type];
-                if ($type == 'color') {
-                    $col0 = $this->pdfColor->getColorObject($grad['colors'][($idx - 1)][$type]);
-                    $col1 = $this->pdfColor->getColorObject($grad['colors'][$idx][$type]);
-                    if (! $col0 instanceof \Com\Tecnick\Color\Model) {
+                $prevcol = $grad['colors'][$idx - 1] ?? null;
+                $nextcol = $grad['colors'][$idx] ?? null;
+                if (!\is_array($prevcol) || !\is_array($nextcol)) {
+                    continue;
+                }
+
+                $col0 = $prevcol[$type] ?? null;
+                $col1 = $nextcol[$type] ?? null;
+                if ($type !== 'color') {
+                    if (!\is_numeric($col0) || !\is_numeric($col1)) {
                         continue;
                     }
 
-                    if (! $col1 instanceof \Com\Tecnick\Color\Model) {
+                    $col0 = \sprintf('%F', (float) $col0);
+                    $col1 = \sprintf('%F', (float) $col1);
+                } else {
+                    if (!\is_string($col0) || !\is_string($col1)) {
                         continue;
                     }
 
-                    $col0 = $col0->getComponentsString();
-                    $col1 = $col1->getComponentsString();
+                    $model0 = $this->pdfColor->getColorObject($col0);
+                    $model1 = $this->pdfColor->getColorObject($col1);
+                    if (!$model0 instanceof \Com\Tecnick\Color\Model) {
+                        continue;
+                    }
+
+                    if (!$model1 instanceof \Com\Tecnick\Color\Model) {
+                        continue;
+                    }
+
+                    $col0 = $model0->getComponentsString();
+                    $col1 = $model1->getComponentsString();
                 }
 
                 $encode[] = '0 1';
-                if ($idx < $lastcols && isset($grad['colors'][$idx]['offset'])) {
-                    $bounds[] = \sprintf('%F ', $grad['colors'][$idx]['offset']);
+                $offset = $nextcol['offset'] ?? null;
+                if ($idx < $lastcols && \is_float($offset)) {
+                    $bounds[] = \sprintf('%F ', $offset);
                 }
 
-                $out .= ++$this->pon . ' 0 obj' . "\n"
-                . '<<'
-                . ' /FunctionType 2'
-                . ' /Domain [0 1]'
-                . ' /C0 [' . $col0 . ']'
-                . ' /C1 [' . $col1 . ']';
-                if (isset($grad['colors'][$idx]['exponent'])) {
-                    $out .= ' /N ' . $grad['colors'][$idx]['exponent'];
+                $out .=
+                    ++$this->pon
+                    . ' 0 obj'
+                    . "\n"
+                    . '<<'
+                    . ' /FunctionType 2'
+                    . ' /Domain [0 1]'
+                    . ' /C0 ['
+                    . $col0
+                    . ']'
+                    . ' /C1 ['
+                    . $col1
+                    . ']';
+                $exponent = $nextcol['exponent'] ?? null;
+                if (\is_float($exponent)) {
+                    $out .= ' /N ' . $exponent;
                 }
 
-                $out .= ' >>' . "\n"
-                . 'endobj' . "\n";
+                $out .= ' >>' . "\n" . 'endobj' . "\n";
                 $funct[] = $this->pon . ' 0 R';
             }
 
-            $out .= ++$this->pon . ' 0 obj' . "\n"
+            $out .=
+                ++$this->pon
+                . ' 0 obj'
+                . "\n"
                 . '<<'
                 . ' /FunctionType 3'
                 . ' /Domain [0 1]'
-                . ' /Functions [' . \implode(' ', $funct) . ']'
-                . ' /Bounds [' . \implode(' ', $bounds) . ']'
-                . ' /Encode [' . \implode(' ', $encode) . ']'
-                . ' >>' . "\n"
-                . 'endobj' . "\n";
+                . ' /Functions ['
+                . \implode(' ', $funct)
+                . ']'
+                . ' /Bounds ['
+                . \implode(' ', $bounds)
+                . ']'
+                . ' /Encode ['
+                . \implode(' ', $encode)
+                . ']'
+                . ' >>'
+                . "\n"
+                . 'endobj'
+                . "\n";
         }
 
         return $out . $this->getOutPatternObj($grad, $this->pon);
@@ -532,6 +568,8 @@ abstract class Base
      * @param int          $objref Refrence object number
      *
      * @return string PDF command
+     *
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
      */
     protected function getOutPatternObj(array $grad, int $objref): string
     {
@@ -541,11 +579,9 @@ abstract class Base
         }
 
         $oid = ++$this->pon;
-        $out = $oid . ' 0 obj' . "\n"
-            . '<<'
-            . ' /ShadingType ' . $grad['type']
-            . ' /ColorSpace /' . $grad['colspace'];
-        if (! empty($grad['background'])) {
+        $coords = $grad['coords'];
+        $out = $oid . ' 0 obj' . "\n" . '<<' . ' /ShadingType ' . $grad['type'] . ' /ColorSpace /' . $grad['colspace'];
+        if ($grad['background'] !== null) {
             $out .= ' /Background [' . $grad['background']->getComponentsString() . ']';
         }
 
@@ -553,52 +589,57 @@ abstract class Base
             $out .= ' /AntiAlias true';
         }
 
-        if ($grad['type'] == 2) {
-            $out .= ' ' . \sprintf(
-                '/Coords [%F %F %F %F]',
-                $grad['coords'][0],
-                $grad['coords'][1],
-                $grad['coords'][2],
-                $grad['coords'][3]
-            )
-                . ' /Domain [0 1]'
-                . ' /Function ' . $objref . ' 0 R'
-                . ' /Extend [true true]'
-                . ' >>' . "\n";
-        } elseif ($grad['type'] == 3) {
+        if ($grad['type'] === 2) {
+            $out .= \sprintf(
+                ' /Coords [%F %F %F %F] /Domain [0 1] /Function %d 0 R /Extend [true true] >>\n',
+                $coords[0] ?? 0.0,
+                $coords[1] ?? 0.0,
+                $coords[2] ?? 0.0,
+                $coords[3] ?? 0.0,
+                $objref,
+            );
+        } elseif ($grad['type'] === 3) {
             // x0, y0, r0, x1, y1, r1
             // the  radius of the inner circle is 0
-            $out .= ' ' . \sprintf(
-                '/Coords [%F %F 0 %F %F %F]',
-                $grad['coords'][0],
-                $grad['coords'][1],
-                $grad['coords'][2],
-                $grad['coords'][3],
-                $grad['coords'][4]
-            )
-                . ' /Domain [0 1]'
-                . ' /Function ' . $objref . ' 0 R'
-                . ' /Extend [true true]'
-                . ' >>' . "\n";
-        } elseif ($grad['type'] == 6) {
+            $out .= \sprintf(
+                ' /Coords [%F %F 0 %F %F %F] /Domain [0 1] /Function %d 0 R /Extend [true true] >>\n',
+                $coords[0] ?? 0.0,
+                $coords[1] ?? 0.0,
+                $coords[2] ?? 0.0,
+                $coords[3] ?? 0.0,
+                $coords[4] ?? 0.0,
+                $objref,
+            );
+        } elseif ($grad['type'] === 6) {
             $stream = $this->encrypt->encryptString($grad['stream'], $this->pon);
-            $out .= ' /BitsPerCoordinate 16 /BitsPerComponent 8/Decode[0 1 0 1 0 1 0 1 0 1] /BitsPerFlag 8 /Length '
+            $out .=
+                ' /BitsPerCoordinate 16 /BitsPerComponent 8/Decode[0 1 0 1 0 1 0 1 0 1] /BitsPerFlag 8 /Length '
                 . \strlen($stream)
-                . ' >>' . "\n"
-                . ' stream' . "\n"
-                . $stream . "\n"
-                . 'endstream' . "\n";
+                . ' >>'
+                . "\n"
+                . ' stream'
+                . "\n"
+                . $stream
+                . "\n"
+                . 'endstream'
+                . "\n";
         }
 
         $out .= 'endobj' . "\n";
 
         // pattern object
-        $out .= ++$this->pon . ' 0 obj' . "\n"
+        $out .=
+            ++$this->pon
+            . ' 0 obj'
+            . "\n"
             . '<<'
             . ' /Type /Pattern'
             . ' /PatternType 2'
-            . ' /Shading ' . $oid . ' 0 R'
-            . ' >>' . "\n"
+            . ' /Shading '
+            . $oid
+            . ' 0 R'
+            . ' >>'
+            . "\n"
             . 'endobj'
             . "\n";
 
@@ -611,6 +652,8 @@ abstract class Base
      * @param int $pon Current PDF Object Number
      *
      * @return string PDF command
+     *
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
      */
     public function getOutGradientShaders(int $pon): string
     {
@@ -626,33 +669,29 @@ abstract class Base
             $gcol = $this->getOutGradientCols($grad, 'color');
             if ($gcol !== '') {
                 $out .= $gcol;
-                $this->gradients[$idx]['id'] = ($this->pon - 1);
+                $this->gradients[$idx]['id'] = $this->pon - 1;
                 // @phpstan-ignore assign.propertyType
                 $this->gradients[$idx]['pattern'] = $this->pon;
             }
 
             $gopa = $this->getOutGradientCols($grad, 'opacity');
-            $idgs = ($idx + $idt);
+            $idgs = $idx + $idt;
 
             if ($gopa !== '') {
                 $out .= $gopa;
                 // @phpstan-ignore assign.propertyType
-                $this->gradients[$idgs]['id'] = ($this->pon - 1);
+                $this->gradients[$idgs]['id'] = $this->pon - 1;
                 // @phpstan-ignore assign.propertyType
                 $this->gradients[$idgs]['pattern'] = $this->pon;
             }
 
             if ($grad['transparency']) {
                 $oid = ++$this->pon;
-                $pwidth = ($this->pagew * $this->kunit);
-                $pheight = ($this->pageh * $this->kunit);
+                $pwidth = $this->pagew * $this->kunit;
+                $pheight = $this->pageh * $this->kunit;
                 $rect = \sprintf('%F %F', $pwidth, $pheight);
 
-                $out .= $oid . ' 0 obj' . "\n"
-                    . '<<'
-                    . ' /Type /XObject'
-                    . ' /Subtype /Form'
-                    . ' /FormType 1';
+                $out .= $oid . ' 0 obj' . "\n" . '<<' . ' /Type /XObject' . ' /Subtype /Form' . ' /FormType 1';
                 $stream = 'q /a0 gs /Pattern cs /p' . $idgs . ' scn 0 0 ' . $pwidth . ' ' . $pheight . ' re f Q';
                 if ($this->compress) {
                     $cmpstream = \gzcompress($stream);
@@ -662,39 +701,70 @@ abstract class Base
                     }
                 }
 
+                if (!isset($this->gradients[$idgs]['pattern'])) {
+                    continue;
+                }
+
                 $stream = $this->encrypt->encryptString($stream, $oid);
-                $out .= ' /Length ' . \strlen($stream)
-                    . ' /BBox [0 0 ' . $rect . ']'
+                $out .=
+                    ' /Length '
+                    . \strlen($stream)
+                    . ' /BBox [0 0 '
+                    . $rect
+                    . ']'
                     . ' /Group << /Type /Group /S /Transparency /CS /DeviceGray >>'
                     . ' /Resources <<'
                     . ' /ExtGState << /a0 << /ca 1 /CA 1 >>  >>'
-                    . ' /Pattern << /p' . $idgs . ' ' . $this->gradients[$idgs]['pattern'] . ' 0 R >>'
+                    . ' /Pattern << /p'
+                    . $idgs
+                    . ' '
+                    . $this->gradients[$idgs]['pattern']
+                    . ' 0 R >>'
                     . ' >>'
-                    . ' >>' . "\n"
-                    . ' stream' . "\n"
-                    . $stream . "\n"
-                    . 'endstream' . "\n"
-                    . 'endobj' . "\n";
+                    . ' >>'
+                    . "\n"
+                    . ' stream'
+                    . "\n"
+                    . $stream
+                    . "\n"
+                    . 'endstream'
+                    . "\n"
+                    . 'endobj'
+                    . "\n";
 
                 // SMask
                 $objsm = ++$this->pon;
-                $out .= $objsm . ' 0 obj' . "\n"
+                $out .=
+                    $objsm
+                    . ' 0 obj'
+                    . "\n"
                     . '<<'
                     . ' /Type /Mask'
                     . ' /S /Luminosity'
-                    . ' /G ' . $oid . ' 0 R'
-                    . ' >>' . "\n"
-                    . 'endobj' . "\n";
+                    . ' /G '
+                    . $oid
+                    . ' 0 R'
+                    . ' >>'
+                    . "\n"
+                    . 'endobj'
+                    . "\n";
 
                 // ExtGState
                 $objext = ++$this->pon;
-                $out .= $objext . ' 0 obj' . "\n"
+                $out .=
+                    $objext
+                    . ' 0 obj'
+                    . "\n"
                     . '<<'
                     . ' /Type /ExtGState'
-                    . ' /SMask ' . $objsm . ' 0 R'
+                    . ' /SMask '
+                    . $objsm
+                    . ' 0 R'
                     . ' /AIS false'
-                    . ' >>' . "\n"
-                    . 'endobj' . "\n";
+                    . ' >>'
+                    . "\n"
+                    . 'endobj'
+                    . "\n";
                 $this->extgstates[] = [
                     'n' => $objext,
                     'name' => 'TGS' . $idx,

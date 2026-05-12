@@ -26,6 +26,8 @@ namespace Test;
  * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
  * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
+ *
+ * @throws \Com\Tecnick\Pdf\Graph\Exception
  */
 class TransformTest extends TestUtil
 {
@@ -36,13 +38,17 @@ class TransformTest extends TestUtil
             0,
             0,
             new \Com\Tecnick\Color\Pdf(),
-            new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
-            false
+            $this->getEncryptObject(),
+            false,
         );
         $this->assertEquals(-1, $draw->getTransformIndex());
         $this->assertEquals('q' . "\n", $draw->getStartTransform());
         return $draw;
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetStartStopTransform(): void
     {
@@ -51,8 +57,8 @@ class TransformTest extends TestUtil
             0,
             0,
             new \Com\Tecnick\Color\Pdf(),
-            new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
-            false
+            $this->getEncryptObject(),
+            false,
         );
         $this->assertEquals(-1, $draw->getTransformIndex());
         $this->assertEquals('q' . "\n", $draw->getStartTransform());
@@ -61,7 +67,7 @@ class TransformTest extends TestUtil
         $tmx = [0.1, 1.2, 2.3, 3.4, 4.5, 5.6];
         $this->assertEquals(
             '0.100000 1.200000 2.300000 3.400000 4.500000 5.600000 cm' . "\n",
-            $draw->getTransformation($tmx)
+            $draw->getTransformation($tmx),
         );
 
         $this->bcAssertEqualsWithDelta(
@@ -72,7 +78,7 @@ class TransformTest extends TestUtil
             ],
             $draw->getTransformStack(),
             0.0001,
-            ''
+            '',
         );
 
         $this->assertEquals('Q' . "\n", $draw->getStopTransform());
@@ -81,15 +87,23 @@ class TransformTest extends TestUtil
         $this->assertEquals(-1, $draw->getTransformIndex());
     }
 
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+
     public function testGetTransform(): void
     {
         $draw = $this->getTestObject();
         $tmx = [0.1, 1.2, 2.3, 3.4, 4.5, 5.6];
         $this->assertEquals(
             '0.100000 1.200000 2.300000 3.400000 4.500000 5.600000 cm' . "\n",
-            $draw->getTransformation($tmx)
+            $draw->getTransformation($tmx),
         );
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testSetPageHeight(): void
     {
@@ -98,17 +112,23 @@ class TransformTest extends TestUtil
             0,
             0,
             new \Com\Tecnick\Color\Pdf(),
-            new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
-            false
+            $this->getEncryptObject(),
+            false,
         );
         $prev = $draw->setPageHeight(100);
-        $this->assertEquals(0, (int)$prev);
+        $this->assertEquals(0, (int) $prev);
         $this->assertEquals('q' . "\n", $draw->getStartTransform());
-        $this->assertEquals(
-            '3.000000 0.000000 0.000000 5.000000 -14.000000 -356.000000 cm' . "\n",
-            $draw->getScaling(3, 5, 7, 11)
-        );
+        $this->assertEquals('3.000000 0.000000 0.000000 5.000000 -14.000000 -356.000000 cm' . "\n", $draw->getScaling(
+            3,
+            5,
+            7,
+            11,
+        ));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testSetPageWidth(): void
     {
@@ -117,17 +137,23 @@ class TransformTest extends TestUtil
             0,
             0,
             new \Com\Tecnick\Color\Pdf(),
-            new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
-            false
+            $this->getEncryptObject(),
+            false,
         );
         $prev = $draw->setPageWidth(100);
-        $this->assertEquals(0, (int)$prev);
+        $this->assertEquals(0, (int) $prev);
         $this->assertEquals('q' . "\n", $draw->getStartTransform());
-        $this->assertEquals(
-            '3.000000 0.000000 0.000000 5.000000 -14.000000 44.000000 cm' . "\n",
-            $draw->getScaling(3, 5, 7, 11)
-        );
+        $this->assertEquals('3.000000 0.000000 0.000000 5.000000 -14.000000 44.000000 cm' . "\n", $draw->getScaling(
+            3,
+            5,
+            7,
+            11,
+        ));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testSetKUnit(): void
     {
@@ -136,170 +162,253 @@ class TransformTest extends TestUtil
             0,
             0,
             new \Com\Tecnick\Color\Pdf(),
-            new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
-            false
+            $this->getEncryptObject(),
+            false,
         );
         $draw->setKUnit(0.75);
         $this->assertEquals('q' . "\n", $draw->getStartTransform());
-        $this->assertEquals(
-            '3.000000 0.000000 0.000000 5.000000 -10.500000 33.000000 cm' . "\n",
-            $draw->getScaling(3, 5, 7, 11)
-        );
+        $this->assertEquals('3.000000 0.000000 0.000000 5.000000 -10.500000 33.000000 cm' . "\n", $draw->getScaling(
+            3,
+            5,
+            7,
+            11,
+        ));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetScaling(): void
     {
         $draw = $this->getTestObject();
-        $this->assertEquals(
-            '3.000000 0.000000 0.000000 5.000000 -14.000000 44.000000 cm' . "\n",
-            $draw->getScaling(3, 5, 7, 11)
-        );
-        $this->assertEquals(
-            '3.000000 0.000000 0.000000 3.000000 -14.000000 22.000000 cm' . "\n",
-            $draw->getScaling(3, 3, 7, 11)
-        );
+        $this->assertEquals('3.000000 0.000000 0.000000 5.000000 -14.000000 44.000000 cm' . "\n", $draw->getScaling(
+            3,
+            5,
+            7,
+            11,
+        ));
+        $this->assertEquals('3.000000 0.000000 0.000000 3.000000 -14.000000 22.000000 cm' . "\n", $draw->getScaling(
+            3,
+            3,
+            7,
+            11,
+        ));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetScalingEx(): void
     {
-        $this->bcExpectException('\\' . \Com\Tecnick\Pdf\Graph\Exception::class);
+        $this->bcExpectException(\Com\Tecnick\Pdf\Graph\Exception::class);
         $draw = $this->getTestObject();
         $draw->getScaling(0, 0, 7, 11);
     }
 
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+
     public function testGetHorizScaling(): void
     {
         $draw = $this->getTestObject();
-        $this->assertEquals(
-            '3.000000 0.000000 0.000000 1.000000 -14.000000 0.000000 cm' . "\n",
-            $draw->getHorizScaling(3, 7, 11)
-        );
+        $this->assertEquals('3.000000 0.000000 0.000000 1.000000 -14.000000 0.000000 cm' . "\n", $draw->getHorizScaling(
+            3,
+            7,
+            11,
+        ));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetVertScaling(): void
     {
         $draw = $this->getTestObject();
-        $this->assertEquals(
-            '1.000000 0.000000 0.000000 5.000000 0.000000 44.000000 cm' . "\n",
-            $draw->getVertScaling(5, 7, 11)
-        );
+        $this->assertEquals('1.000000 0.000000 0.000000 5.000000 0.000000 44.000000 cm' . "\n", $draw->getVertScaling(
+            5,
+            7,
+            11,
+        ));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetPropScaling(): void
     {
         $draw = $this->getTestObject();
-        $this->assertEquals(
-            '3.000000 0.000000 0.000000 3.000000 -14.000000 22.000000 cm' . "\n",
-            $draw->getPropScaling(3, 7, 11)
-        );
+        $this->assertEquals('3.000000 0.000000 0.000000 3.000000 -14.000000 22.000000 cm' . "\n", $draw->getPropScaling(
+            3,
+            7,
+            11,
+        ));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetRotation(): void
     {
         $draw = $this->getTestObject();
-        $this->assertEquals(
-            '0.707107 0.707107 -0.707107 0.707107 -5.727922 -8.171573 cm' . "\n",
-            $draw->getRotation(45, 7, 11)
-        );
+        $this->assertEquals('0.707107 0.707107 -0.707107 0.707107 -5.727922 -8.171573 cm' . "\n", $draw->getRotation(
+            45,
+            7,
+            11,
+        ));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetHorizMirroring(): void
     {
         $draw = $this->getTestObject();
         $this->assertEquals(
             '-1.000000 0.000000 0.000000 1.000000 14.000000 0.000000 cm' . "\n",
-            $draw->getHorizMirroring(7)
+            $draw->getHorizMirroring(7),
         );
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetVertMirroring(): void
     {
         $draw = $this->getTestObject();
         $this->assertEquals(
             '1.000000 0.000000 0.000000 -1.000000 0.000000 -22.000000 cm' . "\n",
-            $draw->getVertMirroring(11)
+            $draw->getVertMirroring(11),
         );
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetPointMirroring(): void
     {
         $draw = $this->getTestObject();
-        $this->assertEquals(
-            '-1.000000 0.000000 0.000000 -1.000000 14.000000 -22.000000 cm' . "\n",
-            $draw->getPointMirroring(7, 11)
-        );
+        $this->assertEquals('-1.000000 0.000000 0.000000 -1.000000 14.000000 -22.000000 cm'
+        . "\n", $draw->getPointMirroring(7, 11));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetReflection(): void
     {
         $draw = $this->getTestObject();
-        $this->assertEquals(
-            '-1.000000 0.000000 0.000000 1.000000 14.000000 0.000000 cm' . "\n"
-            . '0.000000 1.000000 -1.000000 0.000000 -4.000000 -18.000000 cm' . "\n",
-            $draw->getReflection(45, 7, 11)
-        );
+        $this->assertEquals('-1.000000 0.000000 0.000000 1.000000 14.000000 0.000000 cm'
+        . "\n"
+        . '0.000000 1.000000 -1.000000 0.000000 -4.000000 -18.000000 cm'
+        . "\n", $draw->getReflection(45, 7, 11));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetTranslation(): void
     {
         $draw = $this->getTestObject();
-        $this->assertEquals(
-            '1.000000 0.000000 0.000000 1.000000 3.000000 -5.000000 cm' . "\n",
-            $draw->getTranslation(3, 5)
-        );
+        $this->assertEquals('1.000000 0.000000 0.000000 1.000000 3.000000 -5.000000 cm' . "\n", $draw->getTranslation(
+            3,
+            5,
+        ));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetHorizTranslation(): void
     {
         $draw = $this->getTestObject();
         $this->assertEquals(
             '1.000000 0.000000 0.000000 1.000000 3.000000 0.000000 cm' . "\n",
-            $draw->getHorizTranslation(3)
+            $draw->getHorizTranslation(3),
         );
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetVertTranslation(): void
     {
         $draw = $this->getTestObject();
         $this->assertEquals(
             '1.000000 0.000000 0.000000 1.000000 0.000000 -5.000000 cm' . "\n",
-            $draw->getVertTranslation(5)
+            $draw->getVertTranslation(5),
         );
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetSkewing(): void
     {
         $draw = $this->getTestObject();
-        $this->assertEquals(
-            '1.000000 0.087489 0.052408 1.000000 0.576486 -0.612421 cm' . "\n",
-            $draw->getSkewing(3, 5, 7, 11)
-        );
+        $this->assertEquals('1.000000 0.087489 0.052408 1.000000 0.576486 -0.612421 cm' . "\n", $draw->getSkewing(
+            3,
+            5,
+            7,
+            11,
+        ));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetSkewingEx(): void
     {
         $draw = $this->getTestObject();
-        $this->bcExpectException('\\' . \Com\Tecnick\Pdf\Graph\Exception::class);
+        $this->bcExpectException(\Com\Tecnick\Pdf\Graph\Exception::class);
         $draw->getSkewing(90, -90, 7, 11);
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetHorizSkewing(): void
     {
         $draw = $this->getTestObject();
-        $this->assertEquals(
-            '1.000000 0.000000 0.052408 1.000000 0.576486 0.000000 cm' . "\n",
-            $draw->getHorizSkewing(3, 7, 11)
-        );
+        $this->assertEquals('1.000000 0.000000 0.052408 1.000000 0.576486 0.000000 cm' . "\n", $draw->getHorizSkewing(
+            3,
+            7,
+            11,
+        ));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetVertSkewing(): void
     {
         $draw = $this->getTestObject();
-        $this->assertEquals(
-            '1.000000 0.087489 0.000000 1.000000 0.000000 -0.612421 cm' . "\n",
-            $draw->getVertSkewing(5, 7, 11)
-        );
+        $this->assertEquals('1.000000 0.087489 0.000000 1.000000 0.000000 -0.612421 cm' . "\n", $draw->getVertSkewing(
+            5,
+            7,
+            11,
+        ));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetCtmProduct(): void
     {

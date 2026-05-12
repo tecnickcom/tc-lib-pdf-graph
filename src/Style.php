@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Style.php
  *
@@ -210,7 +212,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     public function add(array $style = [], bool $inheritlast = false): string
     {
         if ($inheritlast) {
-            $style = \array_merge($this->style[$this->styleid], $style);
+            $style = \array_merge($this->getCurrentStyleArray(), $style);
         }
 
         $this->style[++$this->styleid] = $style;
@@ -221,6 +223,8 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      * Remove and return last style.
      *
      * @return string PDF style string.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function pop(): string
     {
@@ -254,7 +258,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
 
         $this->styleid = $styleid;
 
-        $this->style = \array_slice($this->style, 0, ($this->styleid + 1), true);
+        $this->style = \array_slice($this->style, 0, $this->styleid + 1, true);
     }
 
     /**
@@ -264,7 +268,11 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function getCurrentStyleArray(): array
     {
-        return $this->style[$this->styleid];
+        if (isset($this->style[$this->styleid])) {
+            return $this->style[$this->styleid];
+        }
+
+        return $this->getDefaultStyle();
     }
 
     /**
@@ -277,10 +285,14 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function getLastStyleProperty(
         string $property,
-        int|float|bool|string|null $default = null
+        int|float|bool|string|null $default = null,
     ): int|float|bool|string|null {
         for ($idx = $this->styleid; $idx >= 0; --$idx) {
-            if (isset($this->style[$idx][$property]) && !\is_array($this->style[$idx][$property])) {
+            if (
+                array_key_exists($property, $this->style[$idx] ?? [])
+                && ($this->style[$idx][$property] ?? null) !== null
+                && !\is_array($this->style[$idx][$property])
+            ) {
                 return $this->style[$idx][$property];
             }
         }
@@ -292,14 +304,17 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      * Returns the value of th especified item from the last inserted style.
      *
      * @param string $item Item to search.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
     public function getCurrentStyleItem(string $item): mixed
     {
-        if (! isset($this->style[$this->styleid][$item])) {
+        $style = $this->getCurrentStyleArray();
+        if (!\array_key_exists($item, $style)) {
             throw new GraphException('The ' . $item . ' value is not set in the current style');
         }
 
-        return $this->style[$this->styleid][$item];
+        return $style[$item] ?? null;
     }
 
     /**
@@ -307,7 +322,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function getStyle(): string
     {
-        return $this->getStyleCmd($this->style[$this->styleid]);
+        return $this->getStyleCmd($this->getCurrentStyleArray());
     }
 
     /**
@@ -318,17 +333,17 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     public function getStyleCmd(array $style = []): string
     {
         $out = '';
-        if (isset($style['lineWidth'])) {
-            $out .= \sprintf('%F w' . "\n", ($style['lineWidth'] * $this->kunit));
+        if (array_key_exists('lineWidth', $style)) {
+            $out .= \sprintf('%F w' . "\n", $style['lineWidth'] * $this->kunit);
         }
 
         $out .= $this->getLineModeCmd($style);
 
-        if (isset($style['lineColor'])) {
+        if (array_key_exists('lineColor', $style)) {
             $out .= $this->pdfColor->getPdfColor($style['lineColor'], true);
         }
 
-        if (isset($style['fillColor'])) {
+        if (array_key_exists('fillColor', $style)) {
             $out .= $this->pdfColor->getPdfColor($style['fillColor'], false);
         }
 
@@ -346,25 +361,31 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
     {
         $out = '';
 
-        if (isset($style['lineCap']) && isset(self::LINECAPMAP[$style['lineCap']])) {
-            $out .= self::LINECAPMAP[$style['lineCap']] . ' J' . "\n";
+        if (array_key_exists('lineCap', $style)) {
+            $lineCap = $style['lineCap'];
+            if (isset(self::LINECAPMAP[$lineCap])) {
+                $out .= self::LINECAPMAP[$lineCap] . ' J' . "\n";
+            }
         }
 
-        if (isset($style['lineJoin']) && isset(self::LINEJOINMAP[$style['lineJoin']])) {
-            $out .= self::LINEJOINMAP[$style['lineJoin']] . ' j' . "\n";
+        if (array_key_exists('lineJoin', $style)) {
+            $lineJoin = $style['lineJoin'];
+            if (isset(self::LINEJOINMAP[$lineJoin])) {
+                $out .= self::LINEJOINMAP[$lineJoin] . ' j' . "\n";
+            }
         }
 
-        if (isset($style['miterLimit'])) {
-            $out .= \sprintf('%F M' . "\n", ($style['miterLimit'] * $this->kunit));
+        if (array_key_exists('miterLimit', $style)) {
+            $out .= \sprintf('%F M' . "\n", $style['miterLimit'] * $this->kunit);
         }
 
-        if (isset($style['dashArray'])) {
+        if (array_key_exists('dashArray', $style)) {
             $dash = [];
             foreach ($style['dashArray'] as $val) {
-                $dash[] = \sprintf('%F', ((float) $val * $this->kunit));
+                $dash[] = \sprintf('%F', (float) $val * $this->kunit);
             }
 
-            if (! isset($style['dashPhase'])) {
+            if (!array_key_exists('dashPhase', $style)) {
                 $style['dashPhase'] = 0;
             }
 
@@ -410,7 +431,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function getPathPaintOp(string $mode, string $default = 'S'): string
     {
-        if (empty($mode) || !isset(self::PPOPMAP[$mode])) {
+        if ($mode === '' || !isset(self::PPOPMAP[$mode])) {
             return isset(self::PPOPMAP[$default]) ? self::PPOPMAP[$default] . "\n" : '';
         }
         return self::PPOPMAP[$mode] . "\n";
@@ -423,9 +444,9 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function isFillingMode(string $mode): bool
     {
-        return (isset(self::PPOPMAP[$mode])
-            && (isset(self::MODEFILLING[self::PPOPMAP[$mode]])
-            || $this->isClippingMode($mode))
+        return (
+            isset(self::PPOPMAP[$mode])
+            && (array_key_exists(self::PPOPMAP[$mode], self::MODEFILLING) || $this->isClippingMode($mode))
         );
     }
 
@@ -436,9 +457,12 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function isStrokingMode(string $mode): bool
     {
-        return (isset(self::PPOPMAP[$mode])
-            && isset(self::MODESTROKING[self::PPOPMAP[$mode]])
-        );
+        if (!isset(self::PPOPMAP[$mode])) {
+            return false;
+        }
+
+        $paintMode = self::PPOPMAP[$mode];
+        return array_key_exists($paintMode, self::MODESTROKING);
     }
 
     /**
@@ -448,9 +472,9 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function isClosingMode(string $mode): bool
     {
-        return (isset(self::PPOPMAP[$mode])
-            && (isset(self::MODECLOSING[self::PPOPMAP[$mode]])
-            || $this->isClippingMode($mode))
+        return (
+            isset(self::PPOPMAP[$mode])
+            && (array_key_exists(self::PPOPMAP[$mode], self::MODECLOSING) || $this->isClippingMode($mode))
         );
     }
 
@@ -461,9 +485,12 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function isClippingMode(string $mode): bool
     {
-        return (isset(self::PPOPMAP[$mode])
-            && isset(self::MODECLIPPING[self::PPOPMAP[$mode]])
-        );
+        if (!isset(self::PPOPMAP[$mode])) {
+            return false;
+        }
+
+        $paintMode = self::PPOPMAP[$mode];
+        return array_key_exists($paintMode, self::MODECLIPPING);
     }
 
     /**
@@ -473,11 +500,13 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function getModeWithoutClose(string $mode): string
     {
-        if (
-            isset(self::PPOPMAP[$mode])
-            && isset(self::MODETONOCLOSE[self::PPOPMAP[$mode]])
-        ) {
-            return self::MODETONOCLOSE[self::PPOPMAP[$mode]];
+        if (!isset(self::PPOPMAP[$mode])) {
+            return $mode;
+        }
+
+        $paintMode = self::PPOPMAP[$mode];
+        if (isset(self::MODETONOCLOSE[$paintMode])) {
+            return self::MODETONOCLOSE[$paintMode];
         }
 
         return $mode;
@@ -490,11 +519,13 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function getModeWithoutFill(string $mode): string
     {
-        if (
-            isset(self::PPOPMAP[$mode])
-            && isset(self::MODETONOFILL[self::PPOPMAP[$mode]])
-        ) {
-            return self::MODETONOFILL[self::PPOPMAP[$mode]];
+        if (!isset(self::PPOPMAP[$mode])) {
+            return $mode;
+        }
+
+        $paintMode = self::PPOPMAP[$mode];
+        if (isset(self::MODETONOFILL[$paintMode])) {
+            return self::MODETONOFILL[$paintMode];
         }
 
         return $mode;
@@ -507,11 +538,13 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function getModeWithoutStroke(string $mode): string
     {
-        if (
-            isset(self::PPOPMAP[$mode])
-            && isset(self::MODETONOSTROKE[self::PPOPMAP[$mode]])
-        ) {
-            return self::MODETONOSTROKE[self::PPOPMAP[$mode]];
+        if (!isset(self::PPOPMAP[$mode])) {
+            return $mode;
+        }
+
+        $paintMode = self::PPOPMAP[$mode];
+        if (isset(self::MODETONOSTROKE[$paintMode])) {
+            return self::MODETONOSTROKE[$paintMode];
         }
 
         return $mode;
@@ -530,16 +563,18 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
             return '';
         }
 
-        $gsx = (\count($this->extgstates) + 1);
+        $gsx = \count($this->extgstates) + 1;
         // check if this ExtGState already exist
         foreach ($this->extgstates as $idx => $ext) {
-            if ($ext['parms'] == $parms) {
-                $gsx = $idx;
-                break;
+            if ($ext['parms'] !== $parms) {
+                continue;
             }
+
+            $gsx = $idx;
+            break;
         }
 
-        if (empty($this->extgstates[$gsx])) {
+        if (($this->extgstates[$gsx] ?? []) === []) {
             $this->extgstates[$gsx] = [
                 'n' => 0,
                 'name' => '',

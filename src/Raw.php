@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Raw.php
  *
@@ -40,11 +42,7 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
      */
     public function getRawPoint(float $posx, float $posy): string
     {
-        return \sprintf(
-            '%F %F m' . "\n",
-            ($posx * $this->kunit),
-            (($this->pageh - $posy) * $this->kunit)
-        );
+        return \sprintf('%F %F m' . "\n", $posx * $this->kunit, ($this->pageh - $posy) * $this->kunit);
     }
 
     /**
@@ -58,11 +56,7 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
      */
     public function getRawLine(float $posx, float $posy): string
     {
-        return \sprintf(
-            '%F %F l' . "\n",
-            ($posx * $this->kunit),
-            (($this->pageh - $posy) * $this->kunit)
-        );
+        return \sprintf('%F %F l' . "\n", $posx * $this->kunit, ($this->pageh - $posy) * $this->kunit);
     }
 
     /**
@@ -77,19 +71,14 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
      *
      * @return string PDF command
      */
-    public function getRawRect(
-        float $posx,
-        float $posy,
-        float $width,
-        float $height,
-        string $mode = ''
-    ): string {
+    public function getRawRect(float $posx, float $posy, float $width, float $height, string $mode = ''): string
+    {
         return \sprintf(
             '%F %F %F %F re' . "\n" . $this->getPathPaintOp($mode, ''),
-            ($posx * $this->kunit),
-            (($this->pageh - $posy) * $this->kunit),
-            ($width * $this->kunit),
-            (-$height * $this->kunit)
+            $posx * $this->kunit,
+            ($this->pageh - $posy) * $this->kunit,
+            $width * $this->kunit,
+            -$height * $this->kunit,
         );
     }
 
@@ -114,16 +103,16 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
         float $posx2,
         float $posy2,
         float $posx3,
-        float $posy3
+        float $posy3,
     ): string {
         return \sprintf(
             '%F %F %F %F %F %F c' . "\n",
-            ($posx1 * $this->kunit),
-            (($this->pageh - $posy1) * $this->kunit),
-            ($posx2 * $this->kunit),
-            (($this->pageh - $posy2) * $this->kunit),
-            ($posx3 * $this->kunit),
-            (($this->pageh - $posy3) * $this->kunit)
+            $posx1 * $this->kunit,
+            ($this->pageh - $posy1) * $this->kunit,
+            $posx2 * $this->kunit,
+            ($this->pageh - $posy2) * $this->kunit,
+            $posx3 * $this->kunit,
+            ($this->pageh - $posy3) * $this->kunit,
         );
     }
 
@@ -144,10 +133,10 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
     {
         return \sprintf(
             '%F %F %F %F v' . "\n",
-            ($posx2 * $this->kunit),
-            (($this->pageh - $posy2) * $this->kunit),
-            ($posx3 * $this->kunit),
-            (($this->pageh - $posy3) * $this->kunit)
+            $posx2 * $this->kunit,
+            ($this->pageh - $posy2) * $this->kunit,
+            $posx3 * $this->kunit,
+            ($this->pageh - $posy3) * $this->kunit,
         );
     }
 
@@ -168,10 +157,10 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
     {
         return \sprintf(
             '%F %F %F %F y' . "\n",
-            ($posx1 * $this->kunit),
-            (($this->pageh - $posy1) * $this->kunit),
-            ($posx3 * $this->kunit),
-            (($this->pageh - $posy3) * $this->kunit)
+            $posx1 * $this->kunit,
+            ($this->pageh - $posy1) * $this->kunit,
+            $posx3 * $this->kunit,
+            ($this->pageh - $posy3) * $this->kunit,
         );
     }
 
@@ -191,29 +180,29 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
         float $rdv,
         float $rdh,
         bool $ccw,
-        bool $svg
+        bool $svg,
     ): void {
         $ags = $this->degToRad($ags);
         $agf = $this->degToRad($agf);
-        if (! $svg) {
-            $ags = \atan2((\sin($ags) / $rdv), (\cos($ags) / $rdh));
-            $agf = \atan2((\sin($agf) / $rdv), (\cos($agf) / $rdh));
+        if (!$svg) {
+            $ags = \atan2(\sin($ags) / $rdv, \cos($ags) / $rdh);
+            $agf = \atan2(\sin($agf) / $rdv, \cos($agf) / $rdh);
         }
 
         if ($ags < 0) {
-            $ags += (2 * self::MPI);
+            $ags += 2 * self::MPI;
         }
 
         if ($agf < 0) {
-            $agf += (2 * self::MPI);
+            $agf += 2 * self::MPI;
         }
 
-        if ($ccw && ($ags > $agf)) {
+        if ($ccw && $ags > $agf) {
             // reverse rotation
-            $ags -= (2 * self::MPI);
-        } elseif (! $ccw && ($ags < $agf)) {
+            $ags -= 2 * self::MPI;
+        } elseif (!$ccw && $ags < $agf) {
             // reverse rotation
-            $agf -= (2 * self::MPI);
+            $agf -= 2 * self::MPI;
         }
     }
 
@@ -254,10 +243,10 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
         bool $startpoint = true,
         bool $ccw = true,
         bool $svg = false,
-        array &$bbox = []
+        array &$bbox = [],
     ): string {
         $out = '';
-        if (($rdh <= 0) || ($rdv < 0)) {
+        if ($rdh <= 0 || $rdv < 0) {
             return '';
         }
 
@@ -270,15 +259,15 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
         $ags = $angs;
         $agf = $angf;
         $this->setRawEllipticalArcAngles($ags, $agf, $rdv, $rdh, $ccw, $svg);
-        $total_angle = ($agf - $ags);
+        $total_angle = $agf - $ags;
         $ncv = \max(2, $ncv);
-        $ncv *= (2 * \abs($total_angle) / self::MPI); // total arcs to draw
-        $ncv = \round($ncv) + 1;
-        $arcang = ($total_angle / $ncv); // angle of each arc
+        $ncv *= (2 * \abs($total_angle)) / self::MPI; // total arcs to draw
+        $ncv = (int) (\round($ncv) + 1);
+        $arcang = $total_angle / $ncv; // angle of each arc
         $posx0 = $posxc; // X center point in PDF coordinates
-        $posy0 = ($this->pageh - $posyc); // Y center point in PDF coordinates
+        $posy0 = $this->pageh - $posyc; // Y center point in PDF coordinates
         $ang = $ags; // starting angle
-        $alpha = \sin($arcang) * ((\sqrt(4 + (3 * \tan(($arcang) / 2) ** 2)) - 1) / 3);
+        $alpha = \sin($arcang) * ((\sqrt(4 + (3 * (\tan($arcang / 2) ** 2))) - 1) / 3);
         $cos_xang = \cos($posxang);
         $sin_xang = \sin($posxang);
         $cos_ang = \cos($ang);
@@ -287,18 +276,18 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
         $px1 = $posx0 + ($rdh * $cos_xang * $cos_ang) - ($rdv * $sin_xang * $sin_ang);
         $py1 = $posy0 + ($rdh * $sin_xang * $cos_ang) + ($rdv * $cos_xang * $sin_ang);
         // first Bezier control point
-        $qx1 = ($alpha * ((-$rdh * $cos_xang * $sin_ang) - ($rdv * $sin_xang * $cos_ang)));
-        $qy1 = ($alpha * ((-$rdh * $sin_xang * $sin_ang) + ($rdv * $cos_xang * $cos_ang)));
+        $qx1 = $alpha * ((-$rdh * $cos_xang * $sin_ang) - ($rdv * $sin_xang * $cos_ang));
+        $qy1 = $alpha * ((-$rdh * $sin_xang * $sin_ang) + ($rdv * $cos_xang * $cos_ang));
         if ($pie) {
-            $out .= $this->getRawLine($px1, ($this->pageh - $py1)); // line from center to arc starting point
+            $out .= $this->getRawLine($px1, $this->pageh - $py1); // line from center to arc starting point
         } elseif ($startpoint) {
-            $out .= $this->getRawPoint($px1, ($this->pageh - $py1)); // arc starting point
+            $out .= $this->getRawPoint($px1, $this->pageh - $py1); // arc starting point
         }
 
         // draw arcs
         for ($idx = 1; $idx <= $ncv; ++$idx) {
             $ang = $ags + ($idx * $arcang); // starting angle
-            if ($idx == $ncv) {
+            if ($idx === $ncv) {
                 $ang = $agf;
             }
 
@@ -308,15 +297,15 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
             $px2 = $posx0 + ($rdh * $cos_xang * $cos_ang) - ($rdv * $sin_xang * $sin_ang);
             $py2 = $posy0 + ($rdh * $sin_xang * $cos_ang) + ($rdv * $cos_xang * $sin_ang);
             // second Bezier control point
-            $qx2 = ($alpha * ((-$rdh * $cos_xang * $sin_ang) - ($rdv * $sin_xang * $cos_ang)));
-            $qy2 = ($alpha * ((-$rdh * $sin_xang * $sin_ang) + ($rdv * $cos_xang * $cos_ang)));
+            $qx2 = $alpha * ((-$rdh * $cos_xang * $sin_ang) - ($rdv * $sin_xang * $cos_ang));
+            $qy2 = $alpha * ((-$rdh * $sin_xang * $sin_ang) + ($rdv * $cos_xang * $cos_ang));
             // draw arc
-            $cx1 = ($px1 + $qx1);
-            $cy1 = ($this->pageh - ($py1 + $qy1));
-            $cx2 = ($px2 - $qx2);
-            $cy2 = ($this->pageh - ($py2 - $qy2));
+            $cx1 = $px1 + $qx1;
+            $cy1 = $this->pageh - ($py1 + $qy1);
+            $cx2 = $px2 - $qx2;
+            $cy2 = $this->pageh - ($py2 - $qy2);
             $cx3 = $px2;
-            $cy3 = ($this->pageh - $py2);
+            $cy3 = $this->pageh - $py2;
             $out .= $this->getRawCurve($cx1, $cy1, $cx2, $cy2, $cx3, $cy3);
             // get bounding box coordinates
             $bbox = [
@@ -357,21 +346,17 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
      *
      * @return float Angle in radiants
      */
-    public function getVectorsAngle(
-        float $posx1,
-        float $posy1,
-        float $posx2,
-        float $posy2,
-    ): float {
-        $dprod = (($posx1 * $posx2) + ($posy1 * $posy2));
+    public function getVectorsAngle(float $posx1, float $posy1, float $posx2, float $posy2): float
+    {
+        $dprod = ($posx1 * $posx2) + ($posy1 * $posy2);
         $dist1 = \sqrt(($posx1 * $posx1) + ($posy1 * $posy1));
         $dist2 = \sqrt(($posx2 * $posx2) + ($posy2 * $posy2));
-        $distprod = ($dist1 * $dist2);
-        if ($distprod == 0) {
+        $distprod = $dist1 * $dist2;
+        if ($distprod === 0.0) {
             return 0;
         }
 
-        $angle = \acos(\min(1, \max(-1, ($dprod / $distprod))));
+        $angle = \acos(\min(1, \max(-1, $dprod / $distprod)));
         if ((($posx1 * $posy2) - ($posx2 * $posy1)) < 0) {
             $angle *= -1;
         }

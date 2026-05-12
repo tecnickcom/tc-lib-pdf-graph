@@ -31,15 +31,12 @@ class StyleTest extends TestUtil
 {
     protected function getTestObject(): \Com\Tecnick\Pdf\Graph\Draw
     {
-        return new \Com\Tecnick\Pdf\Graph\Draw(
-            1,
-            0,
-            0,
-            new \Com\Tecnick\Color\Pdf(),
-            new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
-            false
-        );
+        return new \Com\Tecnick\Pdf\Graph\Draw(1, 0, 0, new \Com\Tecnick\Color\Pdf(), $this->getEncryptObject(), false);
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetStyleCmd(): void
     {
@@ -60,28 +57,48 @@ class StyleTest extends TestUtil
             'fillColor' => '["RGB",0.250000,0.500000,0.750000]',
         ];
         $res2 = $draw->getStyleCmd($style2);
-        $exp2 = '3.000000 w' . "\n"
-            . '1 J' . "\n"
-            . '2 j' . "\n"
-            . '11.000000 M' . "\n"
-            . '[5.000000 7.000000] 0.000000 d' . "\n"
-            . '0.678431 1.000000 0.184314 RG' . "\n"
-            . '0.250000 0.500000 0.750000 rg' . "\n";
+        $exp2 =
+            '3.000000 w'
+            . "\n"
+            . '1 J'
+            . "\n"
+            . '2 j'
+            . "\n"
+            . '11.000000 M'
+            . "\n"
+            . '[5.000000 7.000000] 0.000000 d'
+            . "\n"
+            . '0.678431 1.000000 0.184314 RG'
+            . "\n"
+            . '0.250000 0.500000 0.750000 rg'
+            . "\n";
         $this->assertEquals($exp2, $res2);
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testStyle(): void
     {
         $draw = $this->getTestObject();
         $style = [];
         $res1 = $draw->add($style, true);
-        $exp1 = '1.000000 w' . "\n"
-            . '0 J' . "\n"
-            . '0 j' . "\n"
-            . '10.000000 M' . "\n"
-            . '[] 0.000000 d' . "\n"
-            . '/CS1 CS 1.000000 SCN' . "\n"
-            . '/CS1 cs 1.000000 scn' . "\n";
+        $exp1 =
+            '1.000000 w'
+            . "\n"
+            . '0 J'
+            . "\n"
+            . '0 j'
+            . "\n"
+            . '10.000000 M'
+            . "\n"
+            . '[] 0.000000 d'
+            . "\n"
+            . '/CS1 CS 1.000000 SCN'
+            . "\n"
+            . '/CS1 cs 1.000000 scn'
+            . "\n";
         $this->assertEquals($exp1, $res1);
 
         $style = [
@@ -95,13 +112,21 @@ class StyleTest extends TestUtil
             'fillColor' => '["RGB",0.250000,0.500000,0.750000]',
         ];
         $res2 = $draw->add($style, false);
-        $exp2 = '3.000000 w' . "\n"
-            . '1 J' . "\n"
-            . '2 j' . "\n"
-            . '11.000000 M' . "\n"
-            . '[5.000000 7.000000] 1.000000 d' . "\n"
-            . '0.678431 1.000000 0.184314 RG' . "\n"
-            . '0.250000 0.500000 0.750000 rg' . "\n";
+        $exp2 =
+            '3.000000 w'
+            . "\n"
+            . '1 J'
+            . "\n"
+            . '2 j'
+            . "\n"
+            . '11.000000 M'
+            . "\n"
+            . '[5.000000 7.000000] 1.000000 d'
+            . "\n"
+            . '0.678431 1.000000 0.184314 RG'
+            . "\n"
+            . '0.250000 0.500000 0.750000 rg'
+            . "\n";
         $this->assertEquals($exp2, $res2);
         $this->assertEquals($style, $draw->getCurrentStyleArray());
 
@@ -112,12 +137,19 @@ class StyleTest extends TestUtil
             'fillColor' => 'cmyk(67,33,0,25)',
         ];
         $res3 = $draw->add($style, true);
-        $exp3 = '3.000000 w' . "\n"
-            . '1 J' . "\n"
-            . '2 j' . "\n"
-            . '11.000000 M' . "\n"
-            . '[5.000000 7.000000] 1.000000 d' . "\n"
-            . '0.670000 0.330000 0.000000 0.250000 k' . "\n";
+        $exp3 =
+            '3.000000 w'
+            . "\n"
+            . '1 J'
+            . "\n"
+            . '2 j'
+            . "\n"
+            . '11.000000 M'
+            . "\n"
+            . '[5.000000 7.000000] 1.000000 d'
+            . "\n"
+            . '0.670000 0.330000 0.000000 0.250000 k'
+            . "\n";
         $this->assertEquals($exp3, $res3);
 
         $style = [
@@ -128,12 +160,19 @@ class StyleTest extends TestUtil
             'dashArray' => [],
         ];
         $res4 = $draw->add($style, true);
-        $exp4 = '3.000000 w' . "\n"
-            . '1 J' . "\n"
-            . '2 j' . "\n"
-            . '11.000000 M' . "\n"
-            . '[] 1.000000 d' . "\n"
-            . '0.670000 0.330000 0.000000 0.250000 k' . "\n";
+        $exp4 =
+            '3.000000 w'
+            . "\n"
+            . '1 J'
+            . "\n"
+            . '2 j'
+            . "\n"
+            . '11.000000 M'
+            . "\n"
+            . '[] 1.000000 d'
+            . "\n"
+            . '0.670000 0.330000 0.000000 0.250000 k'
+            . "\n";
         $this->assertEquals($exp4, $res4);
 
         $style = [
@@ -159,113 +198,106 @@ class StyleTest extends TestUtil
         $this->assertEquals($exp1, $res);
     }
 
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+
     public function testStyleEx(): void
     {
-        $this->bcExpectException('\\' . \Com\Tecnick\Pdf\Graph\Exception::class);
+        $this->bcExpectException(\Com\Tecnick\Pdf\Graph\Exception::class);
         $draw = $this->getTestObject();
         $draw->pop();
     }
 
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+
     public function testSaveRestoreStyle(): void
     {
         $draw = $this->getTestObject();
-        $draw->add(
-            [
-                'lineWidth' => 1,
-            ],
-            false
-        );
-        $draw->add(
-            [
-                'lineWidth' => 2,
-            ],
-            false
-        );
-        $draw->add(
-            [
-                'lineWidth' => 3,
-            ],
-            false
-        );
+        $draw->add([
+            'lineWidth' => 1,
+        ], false);
+        $draw->add([
+            'lineWidth' => 2,
+        ], false);
+        $draw->add([
+            'lineWidth' => 3,
+        ], false);
         $draw->saveStyleStatus();
-        $draw->add(
-            [
-                'lineWidth' => 4,
-            ],
-            false
-        );
-        $draw->add(
-            [
-                'lineWidth' => 5,
-            ],
-            false
-        );
-        $draw->add(
-            [
-                'lineWidth' => 6,
-            ],
-            false
-        );
+        $draw->add([
+            'lineWidth' => 4,
+        ], false);
+        $draw->add([
+            'lineWidth' => 5,
+        ], false);
+        $draw->add([
+            'lineWidth' => 6,
+        ], false);
         $this->assertEquals(
             [
                 'lineWidth' => 6,
             ],
-            $draw->getCurrentStyleArray()
+            $draw->getCurrentStyleArray(),
         );
         $draw->restoreStyleStatus();
         $this->assertEquals(
             [
                 'lineWidth' => 3,
             ],
-            $draw->getCurrentStyleArray()
+            $draw->getCurrentStyleArray(),
         );
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testStyleItem(): void
     {
         $draw = $this->getTestObject();
-        $res = $draw->getCurrentStyleItem('lineCap');
-        $this->assertEquals('butt', $res);
+        $this->assertEquals('butt', $draw->getCurrentStyleItem('lineCap'));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testStyleItemEx(): void
     {
-        $this->bcExpectException('\\' . \Com\Tecnick\Pdf\Graph\Exception::class);
+        $this->bcExpectException(\Com\Tecnick\Pdf\Graph\Exception::class);
         $draw = $this->getTestObject();
         $draw->getCurrentStyleItem('wrongField');
     }
 
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+
     public function testGetLastStyleProperty(): void
     {
         $draw = $this->getTestObject();
-        $draw->add(
-            [
-                'lineWidth' => 1,
-            ],
-            false
-        );
-        $draw->add(
-            [
-                'lineWidth' => 2,
-            ],
-            false
-        );
-        $draw->add(
-            [
-                'lineWidth' => 3,
-            ],
-            false
-        );
+        $draw->add([
+            'lineWidth' => 1,
+        ], false);
+        $draw->add([
+            'lineWidth' => 2,
+        ], false);
+        $draw->add([
+            'lineWidth' => 3,
+        ], false);
         $this->assertEquals(3, $draw->getLastStyleProperty('lineWidth', 0));
-        $draw->add(
-            [
-                'lineWidth' => 4,
-            ],
-            false
-        );
+        $draw->add([
+            'lineWidth' => 4,
+        ], false);
         $this->assertEquals(4, $draw->getLastStyleProperty('lineWidth', 0));
         $this->assertEquals(7, $draw->getLastStyleProperty('unknown', 7));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetPathPaintOp(): void
     {
@@ -286,6 +318,10 @@ class StyleTest extends TestUtil
         $this->assertEquals('B*' . "\n", $res);
     }
 
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+
     public function testIsFillingMode(): void
     {
         $draw = $this->getTestObject();
@@ -300,6 +336,10 @@ class StyleTest extends TestUtil
         $this->assertFalse($draw->isFillingMode('n'));
         $this->assertFalse($draw->isFillingMode(''));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testIsStrokingMode(): void
     {
@@ -316,6 +356,10 @@ class StyleTest extends TestUtil
         $this->assertFalse($draw->isStrokingMode(''));
     }
 
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+
     public function testIsClosingMode(): void
     {
         $draw = $this->getTestObject();
@@ -331,6 +375,10 @@ class StyleTest extends TestUtil
         $this->assertFalse($draw->isClosingMode(''));
     }
 
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+
     public function testGetModeWithoutClose(): void
     {
         $draw = $this->getTestObject();
@@ -340,6 +388,10 @@ class StyleTest extends TestUtil
         $this->assertEquals('B*', $draw->getModeWithoutClose('b*'));
         $this->assertEquals('n', $draw->getModeWithoutClose('n'));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetModeWithoutFill(): void
     {
@@ -354,6 +406,10 @@ class StyleTest extends TestUtil
         $this->assertEquals('n', $draw->getModeWithoutFill('n'));
     }
 
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+
     public function testGetModeWithoutStroke(): void
     {
         $draw = $this->getTestObject();
@@ -367,54 +423,39 @@ class StyleTest extends TestUtil
         $this->assertEquals('n', $draw->getModeWithoutStroke('n'));
     }
 
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+
     public function testGetExtGState(): void
     {
         $draw = $this->getTestObject();
-        $this->assertEquals(
-            '/GS1 gs' . "\n",
-            $draw->getExtGState(
-                [
-                    'A' => 'B',
-                ]
-            )
-        );
-        $this->assertEquals(
-            '/GS1 gs' . "\n",
-            $draw->getExtGState(
-                [
-                    'A' => 'B',
-                ]
-            )
-        );
-        $this->assertEquals(
-            '/GS2 gs' . "\n",
-            $draw->getExtGState(
-                [
-                    'C' => 'D',
-                ]
-            )
-        );
+        $this->assertEquals('/GS1 gs' . "\n", $draw->getExtGState([
+            'A' => 'B',
+        ]));
+        $this->assertEquals('/GS1 gs' . "\n", $draw->getExtGState([
+            'A' => 'B',
+        ]));
+        $this->assertEquals('/GS2 gs' . "\n", $draw->getExtGState([
+            'C' => 'D',
+        ]));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetExtGStatePdfa(): void
     {
-        $draw = new \Com\Tecnick\Pdf\Graph\Draw(
-            1,
-            0,
-            0,
-            new \Com\Tecnick\Color\Pdf(),
-            new \Com\Tecnick\Pdf\Encrypt\Encrypt(),
-            true
-        );
-        $this->assertEquals(
-            '',
-            $draw->getExtGState(
-                [
-                    'A' => 'B',
-                ]
-            )
-        );
+        $draw = new \Com\Tecnick\Pdf\Graph\Draw(1, 0, 0, new \Com\Tecnick\Color\Pdf(), $this->getEncryptObject(), true);
+        $this->assertEquals('', $draw->getExtGState([
+            'A' => 'B',
+        ]));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testRestoreStyleStatusNull(): void
     {
@@ -425,6 +466,10 @@ class StyleTest extends TestUtil
         $draw->restoreStyleStatus();
         $this->assertEquals('butt', $draw->getCurrentStyleItem('lineCap'));
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetLineModeWithDashArrayNoDashPhase(): void
     {
