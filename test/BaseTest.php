@@ -44,6 +44,110 @@ class BaseTest extends TestUtil
     /**
      * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
+    public function testGetOutResourcesByKeysSkipInvalidEntries(): void
+    {
+        $draw = $this->getTestObject();
+
+        $draw->getOverprint();
+        $draw->getGradient(
+            2,
+            [0, 0, 1, 0],
+            [
+                ['color' => 'red', 'offset' => 0.0],
+                ['color' => 'blue', 'offset' => 1.0],
+            ],
+            '',
+            false,
+        );
+
+        $this->assertSame(' /ExtGState << >>' . "\n", $draw->getOutExtGStateResourcesByKeys([999]));
+        $this->assertSame('', $draw->getOutGradientResourcesByKeys([999]));
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
+     */
+    public function testGradientShadersHandleMalformedStopsAndFloatExponent(): void
+    {
+        $draw = $this->getTestObject();
+        $draw->getGradient(
+            2,
+            [0, 0, 1, 0],
+            [
+                ['color' => 'red', 'offset' => 0.0, 'opacity' => 0.5],
+                ['color' => 'blue', 'offset' => 1.0, 'opacity' => 0.6, 'exponent' => 1.5],
+            ],
+            '',
+            false,
+        );
+
+        $outFloatExponent = $draw->getOutGradientShaders($draw->getObjectNumber());
+        $this->assertStringContainsString('/N 1.5', $outFloatExponent);
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
+     */
+    public function testGetOutGradientShadersSkipsMissingOpacityPattern(): void
+    {
+        $draw = new class(0.75, 80, 100, new \Com\Tecnick\Color\Pdf(), $this->getEncryptObject(), false) extends
+            \Com\Tecnick\Pdf\Graph\Draw {
+            /**
+             * @param array<int, array{
+             *     antialias: bool,
+             *     background: ?\Com\Tecnick\Color\Model,
+             *     colors: array<int, array{color: string, exponent?: float, offset?: float, opacity?: float}>,
+             *     colspace: string,
+             *     coords: array<float>,
+             *     id: int,
+             *     pattern: int,
+             *     stream: string,
+             *     transparency: bool,
+             *     type: int,
+             * }> $grads
+             */
+            public function setGradientsForTest(array $grads): void
+            {
+                $this->gradients = $grads;
+            }
+
+            protected function getOutGradientCols(array $grad, string $type): string
+            {
+                if ($type === 'opacity') {
+                    return '';
+                }
+
+                return parent::getOutGradientCols($grad, $type);
+            }
+        };
+
+        $draw->setGradientsForTest([
+            1 => [
+                'antialias' => false,
+                'background' => null,
+                'colors' => [
+                    0 => ['color' => 'red', 'offset' => 0.0, 'opacity' => 0.5, 'exponent' => 1.0],
+                    1 => ['color' => 'blue', 'offset' => 1.0, 'opacity' => 0.6, 'exponent' => 1.0],
+                ],
+                'colspace' => 'DeviceRGB',
+                'coords' => [0.0, 0.0, 1.0, 0.0],
+                'id' => 0,
+                'pattern' => 0,
+                'stream' => '',
+                'transparency' => true,
+                'type' => 2,
+            ],
+        ]);
+
+        $out = $draw->getOutGradientShaders(10);
+        $this->assertNotSame('', $out);
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetOutExtGState(): void
     {

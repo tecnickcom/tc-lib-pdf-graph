@@ -470,6 +470,32 @@ class StyleTest extends TestUtil
     /**
      * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
+    public function testGetCurrentStyleArrayDefaultFallback(): void
+    {
+        $draw = new class(1, 0, 0, new \Com\Tecnick\Color\Pdf(), $this->getEncryptObject(), false) extends
+            \Com\Tecnick\Pdf\Graph\Draw {
+            public function setStyleIdForTest(int $styleid): void
+            {
+                $this->styleid = $styleid;
+            }
+        };
+
+        $draw->setStyleIdForTest(999);
+        $this->assertSame('butt', $draw->getCurrentStyleArray()['lineCap'] ?? null);
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testIsClippingModeInvalid(): void
+    {
+        $draw = $this->getTestObject();
+        $this->assertFalse($draw->isClippingMode('invalid'));
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetLineModeWithDashArrayNoDashPhase(): void
     {

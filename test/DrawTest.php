@@ -203,6 +203,17 @@ class DrawTest extends TestUtil
             . "\n",
             $res,
         );
+
+        $res = $draw->getPolycurve(3, 5, [[7, 11, 13], [29, 31, 37, 41, 43, 47]]);
+        $this->assertEquals(
+            '2.250000 71.250000 m'
+            . "\n"
+            . '21.750000 51.750000 27.750000 44.250000 32.250000 39.750000 c'
+            . "\n"
+            . 'S'
+            . "\n",
+            $res,
+        );
     }
 
     /**
@@ -451,6 +462,9 @@ class DrawTest extends TestUtil
             . "\n",
             $res,
         );
+
+        $res = $draw->getBasicPolygon([3, 5, 7, 11, 13]);
+        $this->assertEquals('2.250000 71.250000 m' . "\n" . '5.250000 66.750000 l' . "\n" . 'S' . "\n", $res);
     }
 
     /**
@@ -552,6 +566,9 @@ class DrawTest extends TestUtil
             . "\n",
             $res,
         );
+
+        $res = $draw->getPolygon([0 => 3, 1 => 5, 2 => 7, 3 => 11, 4 => 13, 6 => 19, 7 => 23, 8 => 29]);
+        $this->assertEquals('2.250000 71.250000 m' . "\n" . '5.250000 66.750000 l' . "\n" . 'S' . "\n", $res);
     }
 
     /**
@@ -935,6 +952,8 @@ class DrawTest extends TestUtil
             . "\n",
             $res,
         );
+
+        $this->assertSame('', $draw->getStarPolygon(3, 5, 7, 4, -1));
     }
 
     /**

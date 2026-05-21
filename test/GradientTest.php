@@ -233,6 +233,26 @@ class GradientTest extends TestUtil
     /**
      * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
+    public function testGetGradientInvalidStops(): void
+    {
+        $this->bcExpectException(\Com\Tecnick\Pdf\Graph\Exception::class);
+        $draw = $this->getTestObject();
+        $draw->getGradient(2, [0, 0, 1, 0], [], '', false);
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetAlphaStringNonstrokingConversion(): void
+    {
+        $draw = $this->getTestObject();
+        $this->assertSame('/GS1 gs' . "\n", $draw->getAlpha(0.5, 'Normal', '0.4'));
+        $this->assertSame('/GS2 gs' . "\n", $draw->getAlpha(0.5, 'Normal', 'bad'));
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
 
     public function testGetCoonsPatchMeshPDFA(): void
     {
