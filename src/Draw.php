@@ -347,6 +347,10 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
             }
         }
 
+        if (!$this->isStrokingMode($mode)) {
+            return $out;
+        }
+
         $nco -= 3;
 
         // paint the outline

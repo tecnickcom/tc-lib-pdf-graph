@@ -104,6 +104,14 @@ class DrawTest extends TestUtil
             . "\n",
             $res,
         );
+
+        $res = $draw->getRect(3, 5, 7, 11, 'F', [
+            'all' => $testStyle,
+            1 => [
+                'lineColor' => '#ff0000',
+            ],
+        ]);
+        $this->assertStringNotContainsString("\nS\n", $res);
     }
 
     /**
