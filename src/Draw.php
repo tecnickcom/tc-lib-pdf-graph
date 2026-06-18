@@ -351,6 +351,25 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
             return $out;
         }
 
+        // When the outline is uniformly styled (no per-segment style overrides),
+        // stroke it as a single continuous path so that adjacent edges are joined
+        // at the vertices (miter/round/bevel) instead of being drawn as
+        // independent, butt-capped segments that would leave the corners open.
+        $hasSegmentStyles = false;
+        foreach ($styles as $skey => $sval) {
+            if (!\is_int($skey) || $sval === []) {
+                continue;
+            }
+
+            $hasSegmentStyles = true;
+            break;
+        }
+
+        if (!$hasSegmentStyles) {
+            $closed = $points[0] === ($points[$nco - 2] ?? null) && $points[1] === ($points[$nco - 1] ?? null);
+            return $out . $this->getBasicPolygon($points, $closed ? 's' : 'S');
+        }
+
         $nco -= 3;
 
         // paint the outline
