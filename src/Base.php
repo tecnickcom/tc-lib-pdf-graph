@@ -321,6 +321,58 @@ abstract class Base
     }
 
     /**
+     * Returns the resource names of the registered ExtGState objects that carry
+     * actual (non-trivial) transparency: a fill or stroke alpha below 1, a blend
+     * mode other than Normal, or a soft mask.
+     *
+     * The returned names match the tokens used by the `gs` operator in content
+     * streams (for example "GS3"), so callers can detect whether a given content
+     * stream actually triggers transparency (as opposed to merely resetting the
+     * graphics state back to fully opaque).
+     *
+     * @return array<int, string> List of ExtGState resource names.
+     */
+    public function getTransparencyExtGStateNames(): array
+    {
+        $names = [];
+        foreach ($this->extgstates as $key => $ext) {
+            if (!self::extGStateHasTransparency($ext['parms'])) {
+                continue;
+            }
+
+            $names[] = $ext['name'] !== '' ? $ext['name'] : 'GS' . $key;
+        }
+
+        return $names;
+    }
+
+    /**
+     * Whether the given ExtGState parameters describe actual transparency:
+     * a constant alpha below 1, a non-Normal blend mode, or a soft mask.
+     *
+     * @param array<string, int|float|bool|string> $parms ExtGState parameters.
+     */
+    private static function extGStateHasTransparency(array $parms): bool
+    {
+        $belowOne = static fn(string $key): bool => (
+            isset($parms[$key])
+            && \is_numeric($parms[$key])
+            && (float) $parms[$key] < 1.0
+        );
+        if ($belowOne('ca') || $belowOne('CA')) {
+            return true;
+        }
+
+        $blend = isset($parms['BM']) ? \ltrim((string) $parms['BM'], '/') : 'Normal';
+        if ($blend !== '' && $blend !== 'Normal') {
+            return true;
+        }
+
+        $smask = isset($parms['SMask']) ? \ltrim((string) $parms['SMask'], '/') : 'None';
+        return $smask !== '' && $smask !== 'None';
+    }
+
+    /**
      * Get the PDF output string for ExtGState Resource Dictionary.
      *
      * @param array<int, array{'name': string, 'n': int, 'parms'?: array<string, int|float|bool|string>}> $data extgstates data.
@@ -591,7 +643,7 @@ abstract class Base
 
         if ($grad['type'] === 2) {
             $out .= \sprintf(
-                ' /Coords [%F %F %F %F] /Domain [0 1] /Function %d 0 R /Extend [true true] >>\n',
+                ' /Coords [%F %F %F %F] /Domain [0 1] /Function %d 0 R /Extend [true true] >>' . "\n",
                 $coords[0] ?? 0.0,
                 $coords[1] ?? 0.0,
                 $coords[2] ?? 0.0,
@@ -602,7 +654,7 @@ abstract class Base
             // x0, y0, r0, x1, y1, r1
             // the  radius of the inner circle is 0
             $out .= \sprintf(
-                ' /Coords [%F %F 0 %F %F %F] /Domain [0 1] /Function %d 0 R /Extend [true true] >>\n',
+                ' /Coords [%F %F 0 %F %F %F] /Domain [0 1] /Function %d 0 R /Extend [true true] >>' . "\n",
                 $coords[0] ?? 0.0,
                 $coords[1] ?? 0.0,
                 $coords[2] ?? 0.0,
@@ -686,6 +738,11 @@ abstract class Base
             }
 
             if ($grad['transparency']) {
+                if (!isset($this->gradients[$idgs]['pattern'])) {
+                    // no transparency pattern was generated: skip without emitting a partial object
+                    continue;
+                }
+
                 $oid = ++$this->pon;
                 $pwidth = $this->pagew * $this->kunit;
                 $pheight = $this->pageh * $this->kunit;
@@ -699,10 +756,6 @@ abstract class Base
                         $stream = $cmpstream;
                         $out .= ' /Filter /FlateDecode';
                     }
-                }
-
-                if (!isset($this->gradients[$idgs]['pattern'])) {
-                    continue;
                 }
 
                 $stream = $this->encrypt->encryptString($stream, $oid);
@@ -768,7 +821,11 @@ abstract class Base
                 $this->extgstates[] = [
                     'n' => $objext,
                     'name' => 'TGS' . $idx,
-                    'parms' => [],
+                    // Record the soft mask so this entry is recognised as carrying
+                    // actual transparency (see getTransparencyExtGStateNames()).
+                    'parms' => [
+                        'SMask' => $objsm . ' 0 R',
+                    ],
                 ];
             }
         }

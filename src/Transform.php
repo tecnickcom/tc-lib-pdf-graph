@@ -381,7 +381,7 @@ abstract class Transform extends \Com\Tecnick\Pdf\Graph\Style
 
     /**
      * Converts the number in degrees to the radian equivalent.
-     * We use this instead of $this->degToRad to avoid precision problems with hhvm.
+     * We use this instead of the deg2rad() function to avoid precision problems with hhvm.
      *
      * @param float $deg Angular value in degrees.
      *

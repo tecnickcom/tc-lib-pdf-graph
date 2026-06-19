@@ -353,4 +353,151 @@ class BaseTest extends TestUtil
         $res = $draw->getOutGradientShaders($draw->getObjectNumber());
         $this->assertNotEmpty($res);
     }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetTransparencyExtGStateNamesEmpty(): void
+    {
+        $draw = $this->getTestObject();
+        $this->assertSame([], $draw->getTransparencyExtGStateNames());
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetTransparencyExtGStateNamesIgnoresOpaque(): void
+    {
+        $draw = $this->getTestObject();
+
+        // Overprint carries no alpha/blend/soft-mask information.
+        $draw->getOverprint();
+        // A fully opaque alpha (CA = ca = 1, BM = Normal, no SMask) must be ignored.
+        $draw->getAlpha();
+
+        $this->assertSame([], $draw->getTransparencyExtGStateNames());
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetTransparencyExtGStateNamesDetectsTransparency(): void
+    {
+        $draw = $this->getTestObject();
+
+        // GS1: stroking alpha below 1 (CA).
+        $draw->getAlpha(0.5, 'Normal', 1.0);
+        // GS2: non-stroking alpha below 1 (ca).
+        $draw->getAlpha(1.0, 'Normal', 0.4);
+        // GS3: non-Normal blend mode.
+        $draw->getAlpha(1.0, 'Multiply', 1.0);
+        // GS4: an explicit soft mask.
+        $draw->getExtGState(['SMask' => '/Foo']);
+        // GS5: fully opaque, must be skipped.
+        $draw->getAlpha();
+
+        $this->assertSame(['GS1', 'GS2', 'GS3', 'GS4'], $draw->getTransparencyExtGStateNames());
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
+     */
+    public function testGetTransparencyExtGStateNamesUsesAssignedName(): void
+    {
+        $draw = new class(0.75, 80, 100, new \Com\Tecnick\Color\Pdf(), $this->getEncryptObject(), false) extends
+            \Com\Tecnick\Pdf\Graph\Draw {
+            /**
+             * @param array<int, array{
+             *     'n': int,
+             *     'name': string,
+             *     'parms': array<string, int|float|bool|string>,
+             * }> $extgstates
+             */
+            public function setExtGStatesForTest(array $extgstates): void
+            {
+                $this->extgstates = $extgstates;
+            }
+        };
+
+        $draw->setExtGStatesForTest([
+            // Named transparent entry: the assigned name is returned verbatim.
+            3 => ['n' => 0, 'name' => 'NAMEDGS', 'parms' => ['ca' => 0.25]],
+            // Unnamed transparent entry: the name falls back to "GS" . key.
+            4 => ['n' => 0, 'name' => '', 'parms' => ['CA' => 0.5]],
+            // Named but opaque entry: must be skipped.
+            5 => ['n' => 0, 'name' => 'OPAQUE', 'parms' => ['ca' => 1.0]],
+        ]);
+
+        $this->assertSame(['NAMEDGS', 'GS4'], $draw->getTransparencyExtGStateNames());
+    }
+
+    /**
+     * Axial (type 2) and radial (type 3) shading dictionaries must terminate
+     * with a real newline before "endobj", not a literal backslash-n.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
+     */
+    public function testGradientShadingDictionaryUsesRealNewline(): void
+    {
+        $draw = $this->getTestObject();
+        // axial shading
+        $draw->getGradient(
+            2,
+            [0, 0, 1, 0],
+            [
+                ['color' => 'red', 'offset' => 0.0],
+                ['color' => 'blue', 'offset' => 1.0],
+            ],
+            '',
+            false,
+        );
+        // radial shading
+        $draw->getGradient(
+            3,
+            [0.5, 0.5, 0.5, 0.5, 1],
+            [
+                ['color' => 'red', 'offset' => 0.0],
+                ['color' => 'green', 'offset' => 1.0],
+            ],
+            '',
+            false,
+        );
+        $out = $draw->getOutGradientShaders($draw->getObjectNumber());
+
+        // the shading dictionary must end with ">>" followed by a real newline and "endobj"
+        $this->assertStringContainsString('/Extend [true true] >>' . "\n" . 'endobj', $out);
+        // it must NOT contain a literal backslash-n sequence (single-quoted: backslash + n)
+        $this->assertStringNotContainsString('>>\n', $out);
+    }
+
+    /**
+     * A transparent gradient registers a luminosity soft-mask ExtGState that
+     * must be reported as carrying actual transparency.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
+     */
+    public function testGetTransparencyExtGStateNamesDetectsGradientSoftMask(): void
+    {
+        $draw = $this->getTestObject();
+        // a gradient with opacity < 1 generates a luminosity soft mask
+        $draw->getGradient(
+            2,
+            [0, 0, 1, 0],
+            [
+                ['color' => 'red', 'offset' => 0.0, 'opacity' => 0.5],
+                ['color' => 'blue', 'offset' => 1.0, 'opacity' => 0.5],
+            ],
+            '',
+            false,
+        );
+        // the TGS ExtGState only exists after the shaders have been generated
+        $this->assertSame([], $draw->getTransparencyExtGStateNames());
+
+        $draw->getOutGradientShaders($draw->getObjectNumber());
+
+        $this->assertContains('TGS1', $draw->getTransparencyExtGStateNames());
+    }
 }

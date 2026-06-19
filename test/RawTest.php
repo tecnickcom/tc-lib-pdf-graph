@@ -265,4 +265,20 @@ class RawTest extends TestUtil
         $this->assertGreaterThan(PHP_INT_MIN, $maxy); // max-y was updated from sentinel
         $this->assertLessThan(0, $maxy); // all cy values in this arc are < 0
     }
+
+    /**
+     * A zero vertical radius means "circle" (per the docblock) and must not
+     * trigger a division by zero.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetRawEllipticalArcZeroVerticalRadius(): void
+    {
+        $draw = $this->getTestObject();
+        // rdv = 0 must be treated as a circle (rdv = rdh), not crash.
+        $out = $draw->getRawEllipticalArc(3, 5, 7, 0);
+        $this->assertNotSame('', $out);
+        // identical to passing the horizontal radius as the vertical one
+        $this->assertSame($draw->getRawEllipticalArc(3, 5, 7, 7), $out);
+    }
 }

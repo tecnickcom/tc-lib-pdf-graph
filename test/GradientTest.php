@@ -902,6 +902,32 @@ class GradientTest extends TestUtil
     }
 
     /**
+     * An empty blend mode must default to Normal without emitting a PHP warning
+     * (regression test for accessing $bmv[0] on an empty string).
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetAlphaEmptyBlendMode(): void
+    {
+        $draw = $this->getTestObject();
+
+        // record whether any PHP warning is emitted while building the alpha
+        $warned = false;
+        \set_error_handler(static function () use (&$warned): bool {
+            $warned = true;
+            return true;
+        }, E_WARNING);
+        try {
+            $res = $draw->getAlpha(0.5, '', 0.4);
+        } finally {
+            \restore_error_handler();
+        }
+
+        $this->assertFalse($warned, 'getAlpha() with an empty blend mode must not emit a warning');
+        $this->assertEquals('/GS1 gs' . "\n", $res);
+    }
+
+    /**
      * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
 

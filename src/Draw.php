@@ -669,8 +669,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         $sy1 = $posy1;
         if ($headmode > 0) {
             // calculate the stopping point for the arrow shaft
-            $linewidth = 0;
-            $linewidth = $style['lineWidth'] ?? (float) $this->getLastStyleProperty('lineWidth', $linewidth);
+            $linewidth = $style['lineWidth'] ?? (float) $this->getLastStyleProperty('lineWidth', 0);
 
             $sx1 = $posx1 + (($armsize - $linewidth) * \cos($dir_angle));
             $sy1 = $posy1 + (($armsize - $linewidth) * \sin($dir_angle));

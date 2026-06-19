@@ -941,8 +941,8 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             $nonstroking = $stroking;
         }
 
-        if ($bmv[0] === '/') {
-            // remove trailing slash
+        if ($bmv !== '' && $bmv[0] === '/') {
+            // remove leading slash
             $bmv = \substr($bmv, 1);
         }
 

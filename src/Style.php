@@ -390,7 +390,6 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
             }
 
             $out .= \sprintf('[%s] %F d' . "\n", \implode(' ', $dash), $style['dashPhase']);
-            return $out;
         }
 
         return $out;

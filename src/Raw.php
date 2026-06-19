@@ -250,6 +250,12 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
             return '';
         }
 
+        if ($rdv === 0.0) {
+            // a zero vertical radius means a circle: use the horizontal radius
+            // (also avoids a division by zero when computing the arc angles)
+            $rdv = $rdh;
+        }
+
         $bbox = [PHP_INT_MAX, PHP_INT_MAX, PHP_INT_MIN, PHP_INT_MIN];
         if ($pie) {
             $out .= $this->getRawPoint($posxc, $posyc); // center of the arc
@@ -264,24 +270,28 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
         $ncv *= (2 * \abs($total_angle)) / self::MPI; // total arcs to draw
         $ncv = (int) (\round($ncv) + 1);
         $arcang = $total_angle / $ncv; // angle of each arc
+        $pageh = $this->pageh;
         $posx0 = $posxc; // X center point in PDF coordinates
-        $posy0 = $this->pageh - $posyc; // Y center point in PDF coordinates
+        $posy0 = $pageh - $posyc; // Y center point in PDF coordinates
         $ang = $ags; // starting angle
         $alpha = \sin($arcang) * ((\sqrt(4 + (3 * (\tan($arcang / 2) ** 2))) - 1) / 3);
         $cos_xang = \cos($posxang);
         $sin_xang = \sin($posxang);
-        $cos_ang = \cos($ang);
-        $sin_ang = \sin($ang);
-        // first arc point
-        $px1 = $posx0 + ($rdh * $cos_xang * $cos_ang) - ($rdv * $sin_xang * $sin_ang);
-        $py1 = $posy0 + ($rdh * $sin_xang * $cos_ang) + ($rdv * $cos_xang * $sin_ang);
-        // first Bezier control point
-        $qx1 = $alpha * ((-$rdh * $cos_xang * $sin_ang) - ($rdv * $sin_xang * $cos_ang));
-        $qy1 = $alpha * ((-$rdh * $sin_xang * $sin_ang) + ($rdv * $cos_xang * $cos_ang));
+        // first arc point and its Bezier control point
+        [$px1, $py1, $qx1, $qy1] = $this->getRawEllipticalArcPoint(
+            $posx0,
+            $posy0,
+            $rdh,
+            $rdv,
+            $cos_xang,
+            $sin_xang,
+            $alpha,
+            $ang,
+        );
         if ($pie) {
-            $out .= $this->getRawLine($px1, $this->pageh - $py1); // line from center to arc starting point
+            $out .= $this->getRawLine($px1, $pageh - $py1); // line from center to arc starting point
         } elseif ($startpoint) {
-            $out .= $this->getRawPoint($px1, $this->pageh - $py1); // arc starting point
+            $out .= $this->getRawPoint($px1, $pageh - $py1); // arc starting point
         }
 
         // draw arcs
@@ -291,21 +301,24 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
                 $ang = $agf;
             }
 
-            $cos_ang = \cos($ang);
-            $sin_ang = \sin($ang);
-            // second arc point
-            $px2 = $posx0 + ($rdh * $cos_xang * $cos_ang) - ($rdv * $sin_xang * $sin_ang);
-            $py2 = $posy0 + ($rdh * $sin_xang * $cos_ang) + ($rdv * $cos_xang * $sin_ang);
-            // second Bezier control point
-            $qx2 = $alpha * ((-$rdh * $cos_xang * $sin_ang) - ($rdv * $sin_xang * $cos_ang));
-            $qy2 = $alpha * ((-$rdh * $sin_xang * $sin_ang) + ($rdv * $cos_xang * $cos_ang));
+            // second arc point and its Bezier control point
+            [$px2, $py2, $qx2, $qy2] = $this->getRawEllipticalArcPoint(
+                $posx0,
+                $posy0,
+                $rdh,
+                $rdv,
+                $cos_xang,
+                $sin_xang,
+                $alpha,
+                $ang,
+            );
             // draw arc
             $cx1 = $px1 + $qx1;
-            $cy1 = $this->pageh - ($py1 + $qy1);
+            $cy1 = $pageh - ($py1 + $qy1);
             $cx2 = $px2 - $qx2;
-            $cy2 = $this->pageh - ($py2 - $qy2);
+            $cy2 = $pageh - ($py2 - $qy2);
             $cx3 = $px2;
-            $cy3 = $this->pageh - $py2;
+            $cy3 = $pageh - $py2;
             $out .= $this->getRawCurve($cx1, $cy1, $cx2, $cy2, $cx3, $cy3);
             // get bounding box coordinates
             $bbox = [
@@ -333,6 +346,42 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
         }
 
         return $out;
+    }
+
+    /**
+     * Computes an elliptical arc point and its Bezier control-point offset.
+     *
+     * @param float $posx0   X center point in PDF coordinates.
+     * @param float $posy0   Y center point in PDF coordinates.
+     * @param float $rdh     Horizontal radius.
+     * @param float $rdv     Vertical radius.
+     * @param float $cosXang Cosine of the ellipse orientation angle.
+     * @param float $sinXang Sine of the ellipse orientation angle.
+     * @param float $alpha   Bezier control-point scaling factor.
+     * @param float $ang     Arc angle in radians.
+     *
+     * @return array{float, float, float, float} Point and control-point offset: [px, py, qx, qy].
+     *
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
+     */
+    private function getRawEllipticalArcPoint(
+        float $posx0,
+        float $posy0,
+        float $rdh,
+        float $rdv,
+        float $cosXang,
+        float $sinXang,
+        float $alpha,
+        float $ang,
+    ): array {
+        $cosAng = \cos($ang);
+        $sinAng = \sin($ang);
+        return [
+            $posx0 + ($rdh * $cosXang * $cosAng) - ($rdv * $sinXang * $sinAng),
+            $posy0 + ($rdh * $sinXang * $cosAng) + ($rdv * $cosXang * $sinAng),
+            $alpha * ((-$rdh * $cosXang * $sinAng) - ($rdv * $sinXang * $cosAng)),
+            $alpha * ((-$rdh * $sinXang * $sinAng) + ($rdv * $cosXang * $cosAng)),
+        ];
     }
 
     /**
