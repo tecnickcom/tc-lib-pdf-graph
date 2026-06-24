@@ -314,7 +314,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
             throw new GraphException('The ' . $item . ' value is not set in the current style');
         }
 
-        return $style[$item] ?? null;
+        return $style[$item];
     }
 
     /**
@@ -415,15 +415,15 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      *                        or df: Close, fill, and then stroke the
      *                        path, using the nonzero winding number
      *                        rule to determine the region to fill. -
-     *                        b or f*d or df*: Close, fill, and then
+     *                        b* or f*d or df*: Close, fill, and then
      *                        stroke the path, using the even-odd
      *                        rule to determine the region to fill. -
-     *                        CNZ: Clipping mode using the even-odd
+     *                        CNZ: Clipping mode using the nonzero
+     *                        winding number rule to determine which
+     *                        regions lie inside the clipping path. -
+     *                        CEO: Clipping mode using the even-odd
      *                        rule to determine which regions lie
-     *                        inside the clipping path. - CEO:
-     *                        Clipping mode using the nonzero winding
-     *                        number rule to determine which regions
-     *                        lie inside the clipping path - n: End
+     *                        inside the clipping path - n: End
      *                        the path object without filling or
      *                        stroking it.
      * @param string $default Default style

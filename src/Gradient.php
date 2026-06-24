@@ -722,21 +722,21 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         bool $vertical = false,
         array $colors = [
             // GRAY : black   to white
-            ['g(0%)',              'g(100%)'],
+            ['g(0%)',               'g(100%)'],
             // RGB  : red     to white
-            ['rgb(100%,0%,0%)',    'rgb(100%,100%,100%)'],
+            ['rgb(100%,0%,0%)',     'rgb(100%,100%,100%)'],
             // RGB  : green   to white
-            ['rgb(0%,100%,0%)',    'rgb(100%,100%,100%)'],
+            ['rgb(0%,100%,0%)',     'rgb(100%,100%,100%)'],
             // RGB  : blue    to white
-            ['rgb(0%,0%,100%)',    'rgb(100%,100%,100%)'],
+            ['rgb(0%,0%,100%)',     'rgb(100%,100%,100%)'],
             // CMYK : cyan    to white
-            ['cmyk(100%,0%,0,0%)', 'cmyk(0%,0%,0,0%)'],
+            ['cmyk(100%,0%,0%,0%)', 'cmyk(0%,0%,0%,0%)'],
             // CMYK : magenta to white
-            ['cmyk(0%,100%,0,0%)', 'cmyk(0%,0%,0,0%)'],
+            ['cmyk(0%,100%,0%,0%)', 'cmyk(0%,0%,0%,0%)'],
             // CMYK : yellow  to white
-            ['cmyk(0%,0%,100,0%)', 'cmyk(0%,0%,0,0%)'],
+            ['cmyk(0%,0%,100%,0%)', 'cmyk(0%,0%,0%,0%)'],
             // CMYK : black   to white
-            ['cmyk(0%,0%,0,100%)', 'cmyk(0%,0%,0,0%)'],
+            ['cmyk(0%,0%,0%,100%)', 'cmyk(0%,0%,0%,0%)'],
         ],
     ): string {
         $numbars = \count($colors);
@@ -928,6 +928,9 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      * @param float|string $nonstroking Alpha value for non-stroking operations:
      *                                  real value from 0 (transparent) to 1
      *                                  (opaque).
+     * @param bool         $ais         Alpha-Is-Shape flag: if true the soft-mask
+     *                                  alpha values are interpreted as shape
+     *                                  (passed through to the /AIS ExtGState key).
      *
      * @return string PDF command
      */

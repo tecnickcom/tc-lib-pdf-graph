@@ -165,6 +165,19 @@ abstract class Base
     protected array $gradients = [];
 
     /**
+     * Bookkeeping for the luminosity soft-mask patterns generated for
+     * transparent gradients, keyed by the transparency pattern index used as
+     * the resource name (/p{key}) inside the soft-mask form XObject.
+     *
+     * These are internal helper objects, referenced only from within the
+     * soft-mask XObject, and are deliberately kept out of $gradients so they
+     * are not advertised in the page-level gradient resource dictionary.
+     *
+     * @var array<int, array{'id': int, 'pattern': int}>
+     */
+    protected array $gradientMasks = [];
+
+    /**
      * Initialize
      *
      * @param float    $kunit    Unit of measure conversion ratio.
@@ -632,7 +645,7 @@ abstract class Base
 
         $oid = ++$this->pon;
         $coords = $grad['coords'];
-        $out = $oid . ' 0 obj' . "\n" . '<<' . ' /ShadingType ' . $grad['type'] . ' /ColorSpace /' . $grad['colspace'];
+        $out = $oid . ' 0 obj' . "\n" . '<< /ShadingType ' . $grad['type'] . ' /ColorSpace /' . $grad['colspace'];
         if ($grad['background'] !== null) {
             $out .= ' /Background [' . $grad['background']->getComponentsString() . ']';
         }
@@ -722,7 +735,6 @@ abstract class Base
             if ($gcol !== '') {
                 $out .= $gcol;
                 $this->gradients[$idx]['id'] = $this->pon - 1;
-                // @phpstan-ignore assign.propertyType
                 $this->gradients[$idx]['pattern'] = $this->pon;
             }
 
@@ -731,14 +743,15 @@ abstract class Base
 
             if ($gopa !== '') {
                 $out .= $gopa;
-                // @phpstan-ignore assign.propertyType
-                $this->gradients[$idgs]['id'] = $this->pon - 1;
-                // @phpstan-ignore assign.propertyType
-                $this->gradients[$idgs]['pattern'] = $this->pon;
+                $this->gradientMasks[$idgs] = [
+                    'id' => $this->pon - 1,
+                    'pattern' => $this->pon,
+                ];
             }
 
             if ($grad['transparency']) {
-                if (!isset($this->gradients[$idgs]['pattern'])) {
+                $mask = $this->gradientMasks[$idgs] ?? null;
+                if ($mask === null) {
                     // no transparency pattern was generated: skip without emitting a partial object
                     continue;
                 }
@@ -748,7 +761,7 @@ abstract class Base
                 $pheight = $this->pageh * $this->kunit;
                 $rect = \sprintf('%F %F', $pwidth, $pheight);
 
-                $out .= $oid . ' 0 obj' . "\n" . '<<' . ' /Type /XObject' . ' /Subtype /Form' . ' /FormType 1';
+                $out .= $oid . ' 0 obj' . "\n" . '<< /Type /XObject /Subtype /Form /FormType 1';
                 $stream = 'q /a0 gs /Pattern cs /p' . $idgs . ' scn 0 0 ' . $pwidth . ' ' . $pheight . ' re f Q';
                 if ($this->compress) {
                     $cmpstream = \gzcompress($stream);
@@ -771,7 +784,7 @@ abstract class Base
                     . ' /Pattern << /p'
                     . $idgs
                     . ' '
-                    . $this->gradients[$idgs]['pattern']
+                    . $mask['pattern']
                     . ' 0 R >>'
                     . ' >>'
                     . ' >>'

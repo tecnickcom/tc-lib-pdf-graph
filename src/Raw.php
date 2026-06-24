@@ -169,8 +169,8 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
      *
      * @param float $ags Angle in degrees at which starting drawing.
      * @param float $agf Angle in degrees at which stop drawing.
-     * @param float $rdh Horizontal radius.
      * @param float $rdv Vertical radius (if = 0 then it is a circle).
+     * @param float $rdh Horizontal radius.
      * @param bool  $ccw If true draws in counter-clockwise direction.
      * @param bool  $svg If true the angles are in svg mode (already calculated).
      */
@@ -222,8 +222,10 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
      * @param bool       $startpoint If true output a starting point.
      * @param bool       $ccw        If true draws in counter-clockwise direction.
      * @param bool       $svg        If true the angles are in svg mode (already calculated).
-     * @param array<int> $bbox       If provided, it will be filled with the bounding box coordinates
-     *                               (x min, y min, x max, y max).
+     * @param array<float> $bbox     If provided, it will be filled with the bounding box coordinates
+     *                               (x min, y min, x max, y max). The box is derived from the Bezier
+     *                               control points, so (by the convex-hull property) it is guaranteed
+     *                               to contain the arc but may be slightly larger than its tight bounds.
      *
      * @return string PDF command
      *
@@ -322,10 +324,10 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
             $out .= $this->getRawCurve($cx1, $cy1, $cx2, $cy2, $cx3, $cy3);
             // get bounding box coordinates
             $bbox = [
-                \min($bbox[0], (int) $cx1, (int) $cx2, (int) $cx3),
-                \min($bbox[1], (int) $cy1, (int) $cy2, (int) $cy3),
-                \max($bbox[2], (int) $cx1, (int) $cx2, (int) $cx3),
-                \max($bbox[3], (int) $cy1, (int) $cy2, (int) $cy3),
+                \min($bbox[0], $cx1, $cx2, $cx3),
+                \min($bbox[1], $cy1, $cy2, $cy3),
+                \max($bbox[2], $cx1, $cx2, $cx3),
+                \max($bbox[3], $cy1, $cy2, $cy3),
             ];
             // move to next point
             $px1 = $px2;
@@ -338,10 +340,10 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
             $out .= $this->getRawLine($posxc, $posyc);
             // get bounding box coordinates
             $bbox = [
-                \min($bbox[0], (int) $posxc),
-                \min($bbox[1], (int) $posyc),
-                \max($bbox[2], (int) $posxc),
-                \max($bbox[3], (int) $posyc),
+                \min($bbox[0], $posxc),
+                \min($bbox[1], $posyc),
+                \max($bbox[2], $posxc),
+                \max($bbox[3], $posyc),
             ];
         }
 

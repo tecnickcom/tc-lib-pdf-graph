@@ -691,7 +691,9 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
             3 => 'f',
         ];
         $points = [$hxl, $hyl, $posx1, $posy1, $hxr, $hyr];
-        return $out . $this->getBasicPolygon($points, $modemap[$headmode] ?? 'S', $style);
+        // The style was already emitted above and persists in the graphics
+        // state, so the arrowhead does not need to repeat it.
+        return $out . $this->getBasicPolygon($points, $modemap[$headmode] ?? 'S');
     }
 
     /**
