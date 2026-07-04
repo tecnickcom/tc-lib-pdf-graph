@@ -484,28 +484,16 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
             $out .= $this->getCircle($posx, $posy, $radius, 0, 360, $cirmode, $cirstyle);
         }
 
-        $points2 = [];
-        $visited = [];
-        for ($idx = 0; $idx < $nvert; ++$idx) {
-            $angrad = $this->degToRad($angle + (($idx * 360) / $nvert));
-            $points2[] = $posx + ($radius * \sin($angrad));
-            $points2[] = $posy + ($radius * \cos($angrad));
-            $visited[] = false;
-        }
-
         $points = [];
+        $visited = [];
         $idx = 0;
-        do {
-            if (($points2[$idx * 2] ?? null) === null || ($points2[($idx * 2) + 1] ?? null) === null) {
-                break;
-            }
-
-            $points[] = $points2[$idx * 2] ?? 0.0;
-            $points[] = $points2[($idx * 2) + 1] ?? 0.0;
+        while ($idx >= 0 && !isset($visited[$idx])) {
             $visited[$idx] = true;
-            $idx += $ngaps;
-            $idx %= $nvert;
-        } while (($visited[$idx] ?? null) !== null && !$visited[$idx]);
+            $angrad = $this->degToRad($angle + (($idx * 360) / $nvert));
+            $points[] = $posx + ($radius * \sin($angrad));
+            $points[] = $posy + ($radius * \cos($angrad));
+            $idx = ($idx + $ngaps) % $nvert;
+        }
 
         if (\count($points) < 6) {
             return $out;
