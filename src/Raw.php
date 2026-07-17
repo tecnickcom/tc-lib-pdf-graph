@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @package   PdfGraph
  * @author    Nicola Asuni <info@tecnick.com>
  * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
- * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  *
  * This file is part of tc-lib-pdf-graph software library.
@@ -26,7 +26,7 @@ namespace Com\Tecnick\Pdf\Graph;
  * @package   PdfGraph
  * @author    Nicola Asuni <info@tecnick.com>
  * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
- * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  */
 abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
@@ -392,7 +392,7 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
     }
 
     /**
-     * Returns the angle in radiants between two vectors with the same origin point.
+     * Returns the angle in radians between two vectors with the same origin point.
      * Angles are counted counter-clock wise.
      *
      * @param float $posx1 X coordinate of first vector point.
@@ -400,7 +400,7 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
      * @param float $posx2 X coordinate of second vector point.
      * @param float $posy2 Y coordinate of second vector point.
      *
-     * @return float Angle in radiants
+     * @return float Angle in radians
      */
     public function getVectorsAngle(float $posx1, float $posy1, float $posx2, float $posy2): float
     {

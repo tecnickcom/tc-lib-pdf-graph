@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @package   PdfGraph
  * @author    Nicola Asuni <info@tecnick.com>
  * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
- * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  *
  * This file is part of tc-lib-pdf-graph software library.
@@ -28,7 +28,7 @@ use Com\Tecnick\Pdf\Graph\Exception as GraphException;
  * @package   PdfGraph
  * @author    Nicola Asuni <info@tecnick.com>
  * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
- * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  *
  * @phpstan-import-type StyleDataOpt from \Com\Tecnick\Pdf\Graph\Base
@@ -552,7 +552,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * @param float        $hrad   X-axis radius of the ellipse used to round off the corners of the rectangle.
      * @param float        $vrad   Y-axis radius of the ellipse used to round off the corners of the rectangle.
      * @param string       $corner Round corners to draw: 0 (square i-corner) or 1 (rounded i-corner) in i-position.
-     *                             Positions are int the following order: top right, bottom right, bottom left and
+     *                             Positions are in the following order: top right, bottom right, bottom left and
      *                             top left.
      * @param string|PathPaintOp       $mode   Mode of rendering. @see getPathPaintOp()
      * @param StyleDataOpt $style  Style.

@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @package   PdfGraph
  * @author    Nicola Asuni <info@tecnick.com>
  * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
- * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  *
  * This file is part of tc-lib-pdf-graph software library.
@@ -29,7 +29,7 @@ use Com\Tecnick\Pdf\Graph\Exception as GraphException;
  * @package   PdfGraph
  * @author    Nicola Asuni <info@tecnick.com>
  * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
- * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  *
  * @phpstan-import-type GradientData from \Com\Tecnick\Pdf\Graph\Base
@@ -135,8 +135,8 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      * @param string       $colorend   Ending color.
      * @param array<float> $coords     Array of the form (fx, fy, cx, cy, r) where
      *                                 (fx, fy) is the starting point of the
-     *                                 gradient with $colorstart (be inside the
-     *                                 circle), (cx, cy) is the center of the
+     *                                 gradient with $colorstart (which should be
+     *                                 inside the circle), (cx, cy) is the center of the
      *                                 circle with $colorend, and r is the radius
      *                                 of the circle.
      *
@@ -197,7 +197,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
     }
 
     /**
-     * Rectangular clipping area.
+     * Returns the transformation command that maps a gradient onto a rectangular area.
      *
      * @param float $posx   Abscissa of the top left corner of the rectangle.
      * @param float $posy   Ordinate of the top left corner of the rectangle.
@@ -299,7 +299,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
     }
 
     /**
-     * Returns the last gradient ID to be used with XOBjects.
+     * Returns the last gradient ID to be used with XObjects.
      *
      * @return ?int
      */
@@ -666,7 +666,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
     }
 
     /**
-     * Paints registration bars with color transtions
+     * Paints registration bars with color transitions
      *
      * @param float                     $posx     Abscissa of the top left corner of the rectangle.
      * @param float                     $posy     Ordinate of the top left corner of the rectangle.
