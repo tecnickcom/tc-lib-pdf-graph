@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace Com\Tecnick\Pdf\Graph;
 
+use Com\Tecnick\Color\ColorModelType;
 use Com\Tecnick\Pdf\Graph\Exception as GraphException;
 
 /**
@@ -39,41 +40,6 @@ use Com\Tecnick\Pdf\Graph\Exception as GraphException;
 abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
 {
     /**
-     * Blend mode.
-     *
-     * @var array<string, bool>
-     */
-    protected const BLENDMODE = [
-        'Color' => true,
-        'ColorBurn' => true,
-        'ColorDodge' => true,
-        'Darken' => true,
-        'Difference' => true,
-        'Exclusion' => true,
-        'HardLight' => true,
-        'Hue' => true,
-        'Lighten' => true,
-        'Luminosity' => true,
-        'Multiply' => true,
-        'Normal' => true,
-        'Overlay' => true,
-        'Saturation' => true,
-        'Screen' => true,
-        'SoftLight' => true,
-    ];
-
-    /**
-     * Blend mode.
-     *
-     * @var array<string, string>
-     */
-    protected const COLSPACE = [
-        'CMYK' => 'DeviceCMYK',
-        'RGB' => 'DeviceRGB',
-        'GRAY' => 'DeviceGray',
-    ];
-
-    /**
      * Returns the gradients array
      *
      * @return array<int, GradientData>
@@ -90,7 +56,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      * @param float        $posy   Ordinate of upper-left corner.
      * @param float        $width  Width.
      * @param float        $height Height.
-     * @param string       $mode   Mode of rendering. @see getPathPaintOp()
+     * @param string|PathPaintOp $mode Mode of rendering (or PathPaintOp enum case). @see getPathPaintOp()
      * @param StyleDataOpt $style  Style.
      *
      * @return string PDF command
@@ -100,7 +66,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         float $posy,
         float $width,
         float $height,
-        string $mode = 'S',
+        string|PathPaintOp $mode = 'S',
         array $style = [],
     ): string {
         return $this->getStyleCmd($style) . $this->getRawRect($posx, $posy, $width, $height, $mode);
@@ -300,7 +266,11 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             throw new GraphException('Invalid color');
         }
 
-        $colspace = self::COLSPACE[$model->getType()] ?? 'DeviceRGB';
+        $colspace = match ($model->getTypeEnum()) {
+            ColorModelType::Cmyk => 'DeviceCMYK',
+            ColorModelType::Gray => 'DeviceGray',
+            default => 'DeviceRGB',
+        };
 
         $ngr = 1 + \count($this->gradients);
         $this->gradients[$ngr] = $this->getGradientStops([
@@ -918,7 +888,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      *
      * @param float        $stroking    Alpha value for stroking operations:
      *                                  real value from 0 (transparent) to 1 (opaque).
-     * @param string       $bmv         Blend mode, one of the following:
+     * @param string|BlendMode $bmv     Blend mode (or BlendMode enum case), one of the following:
      *                                  Normal, Multiply, Screen,
      *                                  Overlay, Darken, Lighten,
      *                                  ColorDodge, ColorBurn, HardLight,
@@ -936,7 +906,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
      */
     public function getAlpha(
         float $stroking = 1,
-        string $bmv = 'Normal',
+        string|BlendMode $bmv = 'Normal',
         float|string $nonstroking = '',
         bool $ais = false,
     ): string {
@@ -944,14 +914,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
             $nonstroking = $stroking;
         }
 
-        if ($bmv !== '' && $bmv[0] === '/') {
-            // remove leading slash
-            $bmv = \substr($bmv, 1);
-        }
-
-        if (!array_key_exists($bmv, self::BLENDMODE)) {
-            $bmv = 'Normal';
-        }
+        $bmv = BlendMode::fromLoose($bmv)->value;
 
         if (\is_string($nonstroking)) {
             $nonstroking = \is_numeric($nonstroking) ? (float) $nonstroking : $stroking;

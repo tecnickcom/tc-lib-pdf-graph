@@ -67,12 +67,17 @@ abstract class Raw extends \Com\Tecnick\Pdf\Graph\Transform
      * @param float  $posy   Ordinate of upper-left corner.
      * @param float  $width  Width.
      * @param float  $height Height.
-     * @param string $mode   Mode of rendering. @see getPathPaintOp()
+     * @param string|PathPaintOp $mode Mode of rendering (or PathPaintOp enum case). @see getPathPaintOp()
      *
      * @return string PDF command
      */
-    public function getRawRect(float $posx, float $posy, float $width, float $height, string $mode = ''): string
-    {
+    public function getRawRect(
+        float $posx,
+        float $posy,
+        float $width,
+        float $height,
+        string|PathPaintOp $mode = '',
+    ): string {
         return \sprintf(
             '%F %F %F %F re' . "\n" . $this->getPathPaintOp($mode, ''),
             $posx * $this->kunit,
