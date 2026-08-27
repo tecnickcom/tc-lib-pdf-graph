@@ -31,6 +31,9 @@ namespace Test;
  */
 class TransformTest extends TestUtil
 {
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
     protected function getTestObject(): \Com\Tecnick\Pdf\Graph\Draw
     {
         $draw = new \Com\Tecnick\Pdf\Graph\Draw(
@@ -417,5 +420,35 @@ class TransformTest extends TestUtil
         $tmb = [19.1, 23.2, 29.3, 31.4, 37.5, 41.6];
         $ctm = $draw->getCtmProduct($tma, $tmb);
         $this->bcAssertEqualsWithDelta([228.570, 363.800, 320.050, 510.320, 433.430, 686.840], $ctm, 0.001);
+    }
+
+    /**
+     * A transformation issued outside any block must not leave a phantom stack
+     * entry that a later getStopTransform() would turn into an unmatched "Q".
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetTransformationOutsideABlockKeepsTheStackBalanced(): void
+    {
+        $draw = new \Com\Tecnick\Pdf\Graph\Draw(
+            1,
+            0,
+            0,
+            new \Com\Tecnick\Color\Pdf(),
+            $this->getEncryptObject(),
+            false,
+        );
+
+        $out = $draw->getTransformation([1.0, 0.0, 0.0, 1.0, 5.0, 5.0]);
+        $this->assertSame([], $draw->getTransformStack());
+        $this->assertSame(-1, $draw->getTransformIndex());
+
+        $out .= $draw->getStartTransform();
+        $out .= $draw->getStopTransform();
+        $out .= $draw->getStopTransform();
+
+        $this->assertSame(1, \substr_count($out, 'q' . "\n"));
+        $this->assertSame(1, \substr_count($out, 'Q' . "\n"));
+        $this->assertSame(-1, $draw->getTransformIndex());
     }
 }

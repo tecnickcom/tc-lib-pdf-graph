@@ -29,6 +29,9 @@ namespace Test;
  */
 class BaseTest extends TestUtil
 {
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
     protected function getTestObject(): \Com\Tecnick\Pdf\Graph\Draw
     {
         return new \Com\Tecnick\Pdf\Graph\Draw(
@@ -60,7 +63,7 @@ class BaseTest extends TestUtil
             false,
         );
 
-        $this->assertSame(' /ExtGState << >>' . "\n", $draw->getOutExtGStateResourcesByKeys([999]));
+        $this->assertSame('', $draw->getOutExtGStateResourcesByKeys([999]));
         $this->assertSame('', $draw->getOutGradientResourcesByKeys([999]));
     }
 
@@ -162,7 +165,7 @@ class BaseTest extends TestUtil
         $this->assertEquals(
             '11 0 obj'
             . "\n"
-            . '<< /Type /ExtGState /OP true /op true /OPM 0.000000 >>'
+            . '<< /Type /ExtGState /OP true /op true /OPM 0 >>'
             . "\n"
             . 'endobj'
             . "\n"
@@ -349,9 +352,9 @@ class BaseTest extends TestUtil
                 'opacity' => 1.0,
             ],
         ];
+        // an unresolvable color stop is rejected
+        $this->bcExpectException(\Com\Tecnick\Pdf\Graph\Exception::class);
         $draw->getGradient(2, [0, 0, 1, 0], $stops, '', false);
-        $res = $draw->getOutGradientShaders($draw->getObjectNumber());
-        $this->assertNotEmpty($res);
     }
 
     /**
@@ -370,9 +373,9 @@ class BaseTest extends TestUtil
     {
         $draw = $this->getTestObject();
 
-        // Overprint carries no alpha/blend/soft-mask information.
+        // overprint carries no alpha, blend mode or soft mask
         $draw->getOverprint();
-        // A fully opaque alpha (CA = ca = 1, BM = Normal, no SMask) must be ignored.
+        // a fully opaque alpha (CA = ca = 1, BM = Normal, no SMask) is ignored
         $draw->getAlpha();
 
         $this->assertSame([], $draw->getTransparencyExtGStateNames());
@@ -385,15 +388,15 @@ class BaseTest extends TestUtil
     {
         $draw = $this->getTestObject();
 
-        // GS1: stroking alpha below 1 (CA).
+        // GS1: stroking alpha below 1 (CA)
         $draw->getAlpha(0.5, 'Normal', 1.0);
-        // GS2: non-stroking alpha below 1 (ca).
+        // GS2: non-stroking alpha below 1 (ca)
         $draw->getAlpha(1.0, 'Normal', 0.4);
-        // GS3: non-Normal blend mode.
+        // GS3: non-Normal blend mode
         $draw->getAlpha(1.0, 'Multiply', 1.0);
-        // GS4: an explicit soft mask.
+        // GS4: an explicit soft mask
         $draw->getExtGState(['SMask' => '/Foo']);
-        // GS5: fully opaque, must be skipped.
+        // GS5: fully opaque, skipped
         $draw->getAlpha();
 
         $this->assertSame(['GS1', 'GS2', 'GS3', 'GS4'], $draw->getTransparencyExtGStateNames());
@@ -421,11 +424,11 @@ class BaseTest extends TestUtil
         };
 
         $draw->setExtGStatesForTest([
-            // Named transparent entry: the assigned name is returned verbatim.
+            // named transparent entry: the assigned name is returned verbatim
             3 => ['n' => 0, 'name' => 'NAMEDGS', 'parms' => ['ca' => 0.25]],
-            // Unnamed transparent entry: the name falls back to "GS" . key.
+            // unnamed transparent entry: the name falls back to "GS" . key
             4 => ['n' => 0, 'name' => '', 'parms' => ['CA' => 0.5]],
-            // Named but opaque entry: must be skipped.
+            // named but opaque entry: skipped
             5 => ['n' => 0, 'name' => 'OPAQUE', 'parms' => ['ca' => 1.0]],
         ]);
 
@@ -499,5 +502,27 @@ class BaseTest extends TestUtil
         $draw->getOutGradientShaders($draw->getObjectNumber());
 
         $this->assertContains('TGS1', $draw->getTransparencyExtGStateNames());
+    }
+
+    /**
+     * A non-positive unit ratio divides the default style values, so it must be
+     * rejected with a library exception rather than a DivisionByZeroError.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testSetKUnitRejectsANonPositiveRatio(): void
+    {
+        $draw = $this->getTestObject();
+        $this->bcExpectException(\Com\Tecnick\Pdf\Graph\Exception::class);
+        $draw->setKUnit(0.0);
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testConstructorRejectsANonPositiveRatio(): void
+    {
+        $this->bcExpectException(\Com\Tecnick\Pdf\Graph\Exception::class);
+        new \Com\Tecnick\Pdf\Graph\Draw(0.0, 80, 100, new \Com\Tecnick\Color\Pdf(), $this->getEncryptObject(), false);
     }
 }

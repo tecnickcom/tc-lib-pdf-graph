@@ -5,13 +5,13 @@
  *
  * @since     2020-12-19
  * @category  Library
- * @package   file
+ * @package   PdfGraph
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2015-2026 Nicola Asuni - Tecnick.com LTD
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
  * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE)
- * @link      https://github.com/tecnickcom/tc-lib-file
+ * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  *
- * This file is part of tc-lib-file software library.
+ * This file is part of tc-lib-pdf-graph software library.
  */
 
 namespace Test;
@@ -23,11 +23,11 @@ use PHPUnit\Framework\TestCase;
  *
  * @since     2020-12-19
  * @category  Library
- * @package   file
+ * @package   PdfGraph
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2015-2026 Nicola Asuni - Tecnick.com LTD
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
  * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE)
- * @link      https://github.com/tecnickcom/tc-lib-file
+ * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  */
 class TestUtil extends TestCase
 {

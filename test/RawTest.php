@@ -29,6 +29,9 @@ namespace Test;
  */
 class RawTest extends TestUtil
 {
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
     protected function getTestObject(): \Com\Tecnick\Pdf\Graph\Draw
     {
         return new \Com\Tecnick\Pdf\Graph\Draw(
@@ -252,10 +255,7 @@ class RawTest extends TestUtil
     public function testGetRawEllipticalArcBboxNegativeMaxValues(): void
     {
         $draw = $this->getTestObject();
-        // Arc from 45° to 90° with centre at (0, 0) and vertical radius 5.
-        // In this range every cy control point is negative (cy = -rdv * sin(ang)).
-        // The PHP_INT_MIN initialisation ensures the max values are updated correctly
-        // even when all sampled points are negative.
+        // arc from 45 to 90 degrees, where every cy control point is negative
         $bbox = [];
         $draw->getRawEllipticalArc(0, 0, 7, 5, 0, 45, 90, false, 2, true, true, false, $bbox);
         $this->assertCount(4, $bbox);
@@ -275,10 +275,87 @@ class RawTest extends TestUtil
     public function testGetRawEllipticalArcZeroVerticalRadius(): void
     {
         $draw = $this->getTestObject();
-        // rdv = 0 must be treated as a circle (rdv = rdh), not crash.
+        // rdv = 0 is treated as a circle (rdv = rdh)
         $out = $draw->getRawEllipticalArc(3, 5, 7, 0);
         $this->assertNotSame('', $out);
         // identical to passing the horizontal radius as the vertical one
         $this->assertSame($draw->getRawEllipticalArc(3, 5, 7, 7), $out);
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetRawEllipticalArcBBoxIncludesStartPoint(): void
+    {
+        $draw = $this->getTestObject();
+        $bbox = [];
+        // an open arc whose extreme abscissa is its starting point
+        $draw->getRawEllipticalArc(50, 50, 10, 10, 0, 45, 135, false, 2, true, true, false, $bbox);
+
+        // the box is in user coordinates, where the ordinate axis points down
+        $startx = 50 + (10 * \cos($draw->degToRad(45)));
+        $starty = 50 - (10 * \sin($draw->degToRad(45)));
+
+        $this->assertCount(4, $bbox);
+        $xmin = $bbox[0] ?? 0.0;
+        $ymin = $bbox[1] ?? 0.0;
+        $xmax = $bbox[2] ?? 0.0;
+        $ymax = $bbox[3] ?? 0.0;
+
+        $this->bcAssertEqualsWithDelta($startx, $xmax, 0.000001);
+        $this->bcAssertEqualsWithDelta($starty, $ymax, 0.000001);
+        $this->assertGreaterThanOrEqual($xmin, $startx);
+        $this->assertGreaterThanOrEqual($ymin, $starty);
+    }
+
+    /**
+     * A call that draws no arc must not leave the previous call's box in a
+     * reused bounding box variable.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetRawEllipticalArcClearsTheBoundingBoxWhenEmpty(): void
+    {
+        $draw = $this->getTestObject();
+        $bbox = [];
+        $draw->getRawEllipticalArc(50, 50, 10, 10, 0, 45, 135, false, 2, true, true, false, $bbox);
+        $this->assertCount(4, $bbox);
+
+        // a non-positive horizontal radius draws nothing
+        $this->assertSame('', $draw->getRawEllipticalArc(
+            50,
+            50,
+            0,
+            10,
+            0,
+            45,
+            135,
+            false,
+            2,
+            true,
+            true,
+            false,
+            $bbox,
+        ));
+        $this->assertSame([], $bbox);
+
+        // and neither does a negative vertical radius
+        $bbox = [1.0, 2.0, 3.0, 4.0];
+        $this->assertSame('', $draw->getRawEllipticalArc(
+            50,
+            50,
+            10,
+            -1,
+            0,
+            45,
+            135,
+            false,
+            2,
+            true,
+            true,
+            false,
+            $bbox,
+        ));
+        $this->assertSame([], $bbox);
     }
 }

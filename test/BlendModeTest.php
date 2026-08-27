@@ -31,6 +31,9 @@ use Com\Tecnick\Pdf\Graph\BlendMode;
  */
 class BlendModeTest extends TestUtil
 {
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
     protected function getTestObject(): \Com\Tecnick\Pdf\Graph\Draw
     {
         return new \Com\Tecnick\Pdf\Graph\Draw(1, 0, 0, new \Com\Tecnick\Color\Pdf(), $this->getEncryptObject(), false);

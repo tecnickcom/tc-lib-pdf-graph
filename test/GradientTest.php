@@ -29,6 +29,9 @@ namespace Test;
  */
 class GradientTest extends TestUtil
 {
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
     protected function getTestObject(): \Com\Tecnick\Pdf\Graph\Draw
     {
         return new \Com\Tecnick\Pdf\Graph\Draw(
@@ -1070,5 +1073,328 @@ class GradientTest extends TestUtil
         // default exponent and opacity should be applied
         $this->assertEquals(1, $mid['exponent'] ?? null);
         $this->assertEquals(1, $mid['opacity'] ?? null);
+    }
+
+    /**
+     * The color shading of a transparent gradient must keep the gradient color
+     * space; only the luminosity (soft mask) shading is DeviceGray.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
+     */
+    public function testTransparentGradientKeepsColorSpace(): void
+    {
+        $draw = $this->getTestObject();
+        $draw->getGradient(
+            2,
+            [0, 0, 1, 0],
+            [
+                ['color' => '#ff0000', 'offset' => 0.0, 'opacity' => 0.5],
+                ['color' => '#0000ff', 'offset' => 1.0, 'opacity' => 1.0],
+            ],
+            '',
+            false,
+        );
+
+        $out = $draw->getOutGradientShaders(10);
+        $this->assertStringContainsString(
+            '/ShadingType 2 /ColorSpace /DeviceRGB',
+            $out,
+            'the color shading must stay in the gradient color space',
+        );
+        $this->assertStringContainsString(
+            '/ShadingType 2 /ColorSpace /DeviceGray',
+            $out,
+            'the luminosity shading must be DeviceGray',
+        );
+    }
+
+    /**
+     * Stops declared in a different color model must be converted to the
+     * color space of the shading, so that the component count always matches.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
+     */
+    public function testGradientNormalizesMixedColorModels(): void
+    {
+        $draw = $this->getTestObject();
+        $draw->getGradient(
+            2,
+            [0, 0, 1, 0],
+            [
+                ['color' => 'rgb(100%,0%,0%)', 'offset' => 0.0],
+                ['color' => 'cmyk(0%,0%,0%,100%)', 'offset' => 1.0],
+            ],
+            '',
+            false,
+        );
+
+        $this->assertStringContainsString(
+            '/C0 [1.000000 0.000000 0.000000] /C1 [0.000000 0.000000 0.000000]',
+            $draw->getOutGradientShaders(10),
+        );
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetGradientUnsupportedType(): void
+    {
+        $this->bcExpectException(\Com\Tecnick\Pdf\Graph\Exception::class);
+        $draw = $this->getTestObject();
+        $draw->getGradient(
+            1,
+            [0, 0, 1, 0],
+            [
+                ['color' => 'red', 'offset' => 0.0],
+                ['color' => 'blue', 'offset' => 1.0],
+            ],
+            '',
+            false,
+        );
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetGradientTooFewCoordinates(): void
+    {
+        $this->bcExpectException(\Com\Tecnick\Pdf\Graph\Exception::class);
+        $draw = $this->getTestObject();
+        $draw->getGradient(
+            3,
+            [0, 0, 1, 0],
+            [
+                ['color' => 'red', 'offset' => 0.0],
+                ['color' => 'blue', 'offset' => 1.0],
+            ],
+            '',
+            false,
+        );
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetGradientSingleStop(): void
+    {
+        $this->bcExpectException(\Com\Tecnick\Pdf\Graph\Exception::class);
+        $draw = $this->getTestObject();
+        $draw->getGradient(2, [0, 0, 1, 0], [['color' => 'red', 'offset' => 0.0]], '', false);
+    }
+
+    /**
+     * Stops with non contiguous keys must not break the automatic offset interpolation.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetGradientStopsWithSparseKeys(): void
+    {
+        $draw = $this->getTestObject();
+        $draw->getGradient(
+            2,
+            [0, 0, 1, 0],
+            [
+                0 => ['color' => 'red', 'offset' => 0.0],
+                2 => ['color' => 'green'],
+                5 => ['color' => 'blue', 'offset' => 1.0],
+            ],
+            '',
+            false,
+        );
+
+        $gradients = $draw->getGradientsArray();
+        $this->bcAssertEqualsWithDelta(0.5, $gradients[1]['colors'][1]['offset'] ?? -1.0, 0.01);
+    }
+
+    /**
+     * The exponent must be emitted in the PDF real notation, never as a float
+     * cast that could use the exponential form.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
+     */
+    public function testGradientExponentIsNotExponential(): void
+    {
+        $draw = $this->getTestObject();
+        $draw->getGradient(
+            2,
+            [0, 0, 1, 0],
+            [
+                ['color' => 'red', 'offset' => 0.0],
+                ['color' => 'blue', 'offset' => 1.0, 'exponent' => 0.00001],
+            ],
+            '',
+            false,
+        );
+
+        $out = $draw->getOutGradientShaders(10);
+        $this->assertStringContainsString('/N 0.000010', $out);
+        $this->assertStringNotContainsString('E-', $out);
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetAlphaClampsConstantAlpha(): void
+    {
+        $draw = $this->getTestObject();
+        $draw->getAlpha(2.5, 'Normal', -1.0);
+        $this->assertStringContainsString('/CA 1.000000 /ca 0.000000', $draw->getOutExtGState(10));
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetColorRegistrationBarWithPlainColorStrings(): void
+    {
+        $draw = $this->getTestObject();
+        $res = $draw->getColorRegistrationBar(50, 70, 40, 40, false, ['red', 'blue']);
+        $this->assertStringContainsString('re', $res);
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetGradientRejectsUnresolvableStopColor(): void
+    {
+        $draw = $this->getTestObject();
+        $this->bcExpectException(\Com\Tecnick\Pdf\Graph\Exception::class);
+        $draw->getGradient(
+            2,
+            [0, 0, 1, 0],
+            [
+                ['color' => 'red', 'offset' => 0.0],
+                ['color' => 'green', 'offset' => 0.5],
+                ['color' => 'not-a-color', 'offset' => 1.0],
+            ],
+            '',
+            false,
+        );
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetGradientRejectsUnresolvableBackgroundColor(): void
+    {
+        $draw = $this->getTestObject();
+        $this->bcExpectException(\Com\Tecnick\Pdf\Graph\Exception::class);
+        $draw->getGradient(
+            2,
+            [0, 0, 1, 0],
+            [
+                ['color' => 'red', 'offset' => 0.0],
+                ['color' => 'blue', 'offset' => 1.0],
+            ],
+            'not-a-color',
+            false,
+        );
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
+     */
+    public function testGetGradientClampsStopOpacity(): void
+    {
+        $draw = $this->getTestObject();
+        $draw->getGradient(
+            2,
+            [0, 0, 1, 0],
+            [
+                ['color' => 'red', 'offset' => 0.0, 'opacity' => 2.5],
+                ['color' => 'blue', 'offset' => 1.0, 'opacity' => -1.0],
+            ],
+            '',
+            false,
+        );
+
+        // the opacities are DeviceGray components of the soft mask shading
+        $out = $draw->getOutGradientShaders(10);
+        $this->assertStringContainsString('/C0 [1.000000] /C1 [0.000000]', $out);
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
+     */
+    public function testGetGradientKeepsStopOffsetsIncreasing(): void
+    {
+        $draw = $this->getTestObject();
+        $draw->getGradient(
+            2,
+            [0, 0, 1, 0],
+            [
+                ['color' => 'red', 'offset' => 0.0],
+                ['color' => 'green', 'offset' => 0.9],
+                ['color' => 'blue', 'offset' => 0.2],
+                ['color' => 'yellow', 'offset' => 5.0],
+            ],
+            '',
+            false,
+        );
+
+        $out = $draw->getOutGradientShaders(10);
+        $this->assertStringContainsString('/Bounds [0.900000 0.900000]', $out);
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
+     */
+    public function testGetOutGradientShadersLuminosityHasNoBackground(): void
+    {
+        $draw = $this->getTestObject();
+        $draw->getGradient(
+            2,
+            [0, 0, 1, 0],
+            [
+                ['color' => 'rgb(100%,0%,0%)', 'offset' => 0.0, 'opacity' => 0.5],
+                ['color' => 'rgb(0%,0%,100%)', 'offset' => 1.0],
+            ],
+            'rgb(0%,100%,0%)',
+            false,
+        );
+
+        // the color shading keeps the background; the luminosity one carries opacity, not color
+        $out = $draw->getOutGradientShaders(10);
+        $this->assertStringContainsString('/ColorSpace /DeviceRGB /Background [0.000000 1.000000 0.000000]', $out);
+        $this->assertStringContainsString('/ColorSpace /DeviceGray /Coords', $out);
+        $this->assertSame(1, \substr_count($out, '/Background'));
+    }
+
+    /**
+     * Each gradient must get a key of its own: an existing entry may never be
+     * overwritten, or every /Sh and /p reference to it would silently change shape.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGradientKeysAreAllocatedFromTheLastKey(): void
+    {
+        $draw = $this->getTestObject();
+        $stops = [['color' => 'red'], ['color' => 'blue']];
+
+        $this->assertSame('/Sh1 sh' . "\n", $draw->getGradient(2, [0, 0, 1, 0], $stops, '', false));
+        $this->assertSame(1, $draw->getLastGradientID());
+
+        $this->assertSame('/Sh2 sh' . "\n", $draw->getGradient(2, [0, 0, 1, 0], $stops, '', false));
+        $this->assertSame(2, $draw->getLastGradientID());
+        $this->assertCount(2, $draw->getGradientsArray());
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testCoonsPatchMeshKeysAreAllocatedFromTheLastKey(): void
+    {
+        $draw = $this->getTestObject();
+        $draw->getGradient(2, [0, 0, 1, 0], [['color' => 'red'], ['color' => 'blue']], '', false);
+
+        $res = $draw->getCoonsPatchMeshWithCoords(3, 5, 7, 11);
+        $this->assertStringContainsString('/Sh2 sh' . "\n", $res);
+        $this->assertSame(2, $draw->getLastGradientID());
+        $this->assertCount(2, $draw->getGradientsArray());
     }
 }

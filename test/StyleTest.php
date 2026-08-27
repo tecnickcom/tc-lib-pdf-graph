@@ -29,6 +29,9 @@ namespace Test;
  */
 class StyleTest extends TestUtil
 {
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
     protected function getTestObject(): \Com\Tecnick\Pdf\Graph\Draw
     {
         return new \Com\Tecnick\Pdf\Graph\Draw(1, 0, 0, new \Com\Tecnick\Color\Pdf(), $this->getEncryptObject(), false);
@@ -505,5 +508,176 @@ class StyleTest extends TestUtil
         ];
         $res = $draw->getStyleCmd($style);
         $this->assertEquals('[3.000000 5.000000] 0.000000 d' . "\n", $res);
+    }
+
+    /**
+     * A named ExtGState entry must be referenced by its own name, matching the
+     * resource dictionary produced by getOutExtGStateResources().
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
+     */
+    public function testGetExtGStateUsesTheRegisteredName(): void
+    {
+        $draw = new \Com\Tecnick\Pdf\Graph\Draw(
+            1,
+            80,
+            100,
+            new \Com\Tecnick\Color\Pdf(),
+            $this->getEncryptObject(),
+            false,
+        );
+        $draw->getGradient(
+            2,
+            [0, 0, 1, 0],
+            [
+                ['color' => 'red', 'offset' => 0.0, 'opacity' => 0.5],
+                ['color' => 'blue', 'offset' => 1.0],
+            ],
+            '',
+            false,
+        );
+        $draw->getOutGradientShaders(10);
+
+        $names = $draw->getTransparencyExtGStateNames();
+        $this->assertSame(['TGS1'], $names);
+
+        $resources = $draw->getOutExtGStateResources();
+        foreach ($names as $name) {
+            $this->assertStringContainsString('/' . $name . ' ', $resources);
+        }
+    }
+
+    /**
+     * getExtGState() must allocate a key that is not already taken by the
+     * soft-mask entries registered by getOutGradientShaders().
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
+     */
+    public function testGetExtGStateAllocatesAFreeKey(): void
+    {
+        $draw = new \Com\Tecnick\Pdf\Graph\Draw(
+            1,
+            80,
+            100,
+            new \Com\Tecnick\Color\Pdf(),
+            $this->getEncryptObject(),
+            false,
+        );
+        $draw->getGradient(
+            2,
+            [0, 0, 1, 0],
+            [
+                ['color' => 'red', 'offset' => 0.0, 'opacity' => 0.5],
+                ['color' => 'blue', 'offset' => 1.0],
+            ],
+            '',
+            false,
+        );
+        $draw->getOutGradientShaders(10);
+
+        $res = $draw->getAlpha(0.25);
+        $this->assertStringStartsWith('/GS', $res);
+
+        // the alpha entry is its own, distinct from the soft-mask one, and is declared
+        $name = \substr($res, 1, (int) \strpos($res, ' ') - 1);
+        $this->assertSame(['TGS1', $name], $draw->getTransparencyExtGStateNames());
+        $this->assertStringContainsString('/' . $name . ' ', $draw->getOutExtGStateResources());
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testRestoreStyleStatusAfterPoppingBelowTheMark(): void
+    {
+        $draw = $this->getTestObject();
+        $draw->add(['lineWidth' => 3.0]);
+        $draw->saveStyleStatus();
+        $draw->pop();
+        $draw->restoreStyleStatus();
+
+        // the stack holds the initial style only, so there is nothing left to pop
+        $this->bcExpectException(\Com\Tecnick\Pdf\Graph\Exception::class);
+        $draw->pop();
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testCloseAndFillModesArePaintingModes(): void
+    {
+        $draw = $this->getTestObject();
+
+        foreach (['h f', 'h f*'] as $mode) {
+            $this->assertTrue($draw->isFillingMode($mode), $mode);
+            $this->assertTrue($draw->isClosingMode($mode), $mode);
+            $this->assertFalse($draw->isStrokingMode($mode), $mode);
+            $this->assertFalse($draw->isClippingMode($mode), $mode);
+            // neither the close nor the fill survives its own remover
+            $this->assertSame('h', $draw->getModeWithoutFill($mode), $mode);
+            $this->assertSame($mode, $draw->getModeWithoutStroke($mode), $mode);
+        }
+
+        $this->assertSame('f', $draw->getModeWithoutClose('h f'));
+        $this->assertSame('f*', $draw->getModeWithoutClose('h f*'));
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testCloseModeIsAClosingMode(): void
+    {
+        $draw = $this->getTestObject();
+        $this->assertTrue($draw->isClosingMode('h'));
+        // a path with the close removed and nothing painted ends with 'n'
+        $this->assertSame('n', $draw->getModeWithoutClose('h'));
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetModeWithClose(): void
+    {
+        $draw = $this->getTestObject();
+
+        $this->assertSame('s', $draw->getModeWithClose('S'));
+        $this->assertSame('b', $draw->getModeWithClose('B'));
+        $this->assertSame('b*', $draw->getModeWithClose('B*'));
+        // aliases resolve to the same canonical operator
+        $this->assertSame('s', $draw->getModeWithClose('D'));
+        $this->assertSame('b', $draw->getModeWithClose('FD'));
+        // modes that do not stroke, already close, or are unknown are returned unchanged
+        $this->assertSame('f', $draw->getModeWithClose('f'));
+        $this->assertSame('b', $draw->getModeWithClose('b'));
+        $this->assertSame('CNZ', $draw->getModeWithClose('CNZ'));
+        $this->assertSame('nonsense', $draw->getModeWithClose('nonsense'));
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testModePredicatesAcceptTheEnum(): void
+    {
+        $draw = $this->getTestObject();
+
+        $this->assertTrue($draw->isFillingMode(\Com\Tecnick\Pdf\Graph\PathPaintOp::Fill));
+        $this->assertTrue($draw->isStrokingMode(\Com\Tecnick\Pdf\Graph\PathPaintOp::Stroke));
+        $this->assertTrue($draw->isClosingMode(\Com\Tecnick\Pdf\Graph\PathPaintOp::CloseStroke));
+        $this->assertTrue($draw->isClippingMode(\Com\Tecnick\Pdf\Graph\PathPaintOp::Clip));
+        $this->assertFalse($draw->isStrokingMode(\Com\Tecnick\Pdf\Graph\PathPaintOp::Fill));
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testModeConvertersAcceptTheEnum(): void
+    {
+        $draw = $this->getTestObject();
+
+        $this->assertSame('s', $draw->getModeWithClose(\Com\Tecnick\Pdf\Graph\PathPaintOp::Stroke));
+        $this->assertSame('S', $draw->getModeWithoutClose(\Com\Tecnick\Pdf\Graph\PathPaintOp::CloseStroke));
+        $this->assertSame('S', $draw->getModeWithoutFill(\Com\Tecnick\Pdf\Graph\PathPaintOp::FillStroke));
+        $this->assertSame('f', $draw->getModeWithoutStroke(\Com\Tecnick\Pdf\Graph\PathPaintOp::FillStroke));
     }
 }

@@ -29,6 +29,9 @@ namespace Test;
  */
 class DrawTest extends TestUtil
 {
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
     protected function getTestObject(): \Com\Tecnick\Pdf\Graph\Draw
     {
         return new \Com\Tecnick\Pdf\Graph\Draw(
@@ -90,7 +93,7 @@ class DrawTest extends TestUtil
             . "\n"
             . '8.250000 M'
             . "\n"
-            . '[3.750000 5.250000] 0.750000 d'
+            . '[3.750000 5.250000] 0.562500 d'
             . "\n"
             . '0.678431 1.000000 0.184314 RG'
             . "\n"
@@ -143,7 +146,7 @@ class DrawTest extends TestUtil
             . "\n"
             . '8.250000 M'
             . "\n"
-            . '[3.750000 5.250000] 0.750000 d'
+            . '[3.750000 5.250000] 0.562500 d'
             . "\n"
             . '0.678431 1.000000 0.184314 RG'
             . "\n"
@@ -195,7 +198,7 @@ class DrawTest extends TestUtil
             . "\n"
             . '8.250000 M'
             . "\n"
-            . '[3.750000 5.250000] 0.750000 d'
+            . '[3.750000 5.250000] 0.562500 d'
             . "\n"
             . '0.678431 1.000000 0.184314 RG'
             . "\n"
@@ -265,7 +268,7 @@ class DrawTest extends TestUtil
             . "\n"
             . '8.250000 M'
             . "\n"
-            . '[3.750000 5.250000] 0.750000 d'
+            . '[3.750000 5.250000] 0.562500 d'
             . "\n"
             . '0.678431 1.000000 0.184314 RG'
             . "\n"
@@ -350,7 +353,7 @@ class DrawTest extends TestUtil
             . "\n"
             . '8.250000 M'
             . "\n"
-            . '[3.750000 5.250000] 0.750000 d'
+            . '[3.750000 5.250000] 0.562500 d'
             . "\n"
             . '0.678431 1.000000 0.184314 RG'
             . "\n"
@@ -411,7 +414,8 @@ class DrawTest extends TestUtil
             . "\n"
             . '2.250000 71.250000 l'
             . "\n"
-            . 'B'
+            // the sector returns to its starting point: a stroking mode closes the subpath
+            . 'b'
             . "\n",
             $res,
         );
@@ -452,7 +456,7 @@ class DrawTest extends TestUtil
             . "\n"
             . '8.250000 M'
             . "\n"
-            . '[3.750000 5.250000] 0.750000 d'
+            . '[3.750000 5.250000] 0.562500 d'
             . "\n"
             . '0.678431 1.000000 0.184314 RG'
             . "\n"
@@ -518,7 +522,7 @@ class DrawTest extends TestUtil
             . "\n"
             . '8.250000 M'
             . "\n"
-            . '[3.750000 5.250000] 0.750000 d'
+            . '[3.750000 5.250000] 0.562500 d'
             . "\n"
             . '0.678431 1.000000 0.184314 RG'
             . "\n"
@@ -653,7 +657,7 @@ class DrawTest extends TestUtil
             . "\n"
             . '8.250000 M'
             . "\n"
-            . '[3.750000 5.250000] 0.750000 d'
+            . '[3.750000 5.250000] 0.562500 d'
             . "\n"
             . '0.678431 1.000000 0.184314 RG'
             . "\n"
@@ -803,7 +807,7 @@ class DrawTest extends TestUtil
             . "\n"
             . '8.250000 M'
             . "\n"
-            . '[3.750000 5.250000] 0.750000 d'
+            . '[3.750000 5.250000] 0.562500 d'
             . "\n"
             . '0.678431 1.000000 0.184314 RG'
             . "\n"
@@ -932,7 +936,7 @@ class DrawTest extends TestUtil
             . "\n"
             . '8.250000 M'
             . "\n"
-            . '[3.750000 5.250000] 0.750000 d'
+            . '[3.750000 5.250000] 0.562500 d'
             . "\n"
             . '0.678431 1.000000 0.184314 RG'
             . "\n"
@@ -986,7 +990,7 @@ class DrawTest extends TestUtil
             . "\n"
             . '8.250000 M'
             . "\n"
-            . '[3.750000 5.250000] 0.750000 d'
+            . '[3.750000 5.250000] 0.562500 d'
             . "\n"
             . '0.678431 1.000000 0.184314 RG'
             . "\n"
@@ -1061,7 +1065,8 @@ class DrawTest extends TestUtil
             . "\n"
             . '2.250000 65.541631 6.615224 71.250000 12.000000 71.250000 c'
             . "\n"
-            . 'S'
+            // the outline returns to its starting corner: a stroking mode closes the subpath
+            . 's'
             . "\n",
             $res,
         );
@@ -1080,7 +1085,7 @@ class DrawTest extends TestUtil
             . "\n"
             . '8.250000 M'
             . "\n"
-            . '[3.750000 5.250000] 0.750000 d'
+            . '[3.750000 5.250000] 0.562500 d'
             . "\n"
             . '0.678431 1.000000 0.184314 RG'
             . "\n"
@@ -1129,7 +1134,8 @@ class DrawTest extends TestUtil
             . "\n"
             . '2.250000 65.541631 6.615224 71.250000 12.000000 71.250000 c'
             . "\n"
-            . 'S'
+            // the outline returns to its starting corner: a stroking mode closes the subpath
+            . 's'
             . "\n",
             $res,
         );
@@ -1172,7 +1178,7 @@ class DrawTest extends TestUtil
             . "\n"
             . '8.250000 M'
             . "\n"
-            . '[3.750000 5.250000] 0.750000 d'
+            . '[3.750000 5.250000] 0.562500 d'
             . "\n"
             . '0.678431 1.000000 0.184314 RG'
             . "\n"
@@ -1258,8 +1264,6 @@ class DrawTest extends TestUtil
             . '/CS1 CS 1.000000 SCN'
             . "\n"
             . '/CS1 cs 1.000000 scn'
-            . "\n"
-            . '1.000000 1.000000 1.000000 1.000000 k'
             . "\n"
             . '2.250000 71.250000 m'
             . "\n"
@@ -1389,77 +1393,7 @@ class DrawTest extends TestUtil
             . "\n"
             . 'f'
             . "\n"
-            . '4.875000 71.250000 m'
-            . "\n"
-            . '4.875000 71.416725 4.859116 71.583072 4.827563 71.746785 c'
-            . "\n"
-            . '4.796010 71.910497 4.748931 72.070831 4.686966 72.225614 c'
-            . "\n"
-            . '4.625000 72.380396 4.548429 72.528924 4.458291 72.669182 c'
-            . "\n"
-            . '4.368152 72.809440 4.264856 72.940793 4.149802 73.061457 c'
-            . "\n"
-            . '4.034748 73.182122 3.908460 73.291552 3.772649 73.388262 c'
-            . "\n"
-            . '3.636839 73.484972 3.492123 73.568524 3.340464 73.637784 c'
-            . "\n"
-            . '3.188806 73.707044 3.030893 73.761698 2.868867 73.801005 c'
-            . "\n"
-            . '2.706842 73.840312 2.541439 73.864094 2.374903 73.872027 c'
-            . "\n"
-            . '2.208366 73.879960 2.041452 73.872009 1.876424 73.848281 c'
-            . "\n"
-            . '1.711395 73.824554 1.549002 73.785158 1.391447 73.730627 c'
-            . "\n"
-            . '1.233891 73.676097 1.081888 73.606679 0.937500 73.523317 c'
-            . "\n"
-            . '0.793112 73.439954 0.656993 73.343025 0.530991 73.233843 c'
-            . "\n"
-            . '0.404988 73.124661 0.289673 73.003722 0.186611 72.872667 c'
-            . "\n"
-            . '0.083548 72.741612 -0.006795 72.601036 -0.083193 72.452845 c'
-            . "\n"
-            . '-0.159591 72.304653 -0.221697 72.149520 -0.268669 71.989548 c'
-            . "\n"
-            . '-0.315641 71.829576 -0.347266 71.665493 -0.363114 71.499522 c'
-            . "\n"
-            . '-0.378962 71.333552 -0.378962 71.166448 -0.363114 71.000478 c'
-            . "\n"
-            . '-0.347266 70.834507 -0.315641 70.670424 -0.268669 70.510452 c'
-            . "\n"
-            . '-0.221697 70.350480 -0.159591 70.195347 -0.083193 70.047155 c'
-            . "\n"
-            . '-0.006795 69.898964 0.083548 69.758388 0.186611 69.627333 c'
-            . "\n"
-            . '0.289673 69.496278 0.404988 69.375339 0.530991 69.266157 c'
-            . "\n"
-            . '0.656993 69.156975 0.793112 69.060046 0.937500 68.976683 c'
-            . "\n"
-            . '1.081888 68.893321 1.233891 68.823903 1.391447 68.769373 c'
-            . "\n"
-            . '1.549002 68.714842 1.711395 68.675446 1.876424 68.651719 c'
-            . "\n"
-            . '2.041452 68.627991 2.208366 68.620040 2.374903 68.627973 c'
-            . "\n"
-            . '2.541439 68.635906 2.706842 68.659688 2.868867 68.698995 c'
-            . "\n"
-            . '3.030893 68.738302 3.188806 68.792956 3.340464 68.862216 c'
-            . "\n"
-            . '3.492123 68.931476 3.636839 69.015028 3.772649 69.111738 c'
-            . "\n"
-            . '3.908460 69.208448 4.034748 69.317878 4.149802 69.438543 c'
-            . "\n"
-            . '4.264856 69.559207 4.368152 69.690560 4.458291 69.830818 c'
-            . "\n"
-            . '4.548429 69.971076 4.625000 70.119604 4.686966 70.274386 c'
-            . "\n"
-            . '4.748931 70.429169 4.796010 70.589503 4.827563 70.753215 c'
-            . "\n"
-            . '4.859116 70.916928 4.875000 71.083275 4.875000 71.250000 c'
-            . "\n"
-            . 'S'
-            . "\n"
-            . '0.000000 0.000000 0.000000 0.000000 k'
+            . '/CS1 cs 1.000000 scn'
             . "\n"
             . '2.250000 71.250000 m'
             . "\n"
@@ -1798,5 +1732,210 @@ class DrawTest extends TestUtil
         $this->assertEquals('', $draw->getBasicPolygon([]));
         // two coordinates = one point, not enough to draw anything
         $this->assertEquals('', $draw->getBasicPolygon([3, 5]));
+    }
+
+    /**
+     * An explicit style for the closing segment must not be replaced by the first one.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetPolygonKeepsExplicitClosingSegmentStyle(): void
+    {
+        $draw = $this->getTestObject();
+        $res = $draw->getPolygon([0, 0, 10, 0, 10, 10], 's', [
+            0 => ['lineWidth' => 9.0],
+            2 => ['lineWidth' => 3.0],
+        ]);
+
+        $this->assertStringContainsString('2.250000 w', $res, 'the closing segment keeps its own width');
+        $this->assertSame(1, \substr_count($res, '6.750000 w'), 'the first style applies to its own segment only');
+    }
+
+    /**
+     * A corner flag string shorter than four characters must not read past its end.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetRoundedRectShortCornerString(): void
+    {
+        $draw = $this->getTestObject();
+        $this->assertSame(
+            $draw->getRoundedRect(10, 10, 50, 30, 5, 5, '1111'),
+            $draw->getRoundedRect(10, 10, 50, 30, 5, 5, '1'),
+            'missing corner flags default to rounded',
+        );
+        $this->assertSame(
+            $draw->getRoundedRect(10, 10, 50, 30, 5, 5, '0000'),
+            $draw->getRoundedRect(10, 10, 50, 30, 5, 5, '00000'),
+            'extra corner flags are ignored',
+        );
+    }
+
+    /**
+     * The registration mark strokes a single circle per radius and fills through
+     * the spot-aware color handler, so the separation colorant is preserved.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetRegistrationMarkUsesTheSeparationColorant(): void
+    {
+        $draw = $this->getTestObject();
+        $res = $draw->getRegistrationMark(3, 5, 7, true, 'All');
+
+        $this->assertStringNotContainsString(
+            '1.000000 1.000000 1.000000 1.000000 k',
+            $res,
+            'the separation fill must not be replaced by a device color',
+        );
+        $this->assertSame(2, \substr_count($res, '/CS1 cs 1.000000 scn'));
+        $this->assertSame(2, \substr_count($res, "S\n"), 'one stroked circle per radius');
+    }
+
+    /**
+     * The dash phase is expressed in the same space as the dash array.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testDashPhaseIsScaledByTheUnitRatio(): void
+    {
+        $draw = $this->getTestObject();
+        $this->assertSame('[3.000000 6.000000] 1.500000 d' . "\n", $draw->getStyleCmd([
+            'dashArray' => [4, 8],
+            'dashPhase' => 2.0,
+        ]));
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetRoundedRectClampsCornerRadii(): void
+    {
+        $draw = $this->getTestObject();
+        // radii larger than half the side would push the corners outside the rectangle
+        $res = $draw->getRoundedRect(10, 10, 20, 20, 40, 40, '1111', 'S');
+        $this->assertSame($draw->getRoundedRect(10, 10, 20, 20, 10, 10, '1111', 'S'), $res);
+
+        // a negative radius means no rounding at all
+        $this->assertSame(
+            $draw->getBasicRect(10, 10, 20, 20, 'S'),
+            $draw->getRoundedRect(10, 10, 20, 20, -3, -3, '1111', 'S'),
+        );
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetArrowShaftStopsAtTheTip(): void
+    {
+        $draw = $this->getTestObject();
+        // a line thicker than the head must not push the shaft past the tip at (10, 0)
+        $res = $draw->getArrow(0, 0, 10, 0, 1, 2.0, 15.0, ['lineWidth' => 8.0]);
+        $shaft = $draw->getRawPoint(0, 0) . $draw->getRawLine(10, 0);
+        $this->assertStringContainsString($shaft, $res);
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetPolygonIgnoresUnpairedCoordinate(): void
+    {
+        $draw = $this->getTestObject();
+        $res = $draw->getPolygon([0.0, 0.0, 10.0, 0.0, 10.0, 10.0, 5.0], 's');
+        // the trailing value is dropped, so the closing segment returns to the first point
+        $this->assertSame($draw->getPolygon([0.0, 0.0, 10.0, 0.0, 10.0, 10.0], 's'), $res);
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetArrowShaftStopsAtTheTail(): void
+    {
+        $draw = $this->getTestObject();
+        // a head longer than the arrow must not push the shaft back past the tail at (0, 0)
+        $res = $draw->getArrow(0, 0, 1, 0, 1, 5.0, 15.0, ['lineWidth' => 0.1]);
+        $shaft = $draw->getRawPoint(0, 0) . $draw->getRawLine(0, 0);
+        $this->assertStringContainsString($shaft, $res);
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetRoundedRectWithNegativeSize(): void
+    {
+        $draw = $this->getTestObject();
+        // (10, 10) with a negative extent describes the same square as (0, 0) with a positive one
+        $this->assertSame(
+            $draw->getRoundedRect(0, 0, 10, 10, 3, 3, '1111', 'S'),
+            $draw->getRoundedRect(10, 10, -10, -10, 3, 3, '1111', 'S'),
+        );
+    }
+
+    /**
+     * A painting operator with no preceding path is not valid content, so a
+     * degenerate arc must produce nothing at all.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testDegenerateArcsDrawNothing(): void
+    {
+        $draw = $this->getTestObject();
+        $this->assertSame('', $draw->getCircle(10, 10, 0));
+        $this->assertSame('', $draw->getEllipse(10, 10, 0, 5));
+        $this->assertSame('', $draw->getEllipse(10, 10, 5, -1));
+        $this->assertSame('', $draw->getPieSector(10, 10, -5));
+        // a style must not leak out either
+        $this->assertSame('', $draw->getCircle(10, 10, 0, 0, 360, 'S', $this->getTestStyle()));
+    }
+
+    /**
+     * The close-and-fill operators are painting modes like any other: the shape
+     * must be drawn, not silently dropped.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetPolygonWithACloseAndFillMode(): void
+    {
+        $draw = $this->getTestObject();
+        $points = [0.0, 0.0, 10.0, 0.0, 10.0, 10.0];
+        // the closing point is added, so the path holds one more segment than getBasicPolygon()
+        $closed = [0.0, 0.0, 10.0, 0.0, 10.0, 10.0, 0.0, 0.0];
+
+        $this->assertSame($draw->getBasicPolygon($closed, 'h f'), $draw->getPolygon($points, 'h f'));
+        $this->assertSame($draw->getBasicPolygon($closed, 'h f*'), $draw->getPolygon($points, 'h f*'));
+        $this->assertSame(
+            $draw->getBasicPolygon($closed, 'h f'),
+            $draw->getPolygon($points, \Com\Tecnick\Pdf\Graph\PathPaintOp::CloseFill),
+        );
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetRectWithACloseAndFillMode(): void
+    {
+        $draw = $this->getTestObject();
+        $res = $draw->getRect(3, 5, 7, 11, 'h f');
+        $this->assertStringEndsWith('h f' . "\n", $res);
+        $this->assertSame($draw->getRect(3, 5, 7, 11, 'f'), \str_replace('h f', 'f', $res));
+    }
+
+    /**
+     * A shape whose path returns to its starting point must be closed by a
+     * stroking mode, so that the shared vertex is joined instead of capped.
+     *
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testClosedShapesAreStrokedAsClosedPaths(): void
+    {
+        $draw = $this->getTestObject();
+
+        $this->assertStringEndsWith('s' . "\n", $draw->getRoundedRect(3, 5, 20, 10, 3, 3, '1110', 'S'));
+        $this->assertStringEndsWith('b' . "\n", $draw->getRoundedRect(3, 5, 20, 10, 3, 3, '1110', 'B'));
+        $this->assertStringEndsWith('b' . "\n", $draw->getPieSector(3, 5, 7, 0, 90));
+
+        // non-stroking modes have nothing to join and are left untouched
+        $this->assertStringEndsWith('f' . "\n", $draw->getRoundedRect(3, 5, 20, 10, 3, 3, '1110', 'F'));
+        $this->assertStringEndsWith('f' . "\n", $draw->getPieSector(3, 5, 7, 0, 90, 'F'));
+        $this->assertStringEndsWith('W n' . "\n", $draw->getPieSector(3, 5, 7, 0, 90, 'CNZ'));
     }
 }
