@@ -263,10 +263,6 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         string $bgcolor,
         bool $antialias = false,
     ): string {
-        if ($this->pdfa) {
-            return '';
-        }
-
         $mincoords = match ($type) {
             2 => 4,
             3 => 5,
@@ -386,8 +382,10 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
                 $grad['colors'][$key]['exponent'] = $stop['exponent'];
             }
 
+            // A stop opacity is painted through a soft mask, so it is dropped when the
+            // conformance mode forbids transparency: the shading stays, fully opaque.
             $grad['colors'][$key]['opacity'] = 1.0;
-            if (array_key_exists('opacity', $stop)) {
+            if (array_key_exists('opacity', $stop) && !$this->notransparency) {
                 // the opacity is a DeviceGray component of the soft mask shading
                 $opacity = \max(0.0, \min(1.0, $stop['opacity']));
                 $grad['colors'][$key]['opacity'] = $opacity;
@@ -479,10 +477,6 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         float $coords_max = 1.0,
         bool $antialias = false,
     ): string {
-        if ($this->pdfa) {
-            return '';
-        }
-
         // convert the simple array to a multi patch array
         $patch_array = [
             0 => [
@@ -583,10 +577,6 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
         float $coords_max = 1.0,
         bool $antialias = false,
     ): string {
-        if ($this->pdfa) {
-            return '';
-        }
-
         if ($coords_max <= $coords_min) {
             throw new GraphException('coords_max must be greater than coords_min');
         }
@@ -718,7 +708,7 @@ abstract class Gradient extends \Com\Tecnick\Pdf\Graph\Raw
                     $color[1] = $color[0];
                 }
 
-                if ($color[0] === $color[1] || $this->pdfa) {
+                if ($color[0] === $color[1]) {
                     // colored rectangle
                     $out .=
                         $this->getStartTransform()

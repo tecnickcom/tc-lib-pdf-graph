@@ -181,7 +181,9 @@ abstract class Base
      * @param float    $pageh    Page height.
      * @param PdfColor $pdfColor Color object.
      * @param Encrypt  $encrypt  Encrypt object.
-     * @param bool     $pdfa     True if we are in PDF/A mode.
+     * @param bool     $notransparency True when the conformance mode forbids transparency
+     *                                 (PDF/A-1, PDF/X-1a, PDF/X-3): alpha, blend modes and
+     *                                 soft masks are suppressed. Shadings stay available.
      * @param bool     $compress Set to false to disable stream compression.
      *
      * @throws \Com\Tecnick\Pdf\Graph\Exception
@@ -198,7 +200,7 @@ abstract class Base
          * Encrypt object
          */
         protected Encrypt $encrypt,
-        protected bool $pdfa = false,
+        protected bool $notransparency = false,
         protected bool $compress = true,
     ) {
         $this->setKUnit($kunit);
@@ -413,7 +415,7 @@ abstract class Base
      */
     private function getOutExtGStateResDict(array $data): string
     {
-        if ($this->pdfa || $data === []) {
+        if ($this->notransparency || $data === []) {
             return '';
         }
 
@@ -475,7 +477,7 @@ abstract class Base
      */
     private function getOutGradientResDict(array $data): string
     {
-        if ($this->pdfa || $data === []) {
+        if ($data === []) {
             return '';
         }
 
@@ -781,7 +783,7 @@ abstract class Base
     {
         $this->pon = $pon;
 
-        if ($this->pdfa || $this->gradients === []) {
+        if ($this->gradients === []) {
             return '';
         }
 
@@ -806,7 +808,7 @@ abstract class Base
                 ];
             }
 
-            if ($grad['transparency']) {
+            if ($grad['transparency'] && !$this->notransparency) {
                 $mask = $this->gradientMasks[$idgs] ?? null;
                 if ($mask === null) {
                     // no transparency pattern was generated

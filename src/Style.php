@@ -605,7 +605,7 @@ abstract class Style extends \Com\Tecnick\Pdf\Graph\Base
      */
     public function getExtGState(array $parms): string
     {
-        if ($this->pdfa) {
+        if ($this->notransparency) {
             return '';
         }
 

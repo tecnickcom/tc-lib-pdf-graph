@@ -114,9 +114,10 @@ class GradientTest extends TestUtil
 
     /**
      * @throws \Com\Tecnick\Pdf\Graph\Exception
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
      */
 
-    public function testGetGradientPDFA(): void
+    public function testGetGradientWithoutTransparencyKeepsTheShading(): void
     {
         $draw = new \Com\Tecnick\Pdf\Graph\Draw(
             0.75,
@@ -126,9 +127,25 @@ class GradientTest extends TestUtil
             $this->getEncryptObject(),
             true,
         );
-        $this->assertEquals('', $draw->getGradient(2, [], [], '', false));
 
-        $this->assertNull($draw->getLastGradientID());
+        $stops = [
+            [
+                'color' => 'red',
+                'offset' => 0.0,
+                'opacity' => 0.5,
+            ],
+            [
+                'color' => 'blue',
+                'offset' => 1.0,
+                'opacity' => 0.9,
+            ],
+        ];
+
+        // The shading is painted, the soft mask that would carry the stop opacities
+        // is dropped: only transparency is forbidden, shadings are not.
+        $this->assertEquals('/Sh1 sh' . "\n", $draw->getGradient(2, [0, 0, 1, 0], $stops, '', false));
+        $this->assertSame(1, $draw->getLastGradientID());
+        $this->assertStringNotContainsString('/SMask', $draw->getOutGradientShaders(1));
     }
 
     /**
@@ -257,7 +274,7 @@ class GradientTest extends TestUtil
      * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
 
-    public function testGetCoonsPatchMeshPDFA(): void
+    public function testGetCoonsPatchMeshWithoutTransparencyKeepsTheShading(): void
     {
         $draw = new \Com\Tecnick\Pdf\Graph\Draw(
             0.75,
@@ -267,7 +284,9 @@ class GradientTest extends TestUtil
             $this->getEncryptObject(),
             true,
         );
-        $this->assertEquals('', $draw->getCoonsPatchMesh(3, 5, 7, 11));
+
+        // A mesh carries no transparency, so it is emitted in every conformance mode.
+        $this->assertStringContainsString('/Sh1 sh', $draw->getCoonsPatchMesh(3, 5, 7, 11));
     }
 
     /**
@@ -952,7 +971,7 @@ class GradientTest extends TestUtil
      * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
 
-    public function testGetCoonsPatchMeshWithCoordsPdfa(): void
+    public function testGetCoonsPatchMeshWithCoordsWithoutTransparencyKeepsTheShading(): void
     {
         $draw = new \Com\Tecnick\Pdf\Graph\Draw(
             0.75,
@@ -962,7 +981,8 @@ class GradientTest extends TestUtil
             $this->getEncryptObject(),
             true,
         );
-        $this->assertEquals('', $draw->getCoonsPatchMeshWithCoords(3, 5, 7, 11));
+
+        $this->assertStringContainsString('/Sh1 sh', $draw->getCoonsPatchMeshWithCoords(3, 5, 7, 11));
     }
 
     /**

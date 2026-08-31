@@ -448,7 +448,7 @@ class StyleTest extends TestUtil
      * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
 
-    public function testGetExtGStatePdfa(): void
+    public function testGetExtGStateWithoutTransparency(): void
     {
         $draw = new \Com\Tecnick\Pdf\Graph\Draw(1, 0, 0, new \Com\Tecnick\Color\Pdf(), $this->getEncryptObject(), true);
         $this->assertEquals('', $draw->getExtGState([
