@@ -82,6 +82,22 @@ class StyleTest extends TestUtil
      * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
 
+    public function testGetStyleCmdWithFractionalDashArray(): void
+    {
+        $draw = $this->getTestObject();
+
+        $res = $draw->getStyleCmd([
+            'dashArray' => [1.5, 0.25],
+            'dashPhase' => 0.75,
+        ]);
+
+        $this->assertEquals('[1.500000 0.250000] 0.750000 d' . "\n", $res);
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+
     public function testStyle(): void
     {
         $draw = $this->getTestObject();
