@@ -40,7 +40,6 @@ class StyleTest extends TestUtil
     /**
      * @throws \Com\Tecnick\Pdf\Graph\Exception
      */
-
     public function testGetStyleCmd(): void
     {
         $draw = $this->getTestObject();
@@ -76,6 +75,29 @@ class StyleTest extends TestUtil
             . '0.250000 0.500000 0.750000 rg'
             . "\n";
         $this->assertEquals($exp2, $res2);
+    }
+
+    /**
+     * @throws \Com\Tecnick\Pdf\Graph\Exception
+     */
+    public function testGetStyleCmdMiterLimitIsUnitIndependent(): void
+    {
+        // The miter limit is a ratio, so the same value is emitted whatever the
+        // document unit is.
+        foreach ([1.0, 0.75, 2.834646] as $kunit) {
+            $draw = new \Com\Tecnick\Pdf\Graph\Draw(
+                $kunit,
+                0,
+                0,
+                new \Com\Tecnick\Color\Pdf(),
+                $this->getEncryptObject(),
+                false,
+            );
+
+            $this->assertEquals('4.000000 M' . "\n", $draw->getStyleCmd(['miterLimit' => 4.0]));
+            // A value below the legal minimum is clamped rather than emitted as is.
+            $this->assertEquals('1.000000 M' . "\n", $draw->getStyleCmd(['miterLimit' => 0.5]));
+        }
     }
 
     /**

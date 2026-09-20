@@ -233,8 +233,9 @@ abstract class Base
             'lineCap' => $style['lineCap'] ?? 'butt',
             // shape of joints between connected segments of a stroked path
             'lineJoin' => $style['lineJoin'] ?? 'miter',
-            // maximum length of mitered line joins for stroked paths
-            'miterLimit' => $style['miterLimit'] ?? (10.0 / $this->kunit),
+            // ratio of the mitered join length to the line width, above which
+            // the join is converted to a bevel
+            'miterLimit' => $style['miterLimit'] ?? 10.0,
             // lengths of alternating dashes and gaps
             'dashArray' => $style['dashArray'] ?? [],
             // distance  at which to start the dash
